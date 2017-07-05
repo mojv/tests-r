@@ -79,6 +79,7 @@ class FormController extends Controller
     {
         $user = User::find(Auth::id());
         $form = $user->forms()->find($id);
+        Storage::delete("/public/".$form->formfile);
         $form->delete();
         return back();
     }

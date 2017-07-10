@@ -274,6 +274,7 @@
     } else {
       alert('The File APIs are not fully supported in this browser.');
     }
+    var ctx;    
     var imageURLs=[];
     document.getElementById('files').addEventListener('change', handleFileSelect, false);
     document.getElementById('pdf').addEventListener('change', handleFileSelectPdf);

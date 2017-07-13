@@ -116,5 +116,8 @@ return [
   'formCreator' => 'Form Owners Name',
   'formCreatorEmail' => 'Form Owner´s E-mail',
   'download' => 'Download',
-    
+  //-------------------------------------
+  'idField' => 'Is this an ID field?',
+  'img' => 'IMG',
+  'gradeImage' => 'Grade Image' 
 ];

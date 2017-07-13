@@ -116,9 +116,9 @@
             <a id="bcr" class="btn btn-app">
                 <span class="glyphicon glyphicon-qrcode"></span> {{ __('messages.QRCode') }}
             </a>
-            <!--<a id="img"  class="btn btn-app">
-              <i class="fa fa-file-image-o"></i> IMG
-            </a>-->
+            <a id="img"  class="btn btn-app">
+              <i class="fa fa-file-image-o"></i> {{ __('messages.img') }}
+            </a>
             <a id="delete"  class="btn btn-app">
               <i class="fa fa-trash"></i> {{ __('messages.deleteField') }}
             </a>
@@ -166,6 +166,13 @@
                         <div class="form-group col-lg-6">
                             <p>{{ __('messages.fieldName') }}</p>
                             <input type="text" id="field_name" class="form-control" required>
+                        </div>
+                        <div class="form-group col-lg-6" id="id_field_div">
+                            <p>{{ __('messages.idField') }}</p>
+                            <select id="idField" class="form-control" required>
+                                <option value="0">{{ __('messages.no') }}</option>
+                                <option value="1">{{ __('messages.yes') }}</option>
+                            </select>
                         </div>
                         <div class="form-group col-lg-6">
                             <p>{{ __('messages.fieldOrientation') }}</p>
@@ -222,6 +229,13 @@
                         <div class="form-group col-lg-6">
                             <p>{{ __('messages.fieldName') }}</p>
                             <input type="text" id="field_name_up" class="form-control" required>
+                        </div>
+                        <div class="form-group col-lg-6" id="id_field_div_up">
+                            <p>{{ __('messages.idField') }}</p>
+                            <select id="idField_up" class="form-control" required>
+                                <option value="0">{{ __('messages.no') }}</option>
+                                <option value="1">{{ __('messages.yes') }}</option>
+                            </select>
                         </div>
                         <div class="form-group col-lg-6">
                             <p>{{ __('messages.allowMultiMarks') }}</p>
@@ -293,6 +307,7 @@
             $('#columns').prop('disabled', false);
             $('#multiMark').prop('disabled', false);
             $('#output').prop('disabled', false);
+            $("#id_field_div").hide();
             $('#commands').show();
             boxes[2].x=10000;
             boxes[3].y=10000;
@@ -307,11 +322,13 @@
         });
         $('#omr-sq').click(function(){
             $('#shape').val('1');
+            $("#id_field_div").hide();
             $('#myModal2').modal('show');
             $('#commands').hide();
             $('#cancel').show();
             $("#markwidth").show();
             $("#markheight").show();
+
         });
         $('#omr-sc').click(function(){
             $('#shape').val('2');
@@ -319,9 +336,11 @@
             $('#commands').hide();
             $('#cancel').show();
             $("#markradius").show();
+            $("#id_field_div").hide();
         });
         $('#ocr').click(function(){
             $('#shape').val('4');
+            $("#idField").val("0");
             $('#myModal2').modal('show');
             $('#field_orientation').prop('disabled', true);
             $('#rows').prop('disabled', true);
@@ -330,8 +349,11 @@
             $('#output').prop('disabled', true);
             $('#commands').hide();
             $('#cancel').show();
+            $("#id_field_div").hide();
         });
         $('#bcr').click(function(){
+            $("#id_field_div").show();
+            $("#idField").val("0");
             $('#shape').val('5');
             $('#myModal2').modal('show');
             $('#commands').hide();
@@ -353,6 +375,7 @@
             $('#multiMark').prop('disabled', true);
             $('#output').prop('disabled', true);
             $('#commands').hide();
+            $("#id_field_div").hide();
             $('#cancel').show();
         });
         $('#delete').click(function(){

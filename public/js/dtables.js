@@ -2,13 +2,16 @@ var tpdf=0;
 var tocr=0;
 var tomr=0;
 var tbcr=0;
+var hasId=0;
+var cuts=[];
+var tr_img = document.createElement('tr');
 
     function rgbToHex(r, g, b) {
        if (r > 255 || g > 255 || b > 255){
            throw "Invalid color component";
         }
        return ((r << 16) | (g << 8) | b).toString(16);
-   }
+    }
 
     function my_isblack(data,pos){
       	if(data[pos]<50 && data[pos+1]<50 && data[pos+2]<50){
@@ -456,6 +459,7 @@ var tbcr=0;
       this.field_name = '';
       this.q_id;
       this.q_option;
+      this.idField=0;
     }
 
     Box.prototype.drawshape = function(context, shape, fill, shape_id) {
@@ -486,6 +490,7 @@ var tbcr=0;
       this.field_name = '';
       this.q_id;
       this.q_option;
+      this.idField=0;
     }
 
     Circle.prototype.drawshape = function(context, shape, fill) {
@@ -506,7 +511,7 @@ var tbcr=0;
       context.globalAlpha=1;
     };
 
-    function addRect(x, y, w, h, fill, field, question, output, shape, multiMark) {
+    function addRect(x, y, w, h, fill, field, question, output, shape, multiMark, idField) {
       var rect = new Box;
       rect.x = x;
       rect.y = y;
@@ -518,11 +523,12 @@ var tbcr=0;
       rect.field_name = field;
       rect.q_id = question;
       rect.q_option = output;
+      rect.idField= idField;
       boxes.push(rect);
       invalidate();
     }
 
-    function addCircle(x, y, r, fill, field, question, output, shape, multiMark) {
+    function addCircle(x, y, r, fill, field, question, output, shape, multiMark, idField) {
       var circle = new Circle;
       circle.x = x;
       circle.y = y;
@@ -533,6 +539,7 @@ var tbcr=0;
       circle.field_name = field;
       circle.q_id = question;
       circle.q_option = output;
+      circle.idField= idField;
       boxes.push(circle);
       invalidate();
     }
@@ -548,7 +555,7 @@ var tbcr=0;
       invalidate();
     }
 
-    function addTempRect(x, y, w, h, r, fill, field, question, output, shape, multiMark) {
+    function addTempRect(x, y, w, h, r, fill, field, question, output, shape, multiMark, idField) {
       var rect = new Box;
       rect.x = x;
       rect.y = y;
@@ -561,6 +568,7 @@ var tbcr=0;
       rect.field_name = field;
       rect.q_id = question;
       rect.q_option = output;
+      rect.idField = idField;
       temp_boxes.push(rect);
     }
 
@@ -760,11 +768,17 @@ var tbcr=0;
             //alert (mySel.length);
             $('#field_name_up').val(fsSel.field_name);
             $('#old_name').val(fsSel.field_name);
-            if (fsSel.shape == 4 || fsSel.shape == 5){
+            $('#id_field_div_up').hide();
+            console.log(fsSel.shape);
+            if (fsSel.shape == 4 || fsSel.shape == 5 || fsSel.shape == 3){
               $('#multiMark_up').prop('disabled', true);
               $('#output_up').prop('disabled', true);
               $('#multiMark_up').val('');
               $('#output_up').val('');
+              if (fsSel.shape == 5){
+                $('#idField_up').val(fsSel.idField);
+                $('#id_field_div_up').show();
+              }
             }else{
               $('#multiMark_up').prop('disabled', false);
               $('#output_up').prop('disabled', false);
@@ -805,6 +819,8 @@ var tbcr=0;
         if (boxes[i].field_name == $('#old_name').val()){
           boxes[i].field_name= $('#field_name_up').val();
           boxes[i].multiMark=$('#multiMark_up').val();
+          boxes[i].idField=$('#idField_up').val();
+          $('#idField_up').val("0");
           if (boxes[i].shape!=10) {
             if ($('#old_output').val() != $('#output_up').val()){
               if ($('#old_output').val() == "2" && $('#output_up').val() == "3"){
@@ -847,7 +863,7 @@ var tbcr=0;
         var field_name = document.getElementById("field_name").value;
         var field_orientation = document.getElementById("field_orientation").value;
         var multiMark = document.getElementById("multiMark").value;
-        addRect(boxes[2].x-width, boxes[2].y-height, (boxes[3].x - boxes[2].x) + 3*width, (boxes[3].y - boxes[2].y) + 3*height, '#91e57b', field_name, 0 ,  0, 10, multiMark);
+        addRect(boxes[2].x-width, boxes[2].y-height, (boxes[3].x - boxes[2].x) + 3*width, (boxes[3].y - boxes[2].y) + 3*height, '#91e57b', field_name, 0 ,  0, 10, multiMark,0);
         boxes[2].x=10000;
         boxes[3].y=10000;
         invalidate();
@@ -865,7 +881,7 @@ var tbcr=0;
                     }else if(output==3){
                        var que = h+1;
                     }
-                    addRect(tempx, tempy, width, height, '#256b2d', field_name, k+1, que, 1, multiMark);
+                    addRect(tempx, tempy, width, height, '#256b2d', field_name, k+1, que, 1, multiMark,0);
                 }else if (field_orientation == 2){
                     if (output==1){
                        var que = String.fromCharCode(65 + k);
@@ -879,11 +895,11 @@ var tbcr=0;
             }
         }
         area_boxes_count = 0;
-        document.getElementById("rows").value = "";
-        document.getElementById("columns").value = "";
-        document.getElementById("field_name").value = "";
-        document.getElementById("field_orientation").value = "";
-        document.getElementById("multiMark").value = "";
+        $('#rows').val("");
+        $('#columns').val("");
+        $('#field_name').val("");
+        $('#field_orientation').val("");
+        $('#multiMark').val("");
         $('#commands').show();
         $('#cancel').hide();
         $("#markwidth").hide();
@@ -912,7 +928,7 @@ var tbcr=0;
         var field_name = document.getElementById("field_name").value;
         var field_orientation = document.getElementById("field_orientation").value;
         var multiMark = document.getElementById("multiMark").value;
-        addRect(boxes[0].x-width, boxes[0].y-height, (boxes[1].x - boxes[0].x) + 3*width, (boxes[1].y - boxes[0].y) + 3*height, '#91e57b', field_name, 0, 0, 10, multiMark);
+        addRect(boxes[0].x-width, boxes[0].y-height, (boxes[1].x - boxes[0].x) + 3*width, (boxes[1].y - boxes[0].y) + 3*height, '#91e57b', field_name, 0, 0, 10, multiMark,0);
         boxes[0].x=10000;
         boxes[1].y=10000;
         invalidate();
@@ -930,7 +946,7 @@ var tbcr=0;
                     }else if(output==3){
                        var que = h+1;
                     }
-                    addCircle(tempx, tempy, radius, '#256b2d', field_name, k+1, que, 2, multiMark);
+                    addCircle(tempx, tempy, radius, '#256b2d', field_name, k+1, que, 2, multiMark,0);
                 }else if (field_orientation == 2){
                     if (output==1){
                        var que = String.fromCharCode(65 + k);
@@ -944,11 +960,11 @@ var tbcr=0;
             }
         }
         area_boxes_count = 0;
-        document.getElementById("rows").value = "";
-        document.getElementById("columns").value = "";
-        document.getElementById("field_name").value = "";
-        document.getElementById("field_orientation").value = "";
-        document.getElementById("multiMark").value = "";
+        $('#rows').val("");
+        $('#columns').val("");
+        $('#field_name').val("");
+        $('#field_orientation').val("");
+        $('#multiMark').val("");
         $('#commands').show();
         $('#cancel').hide();
         $("#markwidth").hide();
@@ -957,17 +973,18 @@ var tbcr=0;
     }
 
     function crateArea(shape_id, fill){
-        var field_name = document.getElementById("field_name").value;
-        addRect(boxes[0].x+width/2, boxes[0].y+height/2, (boxes[1].x - boxes[0].x), (boxes[1].y - boxes[0].y), fill , field_name,0, 0, shape_id, "2");
+        var field_name = $("#field_name").val();
+        var idField = $("#idField").val();
+        addRect(boxes[0].x+width/2, boxes[0].y+height/2, (boxes[1].x - boxes[0].x), (boxes[1].y - boxes[0].y), fill , field_name,0, 0, shape_id, "2", idField);
         //addRect(boxes[0].x+width/2, boxes[0].y+height/2, (boxes[1].x - boxes[0].x) + 3/2*width, (boxes[1].y - boxes[0].y) + 3/2*height, '#579ad1', field_name, k+1, h+1, 3);
         boxes[0].x=10000;
         boxes[1].y=10000;
         invalidate();
         area_boxes_count = 0;
-        document.getElementById("rows").value = "";
-        document.getElementById("columns").value = "";
-        document.getElementById("field_name").value = "";
-        document.getElementById("field_orientation").value = "";
+        $("#rows").val("");
+        $("#columns").val("");
+        $("#field_name").val("");
+        $("#field_orientation").val("");
         $('#commands').show();
         $('#cancel').hide();
         $("#markwidth").hide();
@@ -1103,7 +1120,7 @@ var tbcr=0;
             var w = boxes[i].w/dx;
             var h = boxes[i].h/dy;
             var r = boxes[i].r/dx;
-            postData.push({field_name:boxes[i].field_name, x: x, y: y, w: w, h: h, r: r, shape: boxes[i].shape, fill: boxes[i].fill.substring(1), multiMark: boxes[i].multiMark, q_id: boxes[i].q_id, q_option: boxes[i].q_option, _token: token});
+            postData.push({field_name:boxes[i].field_name, x: x, y: y, w: w, h: h, r: r, shape: boxes[i].shape, fill: boxes[i].fill.substring(1), multiMark: boxes[i].multiMark, q_id: boxes[i].q_id, q_option: boxes[i].q_option, idField: boxes[i].idField, _token: token});
         }
 
         $.ajax({
@@ -1120,6 +1137,7 @@ var tbcr=0;
     }
 
     function set_tables(){
+        $('#img_table').hide();
         var temp_q_id=0;
         var temp1 = "";
         for (var j=0; j<relativeCoord.length; j++){
@@ -1131,9 +1149,31 @@ var tbcr=0;
                 temp_q_id=0;
             }
             if (temp_q_id==0){
+                $('.cutting').show();
                 var th = document.createElement('th');
                 th.appendChild(document.createTextNode(relativeCoord[j][5] + "  " + relativeCoord[j][6]));
                 document.getElementById('resultsFormOmrHead').appendChild(th);
+                temp1 = relativeCoord[j][5] + "-" + relativeCoord[j][6];
+                temp_q_id=1;
+            }
+        }
+        var temp_q_id=0;
+        var temp1 = "";
+        for (var j=0; j<relativeCoord.length; j++){
+            if (relativeCoord[j][8]<=2){
+                continue;
+            }
+            if (relativeCoord[j][8]>3){
+                break;
+            }
+            var temp2 = relativeCoord[j][5] + "-" + relativeCoord[j][6];
+            if (temp2!=temp1){
+                temp_q_id=0;
+            }
+            if (temp_q_id==0){
+                var th = document.createElement('th');
+                th.appendChild(document.createTextNode(relativeCoord[j][5]));
+                document.getElementById('resultsFormImgHead').appendChild(th);
                 temp1 = relativeCoord[j][5] + "-" + relativeCoord[j][6];
                 temp_q_id=1;
             }
@@ -1168,6 +1208,10 @@ var tbcr=0;
             if (relativeCoord[j][8]>5){
                 break;
             }
+            if (relativeCoord[j][10] == 1){
+                hasId=1;
+                continue;
+            }
             var temp2 = relativeCoord[j][5] + "-" + relativeCoord[j][6];
             if (temp2!=temp1){
                 temp_q_id=0;
@@ -1189,8 +1233,8 @@ var tbcr=0;
         var canvas = document.createElement("canvas");
         //var canvas = document.getElementById("borrar");
         var iterations=imgs.length;
+        (sId = []).length = imgs.length;
         var i = 0;
-
         (function loop() {
             var x_y = imgs[i].width/imgs[i].height;
             if(x_y>MAX_RATIO_A4 || x_y<MIN_RATIO_A4) {
@@ -1259,10 +1303,26 @@ var tbcr=0;
         var esq=i1;
         var dx = i2[0] - i1[0];
         var dy = i3[1] - i1[1];
+        if (hasId==1){
+          idRead(esq, dx, dy, relativeCoord2, function (id) {
+            console.log(id);
+            omrRead(id,  esq, dx, dy, relativeCoord2);
+            bcrRead(id,  esq, dx, dy, relativeCoord2);
+            ocrRead(id,  esq, dx, dy, relativeCoord2);
+            imgRead(id,  esq, dx, dy, relativeCoord2);
+          });
+        }else {
+            asyncRead(i,  esq, dx, dy, relativeCoord2);
+        }
+    }
 
-        omrRead(i,  esq, dx, dy, relativeCoord2);
-        bcrRead(i,  esq, dx, dy, relativeCoord2);
-        ocrRead(i,  esq, dx, dy, relativeCoord2);
+    function asyncRead(i,  esq, dx, dy, relativeCoord2) {
+        setTimeout(function(){
+          omrRead(i,  esq, dx, dy, relativeCoord2);
+          bcrRead(i,  esq, dx, dy, relativeCoord2);
+          ocrRead(i,  esq, dx, dy, relativeCoord2);
+          imgRead(i,  esq, dx, dy, relativeCoord2);
+        }, 1);
     }
 
     function is_box_black_corner(x,y,x_box,y_box){
@@ -1308,13 +1368,50 @@ var tbcr=0;
         Tesseract.recognize(newCanvas, {
         lang: langsel})
         .then(function(data){
-            console.log(data);
             temp = progressUpdate({ status: 'done', data: data });
             var td = document.createElement('td');
             temp = temp;
             td.appendChild(document.createTextNode(temp));
             tr.appendChild(td);
             document.getElementById('resultsFormOcrBody').appendChild(tr);
+        });
+    }
+
+    function idRead (esq, dx, dy, relativeCoord2, callback){
+        var tr = document.createElement('tr');
+        for (var j=0; j<relativeCoord2.length; j++){
+            if (relativeCoord2[j][8]<=4){
+                continue;
+            }
+            if (relativeCoord2[j][8]>5){
+                break;
+            }
+            if (relativeCoord2[j][10]==1){
+              var width = (relativeCoord2[j][2]*dx);
+              var height = (relativeCoord2[j][3]*dy);
+              var newCanvas = document.createElement("canvas");
+              newCanvas.width = width;
+              newCanvas.height = height;
+              var imageData = ctx.getImageData((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], width, height);
+              newCanvas.getContext("2d").putImageData(imageData, 0, 0);
+              var qrImg = newCanvas.toDataURL();
+              idRead2(qrImg,tr, function(id){
+                  callback(id);
+              });
+            }
+        }
+    }
+
+    function idRead2 (qrImg,tr,callback){
+        var qr = new QCodeDecoder();
+        qr.decodeFromImage(qrImg, function (err, result) {
+            var td = document.createElement('td');
+            temp = result;
+            if (err){
+               callback('');
+            }else{
+               callback(temp);
+            }
         });
     }
 
@@ -1326,6 +1423,9 @@ var tbcr=0;
             }
             if (relativeCoord2[j][8]>5){
                 break;
+            }
+            if (relativeCoord2[j][10]==1){
+                continue;
             }
             var width = (relativeCoord2[j][2]*dx);
             var height = (relativeCoord2[j][3]*dy);
@@ -1345,7 +1445,6 @@ var tbcr=0;
             //if (err) throw err;
             var td = document.createElement('td');
             temp = result;
-            console.log(temp);
             if (err){
                td.appendChild(document.createTextNode(''));
             }else{
@@ -1359,6 +1458,9 @@ var tbcr=0;
     function omrRead (i,  esq, dx, dy, relativeCoord2){
         var darkness = document.getElementById("darkness").value;
         var tr = document.createElement('tr');
+        var td_id = document.createElement('td');
+        td_id.appendChild(document.createTextNode(i));
+        tr.appendChild(td_id);
         var temp_q_id=0;
         var temp1 = "";
         var qtemp = "";
@@ -1459,4 +1561,62 @@ var tbcr=0;
             }
         }
         document.getElementById('resultsFormOmrBody').appendChild(tr);
+    }
+
+    function imgRead (i,  esq, dx, dy, relativeCoord2){
+        var temp =[];
+        for (var j=0; j<relativeCoord2.length; j++){
+            if (relativeCoord2[j][8]<=2){
+                continue;
+            }
+            if (relativeCoord2[j][8]>3){
+                break;
+            }
+            var td = document.createElement('td');
+            var width = (relativeCoord2[j][2]*dx);
+            var height = (relativeCoord2[j][3]*dy);
+            var newCanvas = document.createElement("canvas");
+            newCanvas.width = width;
+            newCanvas.height = height;
+            var imageData = ctx.getImageData((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], width, height);
+            newCanvas.getContext("2d").putImageData(imageData, 0, 0);
+            //var cut = document.createElement('a');
+            temp.push(newCanvas.toDataURL());
+            /*cut.target="_blank";
+            cut.innerHTML='img';
+            td.appendChild(cut);
+            tr.appendChild(td);*/
+        }
+        //document.getElementById('resultsFormImgBody').appendChild(tr);
+        cuts.push(temp);
+    }
+
+    function gradeImage(){
+      if (cuts.length!=0) {
+        if (cuts[0].length!=0){
+          $('#temp_img').attr("src",cuts[0][0]);
+          $('#modal_cuttings').modal('show');
+        }else{
+          cuts.shift();
+          document.getElementById('resultsFormImgBody').appendChild(tr_img);
+          console.log(cuts.length);
+          if (cuts.length==0) {
+            console.log('hola');
+            $('#modal_cuttings').modal('hide');
+          }else{
+            tr_img = document.createElement('tr');
+            setTimeout(gradeImage(),0);
+          }
+        }
+      }
+    }
+
+    function gradeImage2(){
+      cuts[0].shift();
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode($('#gradeImage').val()));
+      tr_img.appendChild(td);
+      $('#temp_img').attr("src","");
+      $('#gradeImage').val("");
+      gradeImage();
     }

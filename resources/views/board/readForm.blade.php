@@ -105,6 +105,7 @@
 @section('content')
 <div id="results" hidden>
     <button type="button" id="settable">{{ __('messages.setTables') }}</button>
+    <button type="button" id="gradeImg" class="cutting" hidden="">{{ __('messages.gradeImage') }}</button>
     <div class="x_panel">
       <div class="x_title">
         <h2>{{ __('messages.OMR') }} <small>{{ __('messages.results') }}</small></h2>
@@ -114,6 +115,7 @@
         <table id="datatable-buttons2" class="table table-striped table-bordered dataTable datatable-buttons">
           <thead>
             <tr id="resultsFormOmrHead">
+              <th>ID</th>
             </tr>
           </thead>
           <tbody id="resultsFormOmrBody">
@@ -154,6 +156,43 @@
 
           </tbody>
         </table>
+      </div>
+    </div>
+    <div class="x_panel cutting" id='img_table' hidden>
+      <div class="x_title">
+        <h2>{{ __('messages.img') }} <small>{{ __('messages.results') }}</small></h2>
+        <div class="clearfix"></div>
+      </div>
+      <div class="x_content">
+        <table id="datatable-buttons4" class="table table-striped table-bordered dataTable datatable-buttons">
+          <thead>
+            <tr id="resultsFormImgHead">
+            </tr>
+          </thead>
+          <tbody id="resultsFormImgBody">
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true"  id="modal_cuttings" >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form action="javascript:gradeImage2();">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="myModalLabel2">{{ __('messages.img') }}</h4>
+                </div>
+                <div class="modal-body">
+                  <div class="form-group">
+                      <div align="center"><img id="temp_img" style="max-width: 800px;"></div>
+                      <input id="gradeImage" type="text" class="form-control" name="gradeImage" autofocus placeholder="{{ __('messages.gradeImage') }}" required>
+                   </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">{{ __('messages.gradeImage') }}</button>
+                </div>
+            </form>
+        </div>
       </div>
     </div>
 </div>
@@ -249,7 +288,6 @@
                 <div class="circle1"></div>
         </div>
 
-
 <script type="text/javascript" src="{{ asset('js/dtables.js') }}"></script>
 <script src="{{ asset('js/qcode-decoder.min.js') }}"></script>
 <script src="https://cdn.rawgit.com/naptha/tesseract.js/1.0.7/dist/tesseract.js"></script>
@@ -261,20 +299,19 @@
         ajaxStart: function() { $body.addClass("loading");    },
          ajaxStop: function() { $body.removeClass("loading"); }
     });
-    $(function () {
+    /*$(function () {
         $('.modal').modal({
             show: false,
             keyboard: false,
             backdrop: 'static'
         });
-    });
-
+    });*/
       // Check for the various File API support.
     if (window.File && window.FileReader && window.FileList && window.Blob) {
     } else {
       alert('The File APIs are not fully supported in this browser.');
     }
-    var ctx;    
+    var ctx;
     var imageURLs=[];
     document.getElementById('files').addEventListener('change', handleFileSelect, false);
     document.getElementById('pdf').addEventListener('change', handleFileSelectPdf);
@@ -286,18 +323,13 @@
     var MAX_RATIO_LETTER = 0.776;
     var MIN_RATIO_LETTER = 0.768;
 
-
-
     <?php foreach ($formcoords as $box) {
-        echo "relativeCoord.push([" . $box['x'] . ", " . $box['y'] . ", " . $box['w'] . ", " . $box['h'] . ", " . $box['r'] . ", '"  . $box['field_name'] . "', " . $box['q_id'] . ", '" . $box['q_option'] . "', " . $box['shape'] . ", " . $box['multiMark'] . "]);";
+        echo "relativeCoord.push([" . $box['x'] . ", " . $box['y'] . ", " . $box['w'] . ", " . $box['h'] . ", " . $box['r'] . ", '"  . $box['field_name'] . "', " . $box['q_id'] . ", '" . $box['q_option'] . "', " . $box['shape'] . ", " . $box['multiMark'] . ", " . $box['idField'] . "]);";
     } ?>
-
-
 
 </script>
 
 @endsection
-
 
 @section('script')
 <script src="{{ asset('js/qcode-decoder.min.js') }}"></script>
@@ -308,10 +340,6 @@
 </script>
 
 @endsection
-
-
-
-
 
 @section('script1')
     <!-- Datatables -->
@@ -336,20 +364,31 @@
 @section('script2')
     <!-- Datatables -->
     <script>
+      $('#gradeImg').click(function() {
+        gradeImage()
+      });
       $('#settable').click(function() {
         $(this).hide();
+        $('#gradeImg').hide();
+        var head = $('#datatable-buttons4 thead tr th');
+        var body = $('#datatable-buttons4 tbody tr');
+        $("#datatable-buttons2 thead tr th:first-child").after(head);
+        $("#datatable-buttons2 tbody tr").each(function(i) {
+          $('td:first-child', this).after(body.eq(i).children());
+        });
+        $('#img_table').remove();
         var head = $('#datatable-buttons thead tr th');
         var body = $('#datatable-buttons tbody tr');
-        $("#datatable-buttons2 thead tr").prepend(head);
+        $("#datatable-buttons2 thead tr th:first-child").after(head);
         $("#datatable-buttons2 tbody tr").each(function(i) {
-          $(this).prepend(body.eq(i).children());
+          $('td:first-child', this).after(body.eq(i).children());
         });
         $('#ocr_table').remove();
         var head = $('#datatable-buttons3 thead tr th');
         var body = $('#datatable-buttons3 tbody tr');
-        $("#datatable-buttons2 thead tr").prepend(head);
+        $("#datatable-buttons2 thead tr th:first-child").after(head);
         $("#datatable-buttons2 tbody tr").each(function(i) {
-          $(this).prepend(body.eq(i).children());
+          $('td:first-child', this).after(body.eq(i).children());
         });
         $('#qr_table').remove();
         var handleDataTableButtons = function() {

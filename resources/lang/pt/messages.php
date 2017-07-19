@@ -27,7 +27,7 @@ return [
     'fieldName' => 'Nome do Campo',
     'fieldOrientation' => 'Orientação do Campo',
     'formName' => 'Nome do Formulário',
-    'formReadTemplates' => 'Modelos FormRead',
+    'formReadTemplates' => 'Modelos',
     'forms' => 'Formulários',
     'formsProcessing' => 'Processar Formulários',
     'formsTemplates' => 'Modelos de Formulários',

@@ -91,7 +91,7 @@
                   <li><a><i class="fa fa-table"></i> {{ __('messages.formsProcessing') }} <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="{{route('formList') }}">{{ __('messages.yourForms') }}</a></li>
-                      <li><a href="{{route('templateList') }}">{{ __('messages.formReadTemplates') }}</a></li>
+                      <li><a href="{{route('templateList') }}">{{ __('messages.formReadTemplates') }} {{ config('app.name', 'Laravel') }}</a></li>
                       <li><a href="{{ __('messages.tutorialReadForms') }}" target="_blank">{{ __('messages.tutorial') }}</a></li>
                     </ul>
                   </li>
@@ -193,7 +193,7 @@
                      {{ $error }}
                   @endforeach
                 </div>
-            @endif            
+            @endif
             @yield('content')
           </div>
         </div>

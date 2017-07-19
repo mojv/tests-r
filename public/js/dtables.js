@@ -298,12 +298,6 @@ var tr_img = document.createElement('tr');
         var files = input.files;
 
         for (var i = 0; i < files.length; ++i) {
-
-            var MAX_RATIO_A4 = 0.728;
-            var MIN_RATIO_A4 = 0.704;
-            var MAX_RATIO_LETTER = 0.776;
-            var MIN_RATIO_LETTER = 0.768;
-
             img.onload = function(){
                 sheet_corners()
             };
@@ -341,17 +335,6 @@ var tr_img = document.createElement('tr');
     }
 
     function sheet_corners(){
-        var MAX_RATIO_A4 = 0.728;
-        var MIN_RATIO_A4 = 0.704;
-        var MAX_RATIO_LETTER = 0.776;
-        var MIN_RATIO_LETTER = 0.768;
-        var x_y = img.width/img.height;
-        if(x_y>MAX_RATIO_A4 || x_y<MIN_RATIO_A4) {
-            if(x_y>MAX_RATIO_LETTER || x_y<MIN_RATIO_LETTER) {
-                alert("No se puede procesar el formulario, el tama単o de la hoja debe se A4 o Carta");
-                return;
-            }
-        }
         $('#file_upload').hide();
         $('#commands').show();
         ctx = canvas.getContext("2d");
@@ -1236,15 +1219,6 @@ var tr_img = document.createElement('tr');
         (sId = []).length = imgs.length;
         var i = 0;
         (function loop() {
-            var x_y = imgs[i].width/imgs[i].height;
-            if(x_y>MAX_RATIO_A4 || x_y<MIN_RATIO_A4) {
-                if(x_y>MAX_RATIO_LETTER || x_y<MIN_RATIO_LETTER) {
-                    alert("No se pude procesar la hoja No. " + i + ", el tama単o debe ser A4 o Carta");
-                    i++;
-                    setTimeout(loop, 0);
-                    return;
-                }
-            }
             prepare_sheet(i, canvas, imgs[i], relativeCoord);
             i++;
             if (i < iterations) {

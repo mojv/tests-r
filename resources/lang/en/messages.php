@@ -27,7 +27,7 @@ return [
     'fieldName' => 'Field Name',
     'fieldOrientation' => 'Field Orientation',
     'formName' => 'Form Name',
-    'formReadTemplates' => 'FormRead Templates',
+    'formReadTemplates' => 'Templates',
     'forms' => 'Forms',
     'formsProcessing' => 'Forms Processing',
     'formsTemplates' => 'Forms Templates',
@@ -119,5 +119,5 @@ return [
   //-------------------------------------
   'idField' => 'Is this an ID field?',
   'img' => 'IMG',
-  'gradeImage' => 'Grade Image' 
+  'gradeImage' => 'Grade Image'
 ];

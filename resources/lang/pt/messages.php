@@ -118,6 +118,6 @@ return [
   'download' => 'Baixar',
   'idField' => 'Este é um campo ID?',
   'img' => 'IMG',
-  'gradeImage' => 'Taxa de Imagens'
+  'gradeImage' => 'Taxa de Imagens',
 
 ];

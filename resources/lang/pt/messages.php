@@ -116,6 +116,8 @@ return [
   'formCreator' => 'Criador do Formulário',
   'formCreatorEmail' => 'E-mail do Criador do Formulário',
   'download' => 'Baixar',
-
+  'idField' => 'Este é um campo ID?',
+  'img' => 'IMG',
+  'gradeImage' => 'Taxa de Imagens'
 
 ];

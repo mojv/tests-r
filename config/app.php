@@ -178,7 +178,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Greggilbert\Recaptcha\RecaptchaServiceProvider::class,
-
+        PragmaRX\Firewall\Vendor\Laravel\ServiceProvider::class,
     ],
 
     /*
@@ -230,7 +230,7 @@ return [
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
         'Recaptcha' => Greggilbert\Recaptcha\Facades\Recaptcha::class,
-
+        'Firewall' => PragmaRX\Firewall\Vendor\Laravel\Facade::class,
     ],
 
 ];

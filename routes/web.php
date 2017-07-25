@@ -11,7 +11,7 @@
 |
 */
 
-Route::group(['middleware' => ['web', 'locale']], function () {
+Route::group(['middleware' => ['web', 'locale', 'fw-block-bl']], function () {
 
     Route::get('/', function () {
         return redirect('/login');

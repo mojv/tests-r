@@ -41,6 +41,7 @@ return [
     'installOCRLanguage' => 'Install OCR Language',
     'lastName' => 'Last Name',
     'letter100Q' => 'Letter 100 Q',
+    'letter35Q' => 'Letter 35 Q',
     'login' => 'Login',
     'loginForm' => 'Login Form',
     'logOut' => 'Log Out',

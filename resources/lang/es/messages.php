@@ -41,6 +41,7 @@ return [
     'installOCRLanguage' => 'Instalar Idioma OCR',
     'lastName' => 'Apellido',
     'letter100Q' => 'Carta 100 P',
+    'letter100Q' => 'Carta 35 P',
     'login' => 'Iniciar Sesión',
     'loginForm' => 'Inicio de Sesión',
     'logOut' => 'Cerrar Sesión',

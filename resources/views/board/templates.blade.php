@@ -116,6 +116,25 @@
                         </div>
                       </div>
 
+                      <div class="col-md-55">
+                        <div class="thumbnail">
+                          <div class="image view view-first">
+                            <img style="width: 100%; display: block;" src="{{ asset('download/Letter_35_Q_ico.jpg') }}" alt="image" />
+                            <div class="mask">
+                              <p>{{ __('messages.letter35Q') }}</p>
+                              <div class="tools tools-bottom">
+                                  <a href="{{ asset('download/Letter_35_Q.jpg') }}" download><i class="fa fa-file-image-o"></i></a>
+                                <a href="{{ asset('download/Letter_35_Q.pdf') }}" download><i class="fa fa-file-pdf-o"></i></a>
+                                <a href="{{ asset('download/Letter_35_Q.docx') }}" download><i class="fa fa-file-word-o"></i></a>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="caption">
+                            <p>{{ __('messages.letter35Q') }}</p>
+                          </div>
+                        </div>
+                      </div>
+
                     </div>
                   </div>
                 </div>

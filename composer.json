@@ -9,12 +9,13 @@
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "^5.3.0",
-        "pragmarx/firewall": "^1.0"
+        "pragmarx/firewall": "^1.0",
+        "geoip/geoip": "~1.14"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "~5.7",        
+        "phpunit/phpunit": "~5.7",
         "greggilbert/recaptcha": "dev-master"
     },
     "autoload": {

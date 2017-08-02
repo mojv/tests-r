@@ -15,6 +15,7 @@ return [
         // '172.17.*.*'
         // 'country:br'
         // storage_path().DIRECTORY_SEPARATOR.'blacklisted.txt',
+        'country:co'
     ],
 
     /**
@@ -100,13 +101,13 @@ return [
      *
      */
 
-    'enable_country_search' => false,
+    'enable_country_search' => true,
 
     /**
      * Should Firewall use the database?
      */
 
-    'use_database' => false,
+    'use_database' => true,
 
     /**
      * Models

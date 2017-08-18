@@ -8,7 +8,7 @@
 
   <div class="title_right">
     <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-      <form action="{{route('filterClasses')}}" method="get">
+      <form action="{{route('myClasses')}}" method="get">
         <div class="input-group">
           <input type="text" name="q" class="form-control" placeholder="{{ __('messages.search') }}...">
           <span class="input-group-btn">
@@ -40,8 +40,8 @@
               <th style="width: 20%">{{ __('messages.name') }}</th>
               <th>{{ __('messages.tests') }}</th>
               <th>{{ __('messages.classroomProgress') }}</th>
-              <th>Status</th>
-              <th style="width: 20%">#Edit</th>
+              <th>{{ __('messages.enrollStudents') }}</th>
+              <th style="width: 20%">{{ __('messages.action') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -61,7 +61,7 @@
                 <ul class="list-inline">
                   @foreach ($classe->tests as $test)
                   <li>
-                    <input type="image" src="{{ asset('images\exam.png') }}" height="32" border="1" value="{{$test->id}}">
+                    <input type="image" src="{{ asset('images\exam.png') }}" height="32" border="1" value="{{$test->id}}" data-toggle="tooltip" data-placement="top" title="{{$test->name}}">
                   </li>
                   @endforeach
                   <li>

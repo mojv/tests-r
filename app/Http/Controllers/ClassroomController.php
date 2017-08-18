@@ -23,32 +23,13 @@ class ClassroomController extends Controller
 
     public function myStudents(Request $data)
     {
-      $q=$data->input('q');
-      if ($q)
-      {
-          $students = Student::where('student_id', 'LIKE', "%$q%")
-          ->orWhere('name', 'LIKE', "%$q%")
-          ->orWhere('last_name', 'LIKE', "%$q%")
-          ->orWhere('email', 'LIKE', "%$q%")
-          ->paginate(9);
-      }
-      else
-      {
-          $students = Student::where('user_id',Auth::id())->paginate(9);
-      }
-      return view('board.myStudents', compact('students'));
-    }
-
-    public function filterStudents(Request $data)
-    {
         $q=$data->input('q');
         if ($q)
         {
-            $students = Student::where('student_id', 'LIKE', "%$q%")
-            ->orWhere('name', 'LIKE', "%$q%")
-            ->orWhere('last_name', 'LIKE', "%$q%")
-            ->orWhere('email', 'LIKE', "%$q%")
+            $students = Student::where('user_id',Auth::id())
+            ->where(DB::raw('CONCAT_WS(" ",name, last_name)'), 'like', $q)
             ->paginate(9);
+            //'CONCAT_WS(name," ",last_name," ",email," ",student_id)', 'like', "%{$q%"
         }
         else
         {
@@ -154,9 +135,21 @@ class ClassroomController extends Controller
       return back()->withErrors($errors);
     }
 
-    public function myClasses()
+    public function myClasses(Request $data)
     {
-        $classes = Classe::where('user_id',Auth::id())->with('tests')->paginate(10);
+        $q=$data->input('q');
+        if ($q)
+        {
+            $classes = Classe::where('user_id',Auth::id())
+            ->where('name', 'LIKE', "%$q%")
+            ->with('tests')
+            ->paginate(10);
+        }
+        else
+        {
+            $classes = Classe::where('user_id',Auth::id())->with('tests')->paginate(10);
+        }
+
         $users_id=[Auth::id(), 1];
         $forms_id=[];
         $shareForms=ShareForm::where('user_id',Auth::id())->get();

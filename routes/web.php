@@ -72,7 +72,6 @@ Route::group(['middleware' => ['web', 'locale', 'fw-block-bl']], function () {
     Route::delete('/myStudents/', ['as' => 'deleteStudent', 'uses' =>'ClassroomController@deleteStudent']);
     Route::get('/deleteAllStudents/', ['as' => 'deleteAllStudents', 'uses' =>'ClassroomController@deleteAllStudents']);
     Route::post('/addStudentList', ['as' => 'addStudentList', 'uses' =>'ClassroomController@addStudentList']);
-    Route::get('/filterStudents', ['as' => 'filterStudents', 'uses' =>'ClassroomController@filterStudents']);
 
     //-----------Classes-----------
     Route::get('/myClasses', ['as' => 'myClasses', 'uses' =>'ClassroomController@myClasses']);
@@ -80,7 +79,6 @@ Route::group(['middleware' => ['web', 'locale', 'fw-block-bl']], function () {
     Route::patch('/myClasses/{class}/', ['as' => 'updateClass', 'uses' =>'ClassroomController@updateClass']);
     Route::delete('/myClasses/', ['as' => 'deleteClass', 'uses' =>'ClassroomController@deleteClass']);
     Route::get('/deleteAllClasses/', ['as' => 'deleteAllClasses', 'uses' =>'ClassroomController@deleteAllClasses']);
-    Route::get('/filterClasses', ['as' => 'filterClasses', 'uses' =>'ClassroomController@filterClasses']);
     Route::post('/createExam', ['as' => 'createExam', 'uses' =>'ClassroomController@createExam']);
 
     Auth::routes();

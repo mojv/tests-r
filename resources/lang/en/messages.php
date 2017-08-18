@@ -150,5 +150,6 @@ return [
      'testName' => 'Test Name',
      'createTest' => 'Create Test',
      'testWeight' => 'Test Weight',
+     'enrollStudents' => 'Enroll Students',
 
 ];

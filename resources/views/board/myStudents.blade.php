@@ -8,7 +8,7 @@
   </div>
   <div class="title_right">
     <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-      <form action="{{route('filterStudents')}}" method="get">
+      <form action="{{route('myStudents')}}" method="get">
         <div class="input-group">
           <input type="text" name="q" class="form-control" placeholder="{{ __('messages.search') }}...">
           <span class="input-group-btn">

@@ -182,6 +182,14 @@
                             </select>
                         </div>
                         <div class="form-group col-lg-6">
+                            <p>{{ __('messages.output') }}</p>
+                            <select id="output" class="form-control" required>
+                                <option value="1">A - Z</option>
+                                <option value="2">0, 1, 2 ...</option>
+                                <option value="3">1, 2, 3 ...</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-lg-6">
                             <p>{{ __('messages.numberOfRows') }}</p>
                             <input type="number" id="rows" class="form-control" required>
                         </div>
@@ -197,11 +205,10 @@
                             </select>
                         </div>
                         <div class="form-group col-lg-6">
-                            <p>{{ __('messages.output') }}</p>
-                            <select id="output" class="form-control" required>
-                                <option value="1">A - Z</option>
-                                <option value="2">0, 1, 2 ...</option>
-                                <option value="3">1, 2, 3 ...</option>
+                            <p>{{ __('messages.concatenate') }}</p>
+                            <select id="concatenate" class="form-control" required>
+                                <option value="0">{{ __('messages.no') }}</option>
+                                <option value="1">{{ __('messages.yes') }}</option>
                             </select>
                         </div>
                       </div>
@@ -250,6 +257,13 @@
                                 <option value="1">A - Z</option>
                                 <option value="2">0, 1, 2 ...</option>
                                 <option value="3">1, 2, 3 ...</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <p>{{ __('messages.concatenate') }}</p>
+                            <select id="concatenate_up" class="form-control" required>
+                                <option value="0">{{ __('messages.no') }}</option>
+                                <option value="1">{{ __('messages.yes') }}</option>
                             </select>
                         </div>
                       </div>
@@ -307,6 +321,7 @@
             $('#columns').prop('disabled', false);
             $('#multiMark').prop('disabled', false);
             $('#output').prop('disabled', false);
+            $('#concatenate').prop('disabled', false);
             $("#id_field_div").hide();
             $('#commands').show();
             boxes[2].x=10000;
@@ -321,8 +336,8 @@
             $('#myModal2').modal('hide');
         });
         $('#omr-sq').click(function(){
+            $("#id_field_div").show();
             $('#shape').val('1');
-            $("#id_field_div").hide();
             $('#myModal2').modal('show');
             $('#commands').hide();
             $('#cancel').show();
@@ -331,29 +346,28 @@
 
         });
         $('#omr-sc').click(function(){
+            $("#id_field_div").show();
             $('#shape').val('2');
             $('#myModal2').modal('show');
             $('#commands').hide();
             $('#cancel').show();
             $("#markradius").show();
-            $("#id_field_div").hide();
         });
         $('#ocr').click(function(){
             $('#shape').val('4');
-            $("#idField").val("0");
             $('#myModal2').modal('show');
             $('#field_orientation').prop('disabled', true);
             $('#rows').prop('disabled', true);
             $('#columns').prop('disabled', true);
             $('#multiMark').prop('disabled', true);
             $('#output').prop('disabled', true);
+            $('#concatenate').prop('disabled', true);
             $('#commands').hide();
             $('#cancel').show();
             $("#id_field_div").hide();
         });
         $('#bcr').click(function(){
             $("#id_field_div").show();
-            $("#idField").val("0");
             $('#shape').val('5');
             $('#myModal2').modal('show');
             $('#commands').hide();
@@ -362,6 +376,7 @@
             $('#columns').prop('disabled', true);
             $('#multiMark').prop('disabled', true);
             $('#output').prop('disabled', true);
+            $('#concatenate').prop('disabled', true);
             $('#commands').hide();
             $('#cancel').show();
         });
@@ -374,6 +389,7 @@
             $('#columns').prop('disabled', true);
             $('#multiMark').prop('disabled', true);
             $('#output').prop('disabled', true);
+            $('#concatenate').prop('disabled', true);
             $('#commands').hide();
             $("#id_field_div").hide();
             $('#cancel').show();

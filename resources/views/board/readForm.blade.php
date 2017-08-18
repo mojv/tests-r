@@ -324,7 +324,7 @@
     var MIN_RATIO_LETTER = 0.768;
 
     <?php foreach ($formcoords as $box) {
-        echo "relativeCoord.push([" . $box['x'] . ", " . $box['y'] . ", " . $box['w'] . ", " . $box['h'] . ", " . $box['r'] . ", '"  . $box['field_name'] . "', " . $box['q_id'] . ", '" . $box['q_option'] . "', " . $box['shape'] . ", " . $box['multiMark'] . ", " . $box['idField'] . "]);";
+        echo "relativeCoord.push([" . $box['x'] . ", " . $box['y'] . ", " . $box['w'] . ", " . $box['h'] . ", " . $box['r'] . ", '"  . $box['field_name'] . "', " . $box['q_id'] . ", '" . $box['q_option'] . "', " . $box['shape'] . ", " . $box['multiMark'] . ", " . $box['idField'] . ", " . $box['concatenate'] . "]);";
     } ?>
 
 </script>

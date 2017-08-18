@@ -65,6 +65,24 @@ Route::group(['middleware' => ['web', 'locale', 'fw-block-bl']], function () {
     Route::get('/donate', ['as' => 'donate', 'uses' =>'FormController@donate']);
     Route::get('/forum', ['as' => 'forum', 'uses' =>'FormController@forum']);
 
+    //-----------Students-----------
+    Route::get('/myStudents', ['as' => 'myStudents', 'uses' =>'ClassroomController@myStudents']);
+    Route::post('/myStudents', ['as' => 'createStudent', 'uses' =>'ClassroomController@createStudent']);
+    Route::patch('/myStudents/{student}/', ['as' => 'updateStudent', 'uses' =>'ClassroomController@updateStudent']);
+    Route::delete('/myStudents/', ['as' => 'deleteStudent', 'uses' =>'ClassroomController@deleteStudent']);
+    Route::get('/deleteAllStudents/', ['as' => 'deleteAllStudents', 'uses' =>'ClassroomController@deleteAllStudents']);
+    Route::post('/addStudentList', ['as' => 'addStudentList', 'uses' =>'ClassroomController@addStudentList']);
+    Route::get('/filterStudents', ['as' => 'filterStudents', 'uses' =>'ClassroomController@filterStudents']);
+
+    //-----------Classes-----------
+    Route::get('/myClasses', ['as' => 'myClasses', 'uses' =>'ClassroomController@myClasses']);
+    Route::post('/myClasses', ['as' => 'createClass', 'uses' =>'ClassroomController@createClass']);
+    Route::patch('/myClasses/{class}/', ['as' => 'updateClass', 'uses' =>'ClassroomController@updateClass']);
+    Route::delete('/myClasses/', ['as' => 'deleteClass', 'uses' =>'ClassroomController@deleteClass']);
+    Route::get('/deleteAllClasses/', ['as' => 'deleteAllClasses', 'uses' =>'ClassroomController@deleteAllClasses']);
+    Route::get('/filterClasses', ['as' => 'filterClasses', 'uses' =>'ClassroomController@filterClasses']);
+    Route::post('/createExam', ['as' => 'createExam', 'uses' =>'ClassroomController@createExam']);
+
     Auth::routes();
 
     Route::get('/home', 'HomeController@index');

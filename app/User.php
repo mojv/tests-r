@@ -41,4 +41,14 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Shareform', 'user_owner');
     }
+
+    public function students()
+    {
+        return $this->hasMany('App\Student');
+    }
+
+    public function classes()
+    {
+        return $this->hasMany('App\Classe');
+    }
 }

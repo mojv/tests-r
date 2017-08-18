@@ -45,14 +45,14 @@
             addRect(10000, 10000, width, height, '#256b2d','temp4','temp','temp',1);
 
             <?php foreach ($formcoords as $box){
-                  echo "addTempRect(" . $box['x'] . ", " . $box['y'] . ", " . $box['w'] . ", " . $box['h'] .  ", " . $box['r'] . ", '#" . $box['fill'] . "', '"  . $box['field_name'] .  "', " . $box['q_id'] . ", '"  . $box['q_option'] . "', "  . $box['shape'] . ", '" . $box['multiMark'] . "', '"  . $box['idField'] . "');";
+                  echo "addTempRect(" . $box['x'] . ", " . $box['y'] . ", " . $box['w'] . ", " . $box['h'] .  ", " . $box['r'] . ", '#" . $box['fill'] . "', '"  . $box['field_name'] .  "', " . $box['q_id'] . ", '"  . $box['q_option'] . "', "  . $box['shape'] . ", '" . $box['multiMark'] . "', '"  . $box['idField'] . "', '" . $box['concatenate'] . "');";
             } ?>
 
             for (var tb = 0; tb < temp_boxes.length; tb++){
                 if (temp_boxes[tb].shape=="2"){
-                    addCircle((temp_boxes[tb].x*dx)+esq[0], (temp_boxes[tb].y*dy)+esq[1], temp_boxes[tb].r*dx, temp_boxes[tb].fill,temp_boxes[tb].field_name,temp_boxes[tb].q_id,temp_boxes[tb].q_option,temp_boxes[tb].shape,temp_boxes[tb].multiMark,temp_boxes[tb].idField);
+                    addCircle((temp_boxes[tb].x*dx)+esq[0], (temp_boxes[tb].y*dy)+esq[1], temp_boxes[tb].r*dx, temp_boxes[tb].fill,temp_boxes[tb].field_name,temp_boxes[tb].q_id,temp_boxes[tb].q_option,temp_boxes[tb].shape,temp_boxes[tb].multiMark,temp_boxes[tb].idField,temp_boxes[tb].concatenate);
                 }else{
-                    addRect((temp_boxes[tb].x*dx)+esq[0], (temp_boxes[tb].y*dy)+esq[1], temp_boxes[tb].w*dx,temp_boxes[tb].h*dy,temp_boxes[tb].fill,temp_boxes[tb].field_name,temp_boxes[tb].q_id,temp_boxes[tb].q_option,temp_boxes[tb].shape,temp_boxes[tb].multiMark,temp_boxes[tb].idField);
+                    addRect((temp_boxes[tb].x*dx)+esq[0], (temp_boxes[tb].y*dy)+esq[1], temp_boxes[tb].w*dx,temp_boxes[tb].h*dy,temp_boxes[tb].fill,temp_boxes[tb].field_name,temp_boxes[tb].q_id,temp_boxes[tb].q_option,temp_boxes[tb].shape,temp_boxes[tb].multiMark,temp_boxes[tb].idField,temp_boxes[tb].concatenate);
                 }
             }
             // set our events. Up and down are for dragging,

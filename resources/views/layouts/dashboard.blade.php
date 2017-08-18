@@ -74,9 +74,7 @@
               <div class="clearfix"></div>
             </div>
             <!-- /menu profile quick info -->
-
             <br />
-
             <!-- sidebar menu -->
             <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
                 <ul class="nav side-menu">
@@ -93,6 +91,12 @@
                       <li><a href="{{route('formList') }}">{{ __('messages.yourForms') }}</a></li>
                       <li><a href="{{route('templateList') }}">{{ __('messages.formReadTemplates') }} {{ config('app.name', 'Laravel') }}</a></li>
                       <li><a href="{{ __('messages.tutorialReadForms') }}" target="_blank">{{ __('messages.tutorial') }}</a></li>
+                    </ul>
+                  </li>
+                  <li><a><i class="fa fa-graduation-cap"></i> {{ __('messages.classroom') }} <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="{{route('myClasses') }}">{{ __('messages.myClassrooms') }}</a></li>
+                      <li><a href="{{route('myStudents') }}">{{ __('messages.myStudents') }}</a></li>
                     </ul>
                   </li>
                   <li><a><i class="fa fa-download"></i> {{ __('messages.downloads') }} <span class="fa fa-chevron-down"></span></a>
@@ -190,7 +194,7 @@
                   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
                   </button>
                   @foreach ($errors->all() as $error)
-                     {{ $error }}
+                     <li>{{ $error }}</li>
                   @endforeach
                 </div>
             @endif

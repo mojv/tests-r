@@ -304,6 +304,7 @@ class ClassroomController extends Controller
         $results =  DB::table('students')
                   ->select('results.omr_responses','results.img_responses','results.grade', 'students.*')
                   ->join('results', 'students.id', '=', 'results.student_id')
+                  ->where('results.test_id', $test->id)
                   ->where(function($query) use ($q) {
                       $query->where('name', 'LIKE', '%'.$q.'%')
                         ->orWhere('last_name', 'LIKE', '%'.$q.'%')
@@ -314,6 +315,7 @@ class ClassroomController extends Controller
         $results =  DB::table('students')
                   ->select('results.omr_responses','results.img_responses','results.grade', 'students.*')
                   ->join('results', 'students.id', '=', 'results.student_id')
+                  ->where('results.test_id', $test->id)
                   ->paginate(20);
       }
       //return $results;

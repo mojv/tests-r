@@ -73,7 +73,7 @@
               </td>
               <td class="project_progress">
                 <?php
-                  $complete = (($classe->tests->sum('status'))/(count($classe->tests)))*100;
+                  $complete = round((($classe->tests->sum('status'))/(count($classe->tests)))*100,1);
                 ?>
                 <div class="progress progress_sm">
                   <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="{{$complete}}"></div>

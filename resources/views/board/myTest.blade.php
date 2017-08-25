@@ -5,15 +5,15 @@
   <div class="row tile_count" align="center">
     <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
       <span class="count_top"><i class="fa fa-users"></i> {{ __('messages.numberStudents') }}</span>
-      <div class="count">@if(empty(count($classe->classrooms))) - @else {{ count($enrolls) }} @endif</div>
+      <div class="count">@if(empty(count($enrolls))) - @else {{ count($enrolls) }} @endif</div>
     </div>
     <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
       <span class="count_top"><i class="fa fa-thumbs-up"></i> {{ __('messages.studentsEvaluated') }}</span>
-      <div class="count green">@if(empty(count($results))) - @else {{ count($results2) }} @endif</div>
+      <div class="count green">@if(empty(count($results2))) - @else {{ count($results2) }} @endif</div>
     </div>
     <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
       <span class="count_top"><i class="fa fa-area-chart"></i> {{ __('messages.averageScore') }} </span>
-      <div class="count">@if(empty($results->avg('grade'))) - @else {{ $results2->avg('grade') }}% @endif</div>
+      <div class="count">@if(empty($results2->avg('grade'))) - @else {{ $results2->avg('grade') }}% @endif</div>
     </div>
     <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
       <span class="count_top"><i class="fa fa-sort-numeric-asc"></i> {{ __('messages.numberQuestions') }}</span>

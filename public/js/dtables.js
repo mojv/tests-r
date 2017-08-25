@@ -4,6 +4,10 @@ var tomr=0;
 var tbcr=0;
 var hasId=0;
 var cuts=[];
+var cuts_id=[];
+var omr_titles=[];
+var img_titles=[];
+var img_grades_temp=[];
 var tr_img = document.createElement('tr');
 
     function rgbToHex(r, g, b) {
@@ -1163,6 +1167,7 @@ var tr_img = document.createElement('tr');
                     temp1 = relativeCoord[j][5];
                 }else{
                     th.appendChild(document.createTextNode(relativeCoord[j][5] + "  " + relativeCoord[j][6]));
+                    omr_titles.push(relativeCoord[j][5] + "-" + relativeCoord[j][6]);
                     temp1 = relativeCoord[j][5] + "-" + relativeCoord[j][6];
                 }
                 document.getElementById('resultsFormOmrHead').appendChild(th);
@@ -1187,6 +1192,7 @@ var tr_img = document.createElement('tr');
                 var th = document.createElement('th');
                 th.appendChild(document.createTextNode(relativeCoord[j][5]));
                 document.getElementById('resultsFormImgHead').appendChild(th);
+                img_titles.push(relativeCoord[j][5] + "-" + relativeCoord[j][6]);
                 temp1 = relativeCoord[j][5] + "-" + relativeCoord[j][6];
                 temp_q_id=1;
             }
@@ -1317,7 +1323,6 @@ var tr_img = document.createElement('tr');
             });
         } else if (hasId==2) {
             idReadOmr(esq, dx, dy, relativeCoord2, function (id) {
-              console.log(id);
               asyncRead(id,  esq, dx, dy, relativeCoord2);
             });
         } else {
@@ -1352,7 +1357,7 @@ var tr_img = document.createElement('tr');
            return packet.data.text;
     }
 
-    function ocrRead (i,  esq, dx, dy, relativeCoord2){
+    function ocrRead (i, esq, dx, dy, relativeCoord2){
         var tr = document.createElement('tr');
         for (var j=0; j<relativeCoord2.length; j++){
             if (relativeCoord2[j][8]<=3){
@@ -1474,11 +1479,13 @@ var tr_img = document.createElement('tr');
         var temp1 = "";
         var qtemp = "";
         var ocrTemp = [];
+        var omr_responses = [];
         var concatenate = "";
+        var temp3 = "";
         for (var j=0; j<relativeCoord2.length; j++){
-          if (relativeCoord2[j][10]==1){
-              continue;
-          }
+            if (relativeCoord2[j][10]==1){
+                continue;
+            }
             if (relativeCoord2[j][8]>2){
                 if (temp2!='finish'){
                     var temp2 = relativeCoord2[j][5] + "-" + relativeCoord2[j][6];
@@ -1519,6 +1526,7 @@ var tr_img = document.createElement('tr');
                     }else{
                         td.appendChild(document.createTextNode(qtemp));
                     }
+                    omr_responses.push(qtemp);
                     tr.appendChild(td);
                     ocrTemp = [];
                     qtemp = "";
@@ -1533,9 +1541,9 @@ var tr_img = document.createElement('tr');
             var temp2 = relativeCoord2[j][5] + "-" + relativeCoord2[j][6];
             if (temp_q_id==0){
                 if (relativeCoord2[j][8]==1){
-                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], width, height),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height]);
+                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], width, height),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height,relativeCoord2[j][10], relativeCoord2[j][11]]);
                 } else if (relativeCoord2[j][8]==2){
-                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], radius*2, radius*2),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2]);
+                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], radius*2, radius*2),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2, relativeCoord2[j][10], relativeCoord2[j][11]]);
                 }
                 temp1 = relativeCoord2[j][5] + "-" + relativeCoord2[j][6];
                 temp_q_id=1;
@@ -1571,11 +1579,25 @@ var tr_img = document.createElement('tr');
                 }
                 if (ocrTemp[0][6]==1 || ocrTemp[0][7]==1){
                     concatenate = concatenate + qtemp;
-                    td.appendChild(document.createTextNode(concatenate));
+                    if (temp3 == ""){
+                      temp3= relativeCoord2[j][5];
+                    }else if (temp3 != relativeCoord2[j][5]) {
+                      td.appendChild(document.createTextNode(concatenate));
+                      tr.appendChild(td);
+                      temp3 = "";
+                      concatenate = "";
+                    }
                 }else{
                     td.appendChild(document.createTextNode(qtemp));
                     tr.appendChild(td);
+                    if (temp3 != relativeCoord2[j][5] && temp3 != "") {
+                      td.appendChild(document.createTextNode(concatenate));
+                      tr.appendChild(td);
+                      temp3 = "";
+                      concatenate = "";
+                    }
                 }
+                omr_responses.push(qtemp);
                 ocrTemp = [];
                 qtemp = "";
                 if (relativeCoord2[j][8]==1){
@@ -1592,6 +1614,9 @@ var tr_img = document.createElement('tr');
             }
         }
         document.getElementById('resultsFormOmrBody').appendChild(tr);
+        if (typeof answers !== 'undefined'){
+            storeResponses(i, omr_responses);
+        }
     }
 
     function idReadOmr (esq, dx, dy, relativeCoord2, callback){
@@ -1715,15 +1740,10 @@ var tr_img = document.createElement('tr');
             newCanvas.height = height;
             var imageData = ctx.getImageData((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], width, height);
             newCanvas.getContext("2d").putImageData(imageData, 0, 0);
-            //var cut = document.createElement('a');
             temp.push(newCanvas.toDataURL());
-            /*cut.target="_blank";
-            cut.innerHTML='img';
-            td.appendChild(cut);
-            tr.appendChild(td);*/
         }
-        //document.getElementById('resultsFormImgBody').appendChild(tr);
         cuts.push(temp);
+        cuts_id.push(i);
     }
 
     function gradeImage(){
@@ -1734,9 +1754,14 @@ var tr_img = document.createElement('tr');
         }else{
           cuts.shift();
           document.getElementById('resultsFormImgBody').appendChild(tr_img);
-          console.log(cuts.length);
+          idImg=cuts_id[0];
+          cuts_id.shift();
+          img_grades=img_grades_temp;
+          img_grades_temp=[];
+          if (typeof answers !== 'undefined'){
+              storeResponsesImg(idImg, img_grades);
+          }
           if (cuts.length==0) {
-            console.log('hola');
             $('#modal_cuttings').modal('hide');
           }else{
             tr_img = document.createElement('tr');
@@ -1751,7 +1776,82 @@ var tr_img = document.createElement('tr');
       var td = document.createElement('td');
       td.appendChild(document.createTextNode($('#gradeImage').val()));
       tr_img.appendChild(td);
+      img_grades_temp.push($('#gradeImage').val());
       $('#temp_img').attr("src","");
       $('#gradeImage').val("");
       gradeImage();
+    }
+
+    function storeResponses(student_id, omr_responses) {
+        var average=0;
+        var points=0;
+        omr_titles.forEach(function(title, i){
+            j = titles.indexOf(title);
+            if (answers[j] != "*"){
+                if (omr_responses[i]==answers[j]){
+                  average = average + parseInt(weights[j]);
+                }else{
+                  average = average + 0;
+                }
+            }
+        });
+        titles.forEach(function(title, i){
+            if(answers[i] != "*"){
+              points = points + parseInt(weights[j]);
+            }
+        });
+        grade=(average/points)*100;
+        console.log(grade);
+        omr_responses=omr_responses.join("¬");
+        var token = $("input[name='_token']").val();
+        $.ajax({
+            async: true,
+            url: store_omr,
+            headers: {"X-CSRF-TOKEN": token},
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({student_id: student_id, omr_responses: omr_responses, omr_grade: grade}),
+            success: function (data) {
+
+            },
+            error:function(){
+
+            }
+        })
+    }
+
+    function storeResponsesImg(student_id, img_responses) {
+        var average=0;
+        var points=0;
+        img_titles.forEach(function(title, i){
+            j = titles.indexOf(title);
+            if (answers[j] != "*"){
+               average = average + ((parseInt(img_responses[i])/10)*parseInt(weights[j]));
+            }
+        });
+        titles.forEach(function(title, i){
+            if(answers[i] != "*"){
+              points = points + parseInt(weights[j]);
+            }
+        });
+        grade=(average/points)*100;
+        console.log(grade);
+        img_responses=img_responses.join("¬");
+        var token = $("input[name='_token']").val();
+        $.ajax({
+            async: true,
+            url: store_img,
+            headers: {"X-CSRF-TOKEN": token},
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({student_id: student_id, img_responses: img_responses, img_grade: grade}),
+            success: function (data) {
+
+            },
+            error:function(){
+
+            }
+        })
     }

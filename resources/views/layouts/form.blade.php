@@ -165,25 +165,25 @@
                         <input type="hidden" id="shape" >
                         <div class="form-group col-lg-6">
                             <p>{{ __('messages.fieldName') }}</p>
-                            <input type="text" id="field_name" class="form-control" required>
+                            <input type="text" id="field_name" class="form-control" name="field_name" required>
                         </div>
                         <div class="form-group col-lg-6" id="id_field_div">
                             <p>{{ __('messages.idField') }}</p>
-                            <select id="idField" class="form-control" required>
+                            <select id="idField" class="form-control" name="idField">
                                 <option value="0">{{ __('messages.no') }}</option>
                                 <option value="1">{{ __('messages.yes') }}</option>
                             </select>
                         </div>
                         <div class="form-group col-lg-6">
                             <p>{{ __('messages.fieldOrientation') }}</p>
-                            <select id="field_orientation" class="form-control" required>
+                            <select id="field_orientation" class="form-control" name="field_orientation">
                                 <option value="1">{{ __('messages.horizontal') }}</option>
                                 <option value="2">{{ __('messages.vertical') }}</option>
                             </select>
                         </div>
                         <div class="form-group col-lg-6">
                             <p>{{ __('messages.output') }}</p>
-                            <select id="output" class="form-control" required>
+                            <select id="output" class="form-control" name="output">
                                 <option value="1">A - Z</option>
                                 <option value="2">0, 1, 2 ...</option>
                                 <option value="3">1, 2, 3 ...</option>
@@ -191,22 +191,22 @@
                         </div>
                         <div class="form-group col-lg-6">
                             <p>{{ __('messages.numberOfRows') }}</p>
-                            <input type="number" id="rows" class="form-control" required>
+                            <input type="number" id="rows" class="form-control" name="rows">
                         </div>
                         <div class="form-group col-lg-6">
                             <p>{{ __('messages.numberOfColumns') }}</p>
-                            <input type="number" id="columns" class="form-control" required>
+                            <input type="number" id="columns" class="form-control" name="columns">
                         </div>
                         <div class="form-group col-lg-6">
                             <p>{{ __('messages.allowMultiMarks') }}</p>
-                            <select id="multiMark" class="form-control" required>
+                            <select id="multiMark" class="form-control" name="multiMark">
                                 <option value="0">{{ __('messages.no') }}</option>
                                 <option value="1">{{ __('messages.yes') }}</option>
                             </select>
                         </div>
                         <div class="form-group col-lg-6">
                             <p>{{ __('messages.concatenate') }}</p>
-                            <select id="concatenate" class="form-control" required>
+                            <select id="concatenate" class="form-control" name="concatenate">
                                 <option value="0">{{ __('messages.no') }}</option>
                                 <option value="1">{{ __('messages.yes') }}</option>
                             </select>
@@ -239,21 +239,21 @@
                         </div>
                         <div class="form-group col-lg-6" id="id_field_div_up">
                             <p>{{ __('messages.idField') }}</p>
-                            <select id="idField_up" class="form-control" required>
+                            <select id="idField_up" class="form-control">
                                 <option value="0">{{ __('messages.no') }}</option>
                                 <option value="1">{{ __('messages.yes') }}</option>
                             </select>
                         </div>
                         <div class="form-group col-lg-6">
                             <p>{{ __('messages.allowMultiMarks') }}</p>
-                            <select id="multiMark_up" class="form-control" required>
+                            <select id="multiMark_up" class="form-control">
                                 <option value="0">{{ __('messages.no') }}</option>
                                 <option value="1">{{ __('messages.yes') }}</option>
                             </select>
                         </div>
                         <div class="form-group col-lg-6">
                             <p>{{ __('messages.output') }}</p>
-                            <select id="output_up" class="form-control" required>
+                            <select id="output_up" class="form-control">
                                 <option value="1">A - Z</option>
                                 <option value="2">0, 1, 2 ...</option>
                                 <option value="3">1, 2, 3 ...</option>
@@ -261,7 +261,7 @@
                         </div>
                         <div class="form-group col-lg-6">
                             <p>{{ __('messages.concatenate') }}</p>
-                            <select id="concatenate_up" class="form-control" required>
+                            <select id="concatenate_up" class="form-control">
                                 <option value="0">{{ __('messages.no') }}</option>
                                 <option value="1">{{ __('messages.yes') }}</option>
                             </select>

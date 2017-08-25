@@ -86,8 +86,8 @@
                 <button id="searchUser" type="button" class="btn btn-primary">{{ __('messages.search') }}</button>
               </span>
               <input type="text" class="form-control" id='addUser'>
-            </div>  
-            <div align="center" hidden="" id="userProfile"> 
+            </div>
+            <div align="center" hidden="" id="userProfile">
               <div class="profile_details">
                 <div class="well profile_view">
                   <div class="col-sm-12">
@@ -104,7 +104,7 @@
                       <img id="userPhoto" src="" alt="" class="img-circle img-responsive" style="max-width: 120px; height: auto; ">
                     </div>
                   </div>
-                  <div class="col-xs-12 bottom text-center">           
+                  <div class="col-xs-12 bottom text-center">
                     <div align="center">
                       <button type="button" class="btn btn-primary btn-xs" id="searchFormButton">
                         <i class="fa fa-share-alt"> </i> {{ __('messages.shareForm') }}
@@ -138,21 +138,21 @@
             </table>
 
           </div>
-          <div class="modal-footer">  
-          <div align="left"><h2>{{ __('messages.updateFormFile') }}</h2> </div>                
+          <div class="modal-footer">
+          <div align="left"><h2>{{ __('messages.updateFormFile') }}</h2> </div>
              <form role="form" method="POST" action="{{ route('uploadFormfile') }}" enctype="multipart/form-data">
                 {{ method_field('PATCH') }}
-                {{ csrf_field() }}  
+                {{ csrf_field() }}
                 <div class="input-group">
                   <span class="input-group-btn">
                     <button id="searchUser" type="submit" class="btn btn-primary">{{ __('messages.upload') }}</button>
                   </span>
                   <input type="file" class="form-control" id='addUser' name="formfile" id="formfile" required>
-                </div>   
-                <div align="left"><a id="seeCurrentFile" href="" target="_blank">{{ __('messages.seeCurrentFile') }}</a></div>                        
+                </div>
+                <div align="left"><a id="seeCurrentFile" href="" target="_blank">{{ __('messages.seeCurrentFile') }}</a></div>
                 <input type="hidden" id="hform_id2" name="form_id" />
             </form>
-          </div>          
+          </div>
         </div>
       </div>
     </div>
@@ -185,7 +185,7 @@
     <!-- /modals -->
     <script>
         var formId_share;
-        var userId_share;       
+        var userId_share;
         function editName(value){
             $("#editNameModal").modal("show");
             $("#form_id").val(value);
@@ -215,7 +215,7 @@
                 type: 'POST',
                 contentType: 'application/json',
                 dataType: 'json',
-                data: JSON.stringify({email: userEmail}), 
+                data: JSON.stringify({email: userEmail}),
                 success: function (data) {
                     userId_share=data.id;
                     $('#userProfile').show();
@@ -227,18 +227,18 @@
                     }
                     $('#userCompany').html(data.company);
                     $('#userCountry').html(data.country);
-                    $('#userName').html(data.name + " " + data.lastName);  
+                    $('#userName').html(data.name + " " + data.lastName);
                     if (data.photo == "" || data.photo == null) {
                       $('#userPhoto').attr('src', "{{ asset('images/user.png') }}");
                     }else{
                       $('#userPhoto').attr('src', "{{ asset('storage') }}/" + data.photo);
-                    }                 
+                    }
                 },
                 error:function(){
                     userId_share="";
                     $('#userProfile').hide();
                     alert("{{ __('messages.noUsers') }} !");
-                }              
+                }
             })
         });
         $("#searchFormButton").click(function(){
@@ -250,16 +250,16 @@
                 type: 'POST',
                 contentType: 'application/json',
                 dataType: 'json',
-                data: JSON.stringify({user_id: userId_share, form_id: formId_share}), 
+                data: JSON.stringify({user_id: userId_share, form_id: formId_share}),
                 success: function (data) {
-                  $('#body_shareWith2 tr:last').after('<tr class="sh_forms form_' + formId_share + '" id="shareForm_' + data[0].id + '"><td align="center">'+ data[1].name + ' ' + data[1].lastName + '</td><td align="center">' + data[1].email + '</td><td align="center"><button  type="button" class="btn btn-warning btn-xs" value="' + data[0].id + '" onclick="stopSharing(this.value)">{{ __("messages.stopSharing") }}</button></td></tr>'); 
-                    $('#userProfile').hide();                 
-                },         
+                  $('#body_shareWith2 tr:last').after('<tr class="sh_forms form_' + formId_share + '" id="shareForm_' + data[0].id + '"><td align="center">'+ data[1].name + ' ' + data[1].lastName + '</td><td align="center">' + data[1].email + '</td><td align="center"><button  type="button" class="btn btn-warning btn-xs" value="' + data[0].id + '" onclick="stopSharing(this.value)">{{ __("messages.stopSharing") }}</button></td></tr>');
+                    $('#userProfile').hide();
+                },
                 error:function(){
                     userId_share="";
                     $('#userProfile').hide();
                     alert("{{ __('messages.duplicateUser') }} !");
-                } 
+                }
             })
         });
         function stopSharing(value){
@@ -271,18 +271,18 @@
                 type: 'POST',
                 contentType: 'application/json',
                 dataType: 'json',
-                data: JSON.stringify({id: value}), 
+                data: JSON.stringify({id: value}),
                 success: function (data) {
                     if (data=='error') {
-                      alert("{{ __('messages.errorOccurred') }} !");                      
+                      alert("{{ __('messages.errorOccurred') }} !");
                     }else{
                       $('#shareForm_'+data).remove();
                     }
-                },         
+                },
                 error:function(){
-                  alert("{{ __('messages.errorOccurred') }} !");   
-                } 
-            })          
+                  alert("{{ __('messages.errorOccurred') }} !");
+                }
+            })
         }
     </script>
 

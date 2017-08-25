@@ -19,7 +19,7 @@ class Form extends Model
     {
         return $this->hasMany('App\Shareform');
     }
-    
+
     public function users()
     {
         return $this->belongsTo('App\User');

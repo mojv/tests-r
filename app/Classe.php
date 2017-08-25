@@ -12,7 +12,7 @@ class Classe extends Model
 
   public function classrooms()
   {
-      return $this->hasMany('App\Classroom');
+      return $this->hasMany('App\Classroom', 'class_id');
   }
 
   public function tests()

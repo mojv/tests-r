@@ -31,7 +31,9 @@
         <div class="clearfix"></div>
       </div>
       <div class="x_content">
-
+        <div class="col-md-12 col-sm-12 col-xs-12 text-center">
+          {{ $classes->appends(Request::only('q'))->links() }}
+        </div>
         <!-- start classrooms list -->
         <table class="table table-striped projects">
           <thead>
@@ -61,36 +63,39 @@
                 <ul class="list-inline">
                   @foreach ($classe->tests as $test)
                   <li>
-                    <input type="image" src="{{ asset('images\exam.png') }}" height="32" border="1" value="{{$test->id}}" data-toggle="tooltip" data-placement="top" title="{{$test->name}}">
+                    <a href="{{route('myTest', ['test'=>$test->id])}}"><input type="image" src="{{ asset('images\exam.png') }}" height="32" value="{{$test->id}}" data-toggle="tooltip" data-placement="top" title="{{$test->name}}"></a>
                   </li>
                   @endforeach
                   <li>
-                    <input type="image" src="{{ asset('images\create.png') }}" height="32"  border="1" data-toggle="modal" data-target=".createExam-modal" onclick="set_class(this.value)" value="{{$classe->id}}">
+                    <input type="image" src="{{ asset('images\create.png') }}" height="32"  data-toggle="modal" data-target=".createExam-modal" onclick="set_class(this.value)" value="{{$classe->id}}">
                   </li>
                 </ul>
               </td>
               <td class="project_progress">
+                <?php
+                  $complete = (($classe->tests->sum('status'))/(count($classe->tests)))*100;
+                ?>
                 <div class="progress progress_sm">
-                  <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="80"></div>
+                  <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="{{$complete}}"></div>
                 </div>
-                <small>80% Complete</small>
+                <small>{{$complete}}% {{ __('messages.complete') }}</small>
               </td>
               <td>
-                <button type="button" class="btn btn-success btn-xs">Success</button>
+                <a href="{{route('enrollStudents', ['classe'=> $classe->id])}}"><button type="button" class="btn btn-success btn-xs">{{ __('messages.enroll') }}</button></a> ({{ count($classe->classrooms) }} {{ __('messages.students') }})
               </td>
               <td>
                 <div class="col-xs-4">
-                <a href="#" class="btn btn-primary btn-xs"><i class="fa fa-folder"></i> View </a>
+                <a href="#" class="btn btn-primary btn-xs"><i class="fa fa-folder"></i> {{ __('messages.view') }} </a>
                 </div>
                 <div class="col-xs-4">
-                <button class="btn btn-info btn-xs" value="{{$classe->id}}" onclick="filterForms(this.value)" data-toggle="modal" data-target=".updateClass-modal"><i class="fa fa-pencil"></i> Edit </button>
+                <button class="btn btn-info btn-xs" value="{{$classe->id}}" onclick="filterForms(this.value)" data-toggle="modal" data-target=".updateClass-modal"><i class="fa fa-pencil"></i> {{ __('messages.edit') }} </button>
                 </div>
                 <div class="col-xs-3">
                   <form action="{{route('deleteClass')}}" method="POST">
                     {{ csrf_field() }}
                     {{ method_field('DELETE') }}
                     <input type="hidden" value="{{$classe->id}}" name="id">
-                    <button class="btn btn-danger btn-xs" type="submit" onclick="return confirm('{{ __('messages.deleteClassWaning') }}')"><i class="fa fa-trash-o" ></i> Delete </button>
+                    <button class="btn btn-danger btn-xs" type="submit" onclick="return confirm('{{ __('messages.deleteClassWaning') }}')"><i class="fa fa-trash-o" ></i> {{ __('messages.delete') }} </button>
                     </button>
                   </form>
                 </div>
@@ -218,6 +223,7 @@
                 <div class="updateForms form{{$classe->id}}">
                   <form action="{{ route('updateClass', ['class' => $classe->id] ) }}" method="POST" enctype="multipart/form-data">
                     {{ csrf_field() }}
+                    {{ method_field('PATCH') }}
                     <div class="row">
                       <div class="form-group col-lg-12">
                           <p>{{ __('messages.classroomName') }} *</p>
@@ -335,7 +341,7 @@
                         <input type="number" min="1" max="1000" step="1" class="form-control" name="test_weight" id="test_weight">
                     </div>
                     <div class="form-group col-lg-6">
-                        <p>{{ __('messages.formName') }} *</p>
+                        <p>{{ __('messages.formName') }}</p>
                         {{ Form::select('form_id', $forms, '', ['class' => 'form-control', 'id' => 'test_form_id'])}}
                     </div>
                     <input type="hidden" name="class_id" value="" id="class_id">

@@ -20,7 +20,10 @@ class CreateResultsTable extends Migration
           $table->foreign('test_id')->references('id')->on('tests')->onDelete('cascade')->onUpdate('cascade');
           $table->integer('student_id')->unsigned()->index();
           $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade')->onUpdate('cascade');
-          $table->text('responses')->nullable();
+          $table->text('omr_responses')->nullable();
+          $table->text('img_responses')->nullable();
+          $table->integer('omr_grade')->nullable();
+          $table->integer('img_grade')->nullable();
           $table->integer('grade')->nullable();
           $table->timestamps();
         });

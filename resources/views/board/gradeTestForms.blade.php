@@ -104,7 +104,6 @@
 
 @section('content')
 <div id="results" hidden>
-    <button type="button" id="settable">{{ __('messages.setTables') }}</button>
     <button type="button" id="gradeImg" class="cutting" hidden="">{{ __('messages.gradeImage') }}</button>
     <div class="x_panel">
       <div class="x_title">
@@ -119,40 +118,6 @@
             </tr>
           </thead>
           <tbody id="resultsFormOmrBody">
-
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div class="x_panel" id='qr_table'>
-      <div class="x_title">
-        <h2>{{ __('messages.QRCode') }} <small>{{ __('messages.results') }}</small></h2>
-        <div class="clearfix"></div>
-      </div>
-      <div class="x_content">
-        <table id="datatable-buttons3" class="table table-striped table-bordered dataTable datatable-buttons">
-          <thead>
-            <tr id="resultsFormBcrHead">
-            </tr>
-          </thead>
-          <tbody id="resultsFormBcrBody">
-
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div class="x_panel" id='ocr_table'>
-      <div class="x_title">
-        <h2>{{ __('messages.OCR') }} <small>{{ __('messages.results') }}</small></h2>
-        <div class="clearfix"></div>
-      </div>
-      <div class="x_content">
-        <table id="datatable-buttons" class="table table-striped table-bordered dataTable datatable-buttons">
-          <thead>
-            <tr id="resultsFormOcrHead">
-            </tr>
-          </thead>
-          <tbody id="resultsFormOcrBody">
 
           </tbody>
         </table>
@@ -185,7 +150,7 @@
                 <div class="modal-body">
                   <div class="form-group">
                       <div align="center"><img id="temp_img" style="max-width: 800px;"></div>
-                      <input id="gradeImage" type="number" min="0" max="10" class="form-control" name="gradeImage" autofocus placeholder="{{ __('messages.gradeImage') }}" required>
+                      <input id="gradeImage" type="number" min="0" max="10" step="1" class="form-control" name="gradeImage" autofocus placeholder="{{ __('messages.gradeImage') }}" required>
                    </div>
                 </div>
                 <div class="modal-footer">
@@ -324,11 +289,11 @@
     var MIN_RATIO_LETTER = 0.768;
 
     var titles = '{{ $test->titles}}';
-    var titles = titles.split("¬");
+    var titles = titles.split(";");
     var weights = '{{ $test->answers_weight}}';
-    var weights = weights.split("¬");
+    var weights = weights.split(";");
     var answers = '{{ $test->answers}}';
-    var answers = answers.split("¬");
+    var answers = answers.split(";");
     var store_omr = "{{route('storeGradeOmr', ['test' => $test->id])}}";
     var store_img = "{{route('storeGradeImg', ['test' => $test->id])}}";
 

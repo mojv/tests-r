@@ -1472,9 +1472,11 @@ var tr_img = document.createElement('tr');
     function omrRead (i,  esq, dx, dy, relativeCoord2){
         var darkness = document.getElementById("darkness").value;
         var tr = document.createElement('tr');
+        tr.setAttribute("id", i, 0);
         var td_id = document.createElement('td');
         td_id.appendChild(document.createTextNode(i));
         tr.appendChild(td_id);
+
         var temp_q_id=0;
         var temp1 = "";
         var qtemp = "";
@@ -1802,7 +1804,7 @@ var tr_img = document.createElement('tr');
         });
         grade=(average/points)*100;
         console.log(grade);
-        omr_responses=omr_responses.join("¬");
+        omr_responses=omr_responses.join(";");
         var token = $("input[name='_token']").val();
         $.ajax({
             async: true,
@@ -1813,11 +1815,11 @@ var tr_img = document.createElement('tr');
             dataType: 'json',
             data: JSON.stringify({student_id: student_id, omr_responses: omr_responses, omr_grade: grade}),
             success: function (data) {
-
-            },
-            error:function(){
-
-            }
+              $("#"+student_id).css('background-color','rgba(0, 135, 0, 0.3)');
+            }.bind(this, student_id),
+            error:function() {
+              $("#"+student_id).css('background-color','rgba(199, 0, 0, 0.5)');
+            }.bind(this, student_id)
         })
     }
 
@@ -1837,7 +1839,7 @@ var tr_img = document.createElement('tr');
         });
         grade=(average/points)*100;
         console.log(grade);
-        img_responses=img_responses.join("¬");
+        img_responses=img_responses.join(";");
         var token = $("input[name='_token']").val();
         $.ajax({
             async: true,

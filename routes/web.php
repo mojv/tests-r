@@ -85,6 +85,8 @@ Route::group(['middleware' => ['web', 'locale', 'fw-block-bl']], function () {
     Route::post('/unrollStudent/', ['as' => 'unrollStudent', 'uses' =>'ClassroomController@unrollStudent']);
     Route::get('/enrollAllStudents/{classe}', ['as' => 'enrollAllStudents', 'uses' =>'ClassroomController@enrollAllStudents']);
     Route::get('/unrollAllStudents/{classe}', ['as' => 'unrollAllStudents', 'uses' =>'ClassroomController@unrollAllStudents']);
+
+    //-----------Tests-----------
     Route::get('/mytest/{test}', ['as' => 'myTest', 'uses' =>'ClassroomController@myTest']);
     Route::get('/defineAnswers/{test}', ['as' => 'defineAnswers', 'uses' =>'ClassroomController@defineAnswers']);
     Route::post('/defineAnswers/{test}', ['as' => 'saveAnswers', 'uses' =>'ClassroomController@saveAnswers']);
@@ -92,6 +94,9 @@ Route::group(['middleware' => ['web', 'locale', 'fw-block-bl']], function () {
     Route::post('/gradeTestForms/{test}', ['as' => 'storeGradeOmr', 'uses' =>'ClassroomController@storeGradeOmr']);
     Route::post('/gradeTestImgForms/{test}', ['as' => 'storeGradeImg', 'uses' =>'ClassroomController@storeGradeImg']);
     Route::get('/closeTest/{test}/action/{action}', ['as' => 'closeTest', 'uses' =>'ClassroomController@closeTest']);
+    Route::get('/closeTest/{test}/action/{action}', ['as' => 'closeTest', 'uses' =>'ClassroomController@closeTest']);
+    Route::get('/downloadResults/{test}', ['as' => 'downloadResults', 'uses' =>'ClassroomController@downloadResults']);
+    Route::get('/deleteResults/{test}', ['as' => 'deleteResults', 'uses' =>'ClassroomController@deleteResults']);
 
     Auth::routes();
 

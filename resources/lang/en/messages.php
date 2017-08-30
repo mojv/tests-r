@@ -182,5 +182,6 @@ return [
      'closeTest' => 'Close Test',
      'openTest' => 'Open Test',
      'complete' => 'Complete',
-
+     'downloadResults' => 'Download Results as CSV',
+     'deleteResults' => 'Delete All Results',
 ];

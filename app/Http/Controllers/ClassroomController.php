@@ -16,6 +16,7 @@ use Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 use DB;
+use Illuminate\Support\Facades\Response;
 
 class ClassroomController extends Controller
 {
@@ -299,7 +300,6 @@ class ClassroomController extends Controller
       $id_class = Test::find($id)->class_id;
       $classe = User::find(Auth::id())->classes()->find($id_class);
       $test= $classe->tests()->find($id);
-      $results2 = Result::select('grade')->where('test_id', $test->id)->get();
       if (!empty($q)){
         $results =  DB::table('students')
                   ->select('results.omr_responses','results.img_responses','results.grade', 'students.*')
@@ -318,16 +318,37 @@ class ClassroomController extends Controller
                   ->where('results.test_id', $test->id)
                   ->paginate(20);
       }
-      //return $results;
-      $enrolls = Classroom::select('id')->where('class_id', $classe->id)->get();
+      $results2 = Result::where('test_id', $test->id)->count();
+      $results3 = round(Result::where('test_id', $test->id)->avg('grade'),2);
+      $results4 = Result::where('test_id', $test->id)->inRandomOrder()->take(1000)->get();
+      $titles=explode(";",$test->titles);
+      $answers=explode(";",$test->answers);
+      $enrolls = Classroom::select('id')->where('class_id', $classe->id)->count();
       $questions = Formcoord::where(function($query){
                 $query->where('idField',0)
                       ->orWhereNull('idField');
-            })->select('shape', 'field_name', 'q_id')
+            })->selectRaw('field_name, q_id, min(q_option) as q_min, max(q_option) as q_max, shape, min(id) as id')
             ->whereIn('shape', [1,2,3])
             ->where('form_id', $test->form_id)
-            ->groupBy('shape', 'field_name', 'q_id')->get();
-      return view('board.myTest', compact('test', 'classe', 'enrolls','results2', 'results', 'questions'));
+            ->groupBy('shape', 'field_name', 'q_id')
+            ->get();
+      $omr_answers=[];
+      $img_answers=[];
+      foreach ($results4 as $result){
+        if (isset($result->omr_responses)){
+          array_push($omr_answers,explode(";",$result->omr_responses));
+        }
+        if (isset($result->img_responses) ){
+          array_push($img_answers,explode(";",$result->img_responses));
+        }
+      }
+      if (count($omr_answers)>0) {
+        $omr_answers=array_map(null, ...$omr_answers);
+      }
+      if (count($img_answers)>0) {
+        $img_answers=array_map(null, ...$img_answers);
+      }
+      return view('board.myTest', compact('test', 'classe', 'enrolls', 'results', 'results2', 'results3', 'results4','titles', 'answers', 'questions', 'items','omr_answers','img_answers'));
     }
 
     public function defineAnswers($id)
@@ -335,9 +356,9 @@ class ClassroomController extends Controller
       $id_class = Test::find($id)->class_id;
       $classe = User::find(Auth::id())->classes()->find($id_class);
       $test= $classe->tests()->find($id);
-      $titles=explode("¬",$test->titles);
-      $answers=explode("¬",$test->answers);
-      $weights=explode("¬",$test->answers_weight);
+      $titles=explode(";",$test->titles);
+      $answers=explode(";",$test->answers);
+      $weights=explode(";",$test->answers_weight);
       $questions = Formcoord::where(function($query){
                 $query->where('idField',0)
                       ->orWhereNull('idField');
@@ -366,9 +387,9 @@ class ClassroomController extends Controller
         foreach ($data->input('weights') as $weight){
           array_push($weights,$weight);
         }
-        $test->titles=implode("¬",$titles);
-        $test->answers=implode("¬",$answers);
-        $test->answers_weight=implode("¬",$weights);
+        $test->titles=implode(";",$titles);
+        $test->answers=implode(";",$answers);
+        $test->answers_weight=implode(";",$weights);
         $test->save();
         return back();
     }
@@ -395,7 +416,9 @@ class ClassroomController extends Controller
         $result->omr_grade=$data->input('omr_grade');
         $result->grade=$data->input('omr_grade');
         $test->results()->save($result);
+        return $result;
     }
+
     public function storeGradeImg($id, Request $data)
     {
         $id_class = Test::find($id)->class_id;
@@ -421,14 +444,47 @@ class ClassroomController extends Controller
           $result->grade=$data->input('img_grade');
           $test->results()->save($result);
         }
+        return $result;
     }
 
     public function closeTest($id, $action){
-      $id_class = Test::find($id)->class_id;
-      $classe = User::find(Auth::id())->classes()->find($id_class);
-      $test= $classe->tests()->find($id);
-      $test->status=$action;
-      $test->save();
-      return back();
+        $id_class = Test::find($id)->class_id;
+        $classe = User::find(Auth::id())->classes()->find($id_class);
+        $test= $classe->tests()->find($id);
+        $test->status=$action;
+        $test->save();
+        return back();
     }
+
+    public function downloadResults($id){
+        $id_class = Test::find($id)->class_id;
+        $classe = User::find(Auth::id())->classes()->find($id_class);
+        $test= $classe->tests()->find($id);
+        $results =  DB::table('students')
+                  ->select('results.omr_responses','results.img_responses','results.grade', 'students.*')
+                  ->join('results', 'students.id', '=', 'results.student_id')
+                  ->where('results.test_id', $test->id)
+                  ->get();
+        $filename = "results.csv";
+        $handle = fopen($filename, 'w+');
+        fputcsv($handle, array('Student ID', 'Name', 'Last Name', 'OMR responses', 'IMG results', 'Final Grade'));
+        foreach($results as $row) {
+            fputcsv($handle, array($row->student_id, $row->name, $row->last_name, str_replace(";","-",$row->omr_responses), str_replace(";","-",$row->img_responses), $row->grade));
+        }
+        fclose($handle);
+        $headers = array(
+            'Content-Type' => 'text/csv',
+        );
+        return Response::download($filename, 'results.csv', $headers);
+    }
+
+    public function deleteResults($id){
+        $id_class = Test::find($id)->class_id;
+        $classe = User::find(Auth::id())->classes()->find($id_class);
+        $test= $classe->tests()->find($id);
+        $results =  Result::where('test_id', $test->id);
+        $results->delete();
+        return back();
+    }
+
 }

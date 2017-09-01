@@ -49,6 +49,8 @@
               </li>
               <li><a href="{{route('deleteResults', ['test'=>$test->id])}}">{{ __('messages.deleteResults') }}</a>
               </li>
+              <li><a data-toggle="modal" data-target=".bs-example-modal-sm">{{ __('messages.testSettings') }}</a>
+              </li>
               <li class="divider"></li>
               @if($test->status==0)
               <li><a href="{{route('closeTest', ['test'=>$test->id, 'action'=>1])}}">{{ __('messages.closeTest') }}</a>
@@ -113,41 +115,98 @@
       </div>
     </div>
 
-    @foreach ($questions as $question)
-    <div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="col-md-12">
       <br>
       <div class="x_panel">
         <div class="x_title">
-          <h2><i class="fa fa-bars"></i>{{__('messages.fieldName')}}: {{$question->field_name}}<small>@if($question->shape == 3) ({{  __('messages.image')}}) @else  {{  __('messages.questionNumber')}}: {{$question->q_id}} @endif</small></h2>
+          <h2>{{ __('messages.statisticalResume') }}</h2>
           <div class="clearfix"></div>
         </div>
-        <div class="x_content">
-          <div class="" role="tabpanel" data-example-id="togglable-tabs">
-            <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-              <li role="presentation" class="active setChart"><a href="#tab_content1{{$question->id}}" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Home</a>
-              </li>
-              <li role="presentation" class="setChart"><a href="#tab_content2{{$question->id}}" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false" onclick="setTimeout(function(){ setChart{{$question->id}}b(); }, 300)">Profile</a>
-              </li>
-            </ul>
-            <div id="myTabContent" class="tab-content">
-              <div role="tabpanel" class="tab-pane fade active in" id="tab_content1{{$question->id}}" aria-labelledby="home-tab">
+        <div class="x_content" >
+          <div class="col-md-9 col-sm-12 col-xs-12">
+            <div class="demo-container" style="height:280px">
+              <div class="x_content">
+                <div class="" role="tabpanel" data-example-id="togglable-tabs">
+                  <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+                    <li role="presentation" class="active setChart"><a href="#tab_content1" id="pie-tab" role="tab" data-toggle="tab" aria-expanded="true">{{ __('messages.pieChart') }}</a>
+                    </li>
+                    <li role="presentation" class="setChart"><a href="#tab_content2" role="tab" id="bar-tab" data-toggle="tab" aria-expanded="false">{{ __('messages.barChart') }}</a>
+                    </li>
+                  </ul>
+                  <div id="myTabContent" class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
 
-                <div id="pie{{$question->id}}" style="height:350px;"></div>
+                      <div id="pie-chart" style="height:600px;"></div>
 
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
+
+                      <div id="bar-chart" style="height:600px;"></div>
+
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div role="tabpanel" class="tab-pane fade" id="tab_content2{{$question->id}}" aria-labelledby="profile-tab">
-
-                <div id="bar{{$question->id}}" style="height:350px;"></div>
-
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-12 col-xs-12" >
+            <div class="pre-scrollable" style="max-height: 650px; height:650px;">
+              <div class="x_title">
+                <h2>{{__('messages.questionsList')}}</h2>
+                <div class="clearfix"></div>
               </div>
+              <ul class="list-unstyled top_profiles scroll-view">
+                @foreach ($questions as $question)
+                <li class="media event">
+                  <div class="media-body">
+                    <a class="title" onclick="setTimeout(function(){ questionSts({{$question->id}}); }, 300);">{{__('messages.fieldName')}}: {{$question->field_name}} -@if($question->shape == 3) ({{  __('messages.image')}}) @else  {{  __('messages.questionNumber')}}: <strong>{{$question->q_id}} </strong> @endif </a>
+                  </div>
+                </li>
+                @endforeach
+              </ul>
             </div>
           </div>
 
         </div>
       </div>
     </div>
-    @endforeach
 
+    <!-- Small modal -->
+    <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+       <div class="modal-dialog modal-sm">
+         <div class="modal-content">
+           <form action="{{route('updateTest', ['test'=>$test->id])}}" method="POST">
+             {{ csrf_field() }}
+             <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+               </button>
+               <h4 class="modal-title" id="myModalLabel2">{{ __('messages.testSettings') }}</h4>
+             </div>
+             <div class="modal-body">
+               <div class="row">
+                 <div class="form-group col-lg-12">
+                     <p>{{ __('messages.testName') }} *</p>
+                     <input type="text" class="form-control" name="name" id="test_name" value="{{$test->name}}" required>
+                 </div>
+                 <div class="form-group col-lg-12">
+                     <p>{{ __('messages.testWeight') }}</p>
+                     <input type="number" min="1" max="1000" step="1" class="form-control" name="test_weight" id="test_weight" value="{{$test->test_weight}}" required>
+                 </div>
+                 <div class="form-group col-lg-12">
+                     <p>{{ __('messages.formName') }}</p>
+                     {{ Form::select('form_id', $forms, $test->form_id, ['class' => 'form-control', 'id' => 'test_form_id'])}}
+                 </div>
+               </div>
+             </div>
+             <div class="modal-footer">
+               <a href="{{route('deleteTest', ['test'=>$test->id])}}" onclick="return confirm('{{ __('messages.deleteTestWarning') }}')"><button type="button" class="btn btn-danger">{{ __('messages.deleteTest') }}</button></a>
+               <button type="submit" class="btn btn-primary">{{ __('messages.updateTest') }}</button>
+             </div>
+           </form>
+         </div>
+       </div>
+     </div>
+     <!-- /modals -->
   </div>
   <script>
     var titles = '{{ $test->titles}}';
@@ -194,9 +253,13 @@
   @else
     <?php $data=["[0-4]","(4-6]","(6-8]","(8-10]"]; ?>
   @endif
-
- //function setChart{{$question->id}}a(){
-    var pie{{$question->id}} = echarts.init(document.getElementById('pie{{$question->id}}'));
+function questionSts(value){
+    $("#bar-tab").attr("onclick","setTimeout(function(){ setChart"+ value +"b(); }, 300);");
+    $("#pie-tab").attr("onclick","setTimeout(function(){ setChart"+ value +"a(); }, 300);");
+    $( "#pie-tab").trigger("click");
+}
+ function setChart{{$question->id}}a(){
+    var pie{{$question->id}} = echarts.init(document.getElementById('pie-chart'));
     var option = {
     tooltip: { trigger: 'item', formatter: "{a} <br/>{b} : {c} ({d}%)"   },
     legend: {x: 'center', y: 'bottom', data: [<?php echo "'".implode("','", $data)."'" ?>] },
@@ -247,9 +310,9 @@
         @endif
       ]}]};
     pie{{$question->id}}.setOption(option);
-  //}
+  }
   function setChart{{$question->id}}b(){
-    var bar{{$question->id}} = echarts.init(document.getElementById('bar{{$question->id}}'));
+    var bar{{$question->id}} = echarts.init(document.getElementById('bar-chart'));
     var option = {
       title: {text: 'Bar Graph',subtext: 'Graph subtitle'},
       tooltip: {trigger: 'axis'},
@@ -262,7 +325,7 @@
       calculable: true,
       xAxis: [{type: 'value', boundaryGap: [0, 0.01]}],
       yAxis: [{type: 'category', data:  [<?php echo "'".implode("','", array_reverse($data))."'" ?>] }],
-      series: [{ name: '2015', type: 'bar',
+      series: [{ name: 'Bar', type: 'bar',
       <?php $values=[]; ?>
       @if($question->shape != 3 && count($omr_answers)>0)
         <?php $temp=array_count_values($omr_answers[$j]); ?>

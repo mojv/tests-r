@@ -33,7 +33,8 @@ class ClassroomController extends Controller
             $students = Student::where('user_id', Auth::id())->where(function($query) use ($q) {
                 $query->where('name', 'LIKE', '%'.$q.'%')
                     ->orWhere('last_name', 'LIKE', '%'.$q.'%')
-                    ->orWhere('email', 'LIKE', '%'.$q.'%');
+                    ->orWhere('email', 'LIKE', '%'.$q.'%')
+                    ->orWhere('student_id', 'LIKE', '%'.$q.'%');
             })->orderBy('name')->paginate(9);
         }
         else
@@ -239,7 +240,8 @@ class ClassroomController extends Controller
               ->where(function($query) use ($q) {
                   $query->where('name', 'LIKE', '%'.$q.'%')
                     ->orWhere('last_name', 'LIKE', '%'.$q.'%')
-                    ->orWhere('email', 'LIKE', '%'.$q.'%');
+                    ->orWhere('email', 'LIKE', '%'.$q.'%')
+                    ->orWhere('student_id', 'LIKE', '%'.$q.'%');
               })->with('classrooms')->orderBy('name')->paginate(10);
         }
         else
@@ -308,7 +310,8 @@ class ClassroomController extends Controller
                   ->where(function($query) use ($q) {
                       $query->where('name', 'LIKE', '%'.$q.'%')
                         ->orWhere('last_name', 'LIKE', '%'.$q.'%')
-                        ->orWhere('email', 'LIKE', '%'.$q.'%');
+                        ->orWhere('email', 'LIKE', '%'.$q.'%')
+                        ->orWhere('students.student_id', 'LIKE', '%'.$q.'%');
                   })->paginate(20);
       }
       else{
@@ -348,7 +351,18 @@ class ClassroomController extends Controller
       if (count($img_answers)>0) {
         $img_answers=array_map(null, ...$img_answers);
       }
-      return view('board.myTest', compact('test', 'classe', 'enrolls', 'results', 'results2', 'results3', 'results4','titles', 'answers', 'questions', 'items','omr_answers','img_answers'));
+      $users_id=[Auth::id(), 1];
+      $forms_id=[];
+      $shareForms=ShareForm::where('user_id',Auth::id())->get();
+      foreach ($shareForms as $form) {
+        array_push($forms_id, $form->form_id);
+      }
+      $forms = DB::table('forms')
+          ->select('form_name', 'id')
+          ->whereIn('user_id', $users_id)
+          ->whereIn('id',$forms_id, 'or')
+          ->pluck('form_name', 'id')->prepend('','');
+      return view('board.myTest', compact('test', 'classe', 'enrolls', 'results', 'results2', 'results3', 'results4','titles', 'answers', 'questions', 'items','omr_answers','img_answers', 'forms'));
     }
 
     public function defineAnswers($id)
@@ -485,6 +499,27 @@ class ClassroomController extends Controller
         $results =  Result::where('test_id', $test->id);
         $results->delete();
         return back();
+    }
+
+    public function updateTest($id, Request $data){
+        $validator = $this->validate($data, [
+          'name' => 'required',
+          'form_id' => 'required',
+        ]);
+        $id_class = Test::find($id)->class_id;
+        $classe = User::find(Auth::id())->classes()->find($id_class);
+        $test= $classe->tests()->find($id);
+        $test->update($data->all());
+        $test->save();
+        return back();
+    }
+
+    public function deleteTest($id, Request $data){
+        $id_class = Test::find($id)->class_id;
+        $classe = User::find(Auth::id())->classes()->find($id_class);
+        $test= $classe->tests()->find($id);
+        $test->delete();
+        return redirect(route('myClasses'));
     }
 
 }

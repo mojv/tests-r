@@ -101,7 +101,7 @@
     <div class="row">
         @yield('nameModal')
         @yield('fileInput')
-
+        <div class="col-lg-12" style="position: fixed" alaign="center">
         <div class="x_content" hidden id="commands">
           <div class="btn-group">
               <a id="omr-sq" class="btn btn-app">
@@ -150,6 +150,7 @@
             <span class="fa fa-arrow-circle-o-up form-control-feedback right" aria-hidden="true"></span>
             <label for="ex3">{{ __('messages.markRadius') }}</label>
           </div>
+        </div>
         </div>
         <div class="modal fade bs-example-modal-bg" tabindex="-1" role="dialog" aria-hidden="true"  id="myModal2">
           <div class="modal-dialog modal-bg">

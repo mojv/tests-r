@@ -97,6 +97,8 @@ Route::group(['middleware' => ['web', 'locale', 'fw-block-bl']], function () {
     Route::get('/closeTest/{test}/action/{action}', ['as' => 'closeTest', 'uses' =>'ClassroomController@closeTest']);
     Route::get('/downloadResults/{test}', ['as' => 'downloadResults', 'uses' =>'ClassroomController@downloadResults']);
     Route::get('/deleteResults/{test}', ['as' => 'deleteResults', 'uses' =>'ClassroomController@deleteResults']);
+    Route::post('/updateTest/{test}', ['as' => 'updateTest', 'uses' =>'ClassroomController@updateTest']);
+    Route::get('/deleteTest/{test}', ['as' => 'deleteTest', 'uses' =>'ClassroomController@deleteTest']);
 
     Auth::routes();
 

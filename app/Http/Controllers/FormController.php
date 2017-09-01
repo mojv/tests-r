@@ -79,7 +79,9 @@ class FormController extends Controller
     {
         $user = User::find(Auth::id());
         $form = $user->forms()->find($id);
-        Storage::delete("/public/".$form->formfile);
+        if(isset($form->formfile)){
+          Storage::delete("/public/".$form->formfile);
+        }        
         $form->delete();
         return back();
     }
@@ -101,7 +103,7 @@ class FormController extends Controller
         $form = $user->forms()->find($data->input('form_id'));
         if ($form->formfile!= "" || $form->formfile!= null){
             Storage::delete("/public/".$form->formfile);
-        } 
+        }
         $path = $data->formfile->store('public');
         $form->formfile =basename($path);
         $form->save();
@@ -109,12 +111,12 @@ class FormController extends Controller
     }
 
     public function shareForm(Request $data){
-        if ($data->ajax()){            
+        if ($data->ajax()){
             $email =  $data->all()['email'];
             $user = User::where('email', $email)->where('id', "!=", Auth::id())->first();
             return $user;
-        }        
-    } 
+        }
+    }
 
     public function shareFormCreate(Request $data){
         if ($data->ajax()){
@@ -127,22 +129,22 @@ class FormController extends Controller
             $shareForm->save();
             $user_sh= array($shareForm, User::find($shareForm->user_id));
             return $user_sh;
-        }        
-    }  
+        }
+    }
 
     public function shareFormDelete(Request $data){
        if ($data->ajax()){
            $shareForm = Shareform::find($data->all()['id']);
            if ($shareForm->user_owner==Auth::id()){
                $id=$shareForm->id;
-               $shareForm->delete();               
-               return $id; 
+               $shareForm->delete();
+               return $id;
            }else {
                return 'error';
-           }        
+           }
        }
 
-    }     
+    }
 
     public function formList()
     {
@@ -169,7 +171,7 @@ class FormController extends Controller
     }
 
     public function readSharedForm($id)
-    {        
+    {
         $shareForm = Shareform::where('user_id',Auth::id())->where('form_id',$id)->first();
         $user = User::find($shareForm->user_owner);
         $form = $user->forms()->find($id);
@@ -179,11 +181,11 @@ class FormController extends Controller
     }
 
     public function stopShareForm($id)
-    {        
+    {
         $shareForm = Shareform::where('user_id',Auth::id())->where('form_id',$id)->first();
         $shareForm->delete();
         return back();
-    }    
+    }
 
     public function appReadForm($id)
     {

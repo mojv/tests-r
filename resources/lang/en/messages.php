@@ -184,4 +184,12 @@ return [
      'complete' => 'Complete',
      'downloadResults' => 'Download Results as CSV',
      'deleteResults' => 'Delete All Results',
+     'questionsList' => 'Questions List',
+     'pieChart' => 'Pie Chart',
+     'barChart' => 'Bar Chart',
+     'statisticalResume' => 'Statistical Resume',
+     'testSettings' => 'Test Settings',
+     'updateTest' => 'Update Test',
+     'deleteTest' => 'Delete test',
+     'deleteTestWarning' => 'If you delete this Test, It will also be removed all the result attached to it, an all records will be destroyed, ARE YOU SURE YOU WANT TO DELETE THIS TESTS?',
 ];

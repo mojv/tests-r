@@ -90,7 +90,7 @@
               </td>
               <td>
                 <div class="col-xs-4">
-                <a href="#" class="btn btn-primary btn-xs"><i class="fa fa-folder"></i> {{ __('messages.view') }} </a>
+                <a href="#" class="btn btn-primary btn-xs"><i class="fa fa-area-chart"></i> {{ __('messages.view') }} </a>
                 </div>
                 <div class="col-xs-4">
                 <button class="btn btn-info btn-xs" value="{{$classe->id}}" onclick="filterForms(this.value)" data-toggle="modal" data-target=".updateClass-modal"><i class="fa fa-pencil"></i> {{ __('messages.edit') }} </button>
@@ -343,11 +343,11 @@
                     </div>
                     <div class="form-group col-lg-6">
                         <p>{{ __('messages.testWeight') }}</p>
-                        <input type="number" min="1" max="1000" step="1" class="form-control" name="test_weight" id="test_weight">
+                        <input type="number" min="1" max="1000" step="1" class="form-control" name="test_weight" id="test_weight" required>
                     </div>
                     <div class="form-group col-lg-6">
                         <p>{{ __('messages.formName') }}</p>
-                        {{ Form::select('form_id', $forms, '', ['class' => 'form-control', 'id' => 'test_form_id'])}}
+                        {{ Form::select('form_id', $forms, '', ['class' => 'form-control', 'id' => 'test_form_id', 'required'=>'required'])}}
                     </div>
                     <input type="hidden" name="class_id" value="" id="class_id">
                   </div>

@@ -142,7 +142,7 @@ return [
      'huge' => 'Huge',
      'normal' => 'Normal',
      'small' => 'Small',
-     'deleteEstudentWaning' => 'If you delete a classroom, It will also be removed all the exams a result attached to it, an all records will be destroyed, ARE YOU SURE YOU WANT TO DELETE THIS CLASSROOM?',
+     'deleteClassWaning' => 'If you delete a classroom, It will also be removed all the exams a result attached to it, an all records will be destroyed, ARE YOU SURE YOU WANT TO DELETE THIS CLASSROOM?',
      'seeSyllabus' => 'See Syllabus',
      'noSyllabus' => 'No Syllabus Available',
      'updateClassroom' => 'Update Classroom',

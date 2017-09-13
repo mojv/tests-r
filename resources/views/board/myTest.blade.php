@@ -104,8 +104,8 @@
                 </ul>
               </td>
               <td>{{$result->name}} {{$result->last_name}}</td>
-              <td>{{$result->omr_responses}}</td>
-              <td>{{$result->img_responses}}</td>
+              <td>{{str_replace(";","-",$result->omr_responses)}}</td>
+              <td>{{str_replace(";","-",$result->img_responses)}}</td>
               <td>{{$result->grade}}%</td>
             </tr>
             @endforeach
@@ -278,10 +278,10 @@ function questionSts(value){
     series: [{ name: 'Pie', type: 'pie',radius: '55%', center: ['50%', '48%'],
       data: [
         @if($question->shape != 3 && count($omr_answers)>0)
-          <?php $temp=array_count_values($omr_answers[$j]); ?>
+          <?php $temp=array_count_values($omr_answers[$i]); ?>
           @for ($i=$from;$i<=$to;$i++)
             @if($question->q_min == 'A')
-              <?php if(array_key_exists($alphabet[$i], $temp)){$value = $temp[$alphabet[$i]];}else{$value = 0;} ?>
+              <?php if(array_key_exists($alphabet[$j], $temp)){$value = $temp[$alphabet[$j]];}else{$value = 0;} ?>
               {value: {{$value}}, name: '{{$alphabet[$i]}}'},
             @else
               <?php if(array_key_exists($i, $temp)){$value = $temp[$i];}else{$value = 0;} ?>

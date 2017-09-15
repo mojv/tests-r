@@ -90,7 +90,7 @@
               </td>
               <td>
                 <div class="col-xs-4">
-                <a href="#" class="btn btn-primary btn-xs"><i class="fa fa-area-chart"></i> {{ __('messages.view') }} </a>
+                <a href="{{route('classHistory', ['class' => $classe->id])}}" class="btn btn-primary btn-xs"><i class="fa fa-area-chart"></i> {{ __('messages.view') }} </a>
                 </div>
                 <div class="col-xs-4">
                 <button class="btn btn-info btn-xs" value="{{$classe->id}}" onclick="filterForms(this.value)" data-toggle="modal" data-target=".updateClass-modal"><i class="fa fa-pencil"></i> {{ __('messages.edit') }} </button>

@@ -598,4 +598,23 @@ class ClassroomController extends Controller
         return Response::download($filename, 'pendings.csv', $headers);
     }
 
+    public function classHistory($id){
+        $classe = User::find(Auth::id())->classes()->find($id);
+        $tests = Test::where('class_id', $classe->id)->get();
+        $avgs=[]; $quartiles=[]; $testsNames=[];
+        foreach ($tests as $test) {
+          $quartile=[];
+          $total=Result::where('test_id', $test->id)->count('grade');
+          $middle=ceil($total/2);
+          array_push($avgs,round(Result::where('test_id', $test->id)->avg('grade'),2));
+          array_push($quartile,round(Result::select('grade')->where('test_id', $test->id)->orderBy('grade', 'asc')->limit($middle)->get()->avg('grade'),2));
+          array_push($quartile,round(Result::select('grade')->where('test_id', $test->id)->orderBy('grade', 'desc')->limit($middle)->get()->avg('grade'),2));
+          array_push($quartile,round(Result::where('test_id', $test->id)->min('grade'),2));
+          array_push($quartile,round(Result::where('test_id', $test->id)->max('grade'),2));
+          array_push($quartiles, $quartile);
+          array_push($testsNames, $test->name);
+        }
+        return view('board.classHistory', compact('avgs', 'quartiles', 'testsNames'));
+    }
+
 }

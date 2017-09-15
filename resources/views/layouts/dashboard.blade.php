@@ -96,7 +96,7 @@
                       <li><a href="{{ __('messages.tutorialReadForms') }}" target="_blank">{{ __('messages.tutorial') }}</a></li>
                     </ul>
                   </li>
-                  <li><a><i class="fa fa-graduation-cap"></i> {{ __('messages.classroom') }} <span class="fa fa-chevron-down"></span></a>
+                  <li><a><i class="fa fa-graduation-cap"></i> {{ __('messages.classroom') }} <span class="label label-warning pull-right">beta</span></a>
                     <ul class="nav child_menu">
                       <li><a href="{{route('myClasses') }}">{{ __('messages.myClassrooms') }}</a></li>
                       <li><a href="{{route('myStudents') }}">{{ __('messages.myStudents') }}</a></li>

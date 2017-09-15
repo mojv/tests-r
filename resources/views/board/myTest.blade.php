@@ -290,51 +290,17 @@ $( "#bar-tab").trigger("click");
    var echartBar = echarts.init(document.getElementById('bar-chart'));
 
    echartBar.setOption({
-
-     tooltip : {
-          trigger: 'axis'
-      },
+     tooltip : {trigger: 'axis'},
       calculable : true,
-      legend: {
-          data:['Frequencies','shape']
-      },
-      xAxis : [
-          {
-              type : 'category',
-              data : labels
-          }
+      legend: {data:['Frequencies','shape']},
+      xAxis : [{type : 'category',data : labels}],
+      yAxis : [{type : 'value', name : 'frequencies',axisLabel : {formatter: '{value} ml'}},
+          {type : 'value', name : 'grade', axisLabel : {formatter: '{value} °C'}}
       ],
-      yAxis : [
-          {
-              type : 'value',
-              name : 'frequencies',
-              axisLabel : {
-                  formatter: '{value} ml'
-              }
-          },
-          {
-              type : 'value',
-              name : 'grade',
-              axisLabel : {
-                  formatter: '{value} °C'
-              }
-          }
-      ],
-      series : [
-
-          {
-              name:'Totals',
-              type:'bar',
-              data:totals
-          },
-          {
-              name:'Distribution shape',
-              type:'line',
-              yAxisIndex: 1,
-              data:totals
-          }
-      ]
+      series : [{name:'Totals',type:'bar', data:totals},
+          {name:'Distribution shape',type:'line',yAxisIndex: 1, data:totals}]
    });
+
  }
 
  function setChart{{$question->id}}a(){

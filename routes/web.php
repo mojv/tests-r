@@ -85,6 +85,7 @@ Route::group(['middleware' => ['web', 'locale', 'fw-block-bl']], function () {
     Route::post('/unrollStudent/', ['as' => 'unrollStudent', 'uses' =>'ClassroomController@unrollStudent']);
     Route::get('/enrollAllStudents/{classe}', ['as' => 'enrollAllStudents', 'uses' =>'ClassroomController@enrollAllStudents']);
     Route::get('/unrollAllStudents/{classe}', ['as' => 'unrollAllStudents', 'uses' =>'ClassroomController@unrollAllStudents']);
+    Route::get('/classHistory/{class}/', ['as' => 'classHistory', 'uses' =>'ClassroomController@classHistory']);
 
     //-----------Tests-----------
     Route::get('/mytest/{test}', ['as' => 'myTest', 'uses' =>'ClassroomController@myTest']);
@@ -101,7 +102,7 @@ Route::group(['middleware' => ['web', 'locale', 'fw-block-bl']], function () {
     Route::get('/deleteTest/{test}', ['as' => 'deleteTest', 'uses' =>'ClassroomController@deleteTest']);
     Route::get('/pendingEvaluation/{test}', ['as' => 'pendingEvaluation', 'uses' =>'ClassroomController@pendingEvaluation']);
     Route::get('/downladPendings/{test}', ['as' => 'downladPendings', 'uses' =>'ClassroomController@downladPendings']);
-    
+
     Auth::routes();
 
     Route::get('/home', 'HomeController@index');

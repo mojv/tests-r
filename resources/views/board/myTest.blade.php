@@ -3,10 +3,10 @@
 @section('content')
 
   <div class="row tile_count" align="center">
-    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-      <span class="count_top"><i class="fa fa-users"></i> {{ __('messages.numberStudents') }}</span>
+    <a href="{{route('pendingEvaluation' , ['test'=>$test->id])}}"><div class="col-md-2 col-sm-4 col-xs-4 tile_stats_count">
+      <span class="count_top"><i class="fa fa-users"></i> {{ __('messages.pendingEvaluation') }}</span>
       <div class="count">@if(empty($enrolls)) - @else {{ $enrolls }} @endif</div>
-    </div>
+    </div></a>
     <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
       <span class="count_top"><i class="fa fa-thumbs-up"></i> {{ __('messages.studentsEvaluated') }}</span>
       <div class="count green">@if(empty($results2)) - @else {{ $results2 }} @endif</div>
@@ -140,7 +140,11 @@
 
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
-
+                      <div class="row">
+                      <div class="form-group col-lg-2" id="partitions_div">
+                        <input type="number" class="form-control" placeholder="Partitions" id="partitions" value="9" onchange="setAverageChart()">
+                      </div>
+                      </div>
                       <div id="bar-chart" style="height:600px;"></div>
 
                     </div>
@@ -156,6 +160,11 @@
                 <div class="clearfix"></div>
               </div>
               <ul class="list-unstyled top_profiles scroll-view">
+                <li class="media event">
+                  <div class="media-body">
+                    <a class="title" onclick="setTimeout(function(){ questionSts('average'); }, 300);">{{ __('messages.averageScore') }}</a>
+                  </div>
+                </li>
                 @foreach ($questions as $question)
                 <li class="media event">
                   <div class="media-body">
@@ -215,6 +224,7 @@
     var weights = weights.split(";");
     var answers = '{{ $test->answers}}';
     var answers = answers.split(";");
+    var grades = <?php echo json_encode($grades) ?>;
     var omr_results = [];
     var img_results = [];
 
@@ -230,39 +240,108 @@
 <script src="{{ asset('vendors/echarts/map/js/world.js') }}"></script>
 
 <script>
-<?php $j=0; $alphabet = range('A', 'Z'); $q_omr=count($omr_answers);?>
+$("#bar-tab").attr("onclick","setTimeout(function(){ setAverageChart(); }, 300);");
+$( "#bar-tab").trigger("click");
+<?php $j=0;?>
 @foreach ($questions as $question)
   <?php
-    $title=$question->field_name.'-'.$question->q_id; $j=array_search($title, $titles); $data=[];
+     if (isset($omr_answers[$j])){
+       $options=array_unique($omr_answers[$j]);
+       sort($options);
+       $list = "'".implode("','", $options)."'";
+       $frequencies=array_count_values($omr_answers[$j]);
+     }else {
+       $list = "";
+       $options="";
+       $frequencies="";
+     }
+     $title=$question->field_name.'-'.$question->q_id; $data=[];
   ?>
-  @if($question->q_min == 'A')
-    <?php $from=0; $to=array_search($question->q_max, $alphabet); ?>
-  @elseif($question->q_min == 0)
-    <?php $from=0; $to=$question->q_max; ?>
-  @elseif($question->q_min == 1)
-    <?php $from=1; $to=$question->q_max+1; ?>
-  @endif
-  @if($question->shape != 3)
-    @for ($i=$from;$i<=$to;$i++)
-      @if($question->q_min == 'A')
-        <?php array_push($data, $alphabet[$i]); ?>
-      @else
-        <?php array_push($data, $i); ?>
-      @endif
-    @endfor
-  @else
-    <?php $data=["[0-4]","(4-6]","(6-8]","(8-10]"]; ?>
-  @endif
-function questionSts(value){
-    $("#bar-tab").attr("onclick","setTimeout(function(){ setChart"+ value +"b(); }, 300);");
-    $("#pie-tab").attr("onclick","setTimeout(function(){ setChart"+ value +"a(); }, 300);");
-    $( "#pie-tab").trigger("click");
-}
+  function questionSts(value){
+    if(value=='average'){
+      $("#partitions_div").show();
+      $("#bar-tab").attr("onclick","setTimeout(function(){ setAverageChart(); }, 300);");
+      $( "#bar-tab").trigger("click");
+    }else{
+      $("#partitions_div").hide();
+      $("#bar-tab").attr("onclick","setTimeout(function(){ setChart"+ value +"b(); }, 300);");
+      $("#pie-tab").attr("onclick","setTimeout(function(){ setChart"+ value +"a(); }, 300);");
+      $( "#pie-tab").trigger("click");
+    }
+  }
+
+ function setAverageChart(){
+   partitions=$("#partitions").val();
+   max=Math.max.apply(null, grades)+1;
+   min=Math.min.apply(null, grades)-1;
+   step=(max-min)/partitions;
+   totals=[];
+   labels=[];
+   for (i=0;i<partitions;i++){
+      start=min+(step*i);
+      end=min+(step*(i+1));
+      temp=grades.filter(function(x) {
+          return x >= start && x < end;
+      });
+      totals.push(temp.length);
+      labels.push(Math.round(start*10)/10 + "-" + Math.round(end*10)/10);
+   }
+
+   var echartBar = echarts.init(document.getElementById('bar-chart'));
+
+   echartBar.setOption({
+
+     tooltip : {
+          trigger: 'axis'
+      },
+      calculable : true,
+      legend: {
+          data:['Frequencies','shape']
+      },
+      xAxis : [
+          {
+              type : 'category',
+              data : labels
+          }
+      ],
+      yAxis : [
+          {
+              type : 'value',
+              name : 'frequencies',
+              axisLabel : {
+                  formatter: '{value} ml'
+              }
+          },
+          {
+              type : 'value',
+              name : 'grade',
+              axisLabel : {
+                  formatter: '{value} °C'
+              }
+          }
+      ],
+      series : [
+
+          {
+              name:'Totals',
+              type:'bar',
+              data:totals
+          },
+          {
+              name:'Distribution shape',
+              type:'line',
+              yAxisIndex: 1,
+              data:totals
+          }
+      ]
+   });
+ }
+
  function setChart{{$question->id}}a(){
     var pie{{$question->id}} = echarts.init(document.getElementById('pie-chart'));
     var option = {
     tooltip: { trigger: 'item', formatter: "{a} <br/>{b} : {c} ({d}%)"   },
-    legend: {x: 'center', y: 'bottom', data: [<?php echo "'".implode("','", $data)."'" ?>] },
+    legend: {x: 'center', y: 'bottom', data: [<?php echo $list; ?>] },
     toolbox: { show: true,
       feature: {
         magicType: {show: true, type: ['pie', 'funnel'],
@@ -277,36 +356,10 @@ function questionSts(value){
     calculable: true,
     series: [{ name: 'Pie', type: 'pie',radius: '55%', center: ['50%', '48%'],
       data: [
-        @if($question->shape != 3 && count($omr_answers)>0)
-          <?php $temp=array_count_values($omr_answers[$i]); ?>
-          @for ($i=$from;$i<=$to;$i++)
-            @if($question->q_min == 'A')
-              <?php if(array_key_exists($alphabet[$j], $temp)){$value = $temp[$alphabet[$j]];}else{$value = 0;} ?>
-              {value: {{$value}}, name: '{{$alphabet[$i]}}'},
-            @else
-              <?php if(array_key_exists($i, $temp)){$value = $temp[$i];}else{$value = 0;} ?>
-              {value: {{$value}}, name: '{{$i}}'},
-            @endif
-          @endfor
-        @elseif(count($img_answers)>0)
-          <?php $temp=array_count_values($img_answers[$j-$q_omr]);
-            $value1=0; $value2=0; $value3=0; $value4=0;
-            foreach($temp as $option => $val){
-              if($option <= 4){
-                $value1=$value1+$val;
-              }elseif($option <= 6){
-                $value2=$value2+$val;
-              }elseif($option <= 8){
-                $value3=$value3+$val;
-              }elseif($option <= 10){
-                $value4=$value4+$val;
-              }
-            }
-          ?>
-          {value: {{$value1}}, name: "[0-4]"},
-          {value: {{$value2}}, name: "(4-6]"},
-          {value: {{$value3}}, name: "(6-8]"},
-          {value: {{$value4}}, name: "(8-10]"}
+        @if($options!="")
+          @foreach ($options as $option)
+            {value: {{$frequencies[$option]}}, name: '{{$option}}'},
+          @endforeach
         @endif
       ]}]};
     pie{{$question->id}}.setOption(option);
@@ -324,37 +377,15 @@ function questionSts(value){
       },
       calculable: true,
       xAxis: [{type: 'value', boundaryGap: [0, 0.01]}],
-      yAxis: [{type: 'category', data:  [<?php echo "'".implode("','", array_reverse($data))."'" ?>] }],
+      yAxis: [{type: 'category', data:  [<?php echo $list; ?>] }],
       series: [{ name: 'Bar', type: 'bar',
       <?php $values=[]; ?>
-      @if($question->shape != 3 && count($omr_answers)>0)
-        <?php $temp=array_count_values($omr_answers[$j]); ?>
-        @for ($i=$from;$i<=$to;$i++)
-          @if($question->q_min == 'A')
-            <?php if(array_key_exists($alphabet[$i], $temp)){array_push($values,$temp[$alphabet[$i]]);}else{array_push($values,0);} ?>
-          @else
-            <?php if(array_key_exists($i, $temp)){$value = $temp[$i];}else{$value = 0;} ?>
-            <?php if(array_key_exists($i, $temp)){array_push($values,$temp[$i]);}else{array_push($values,0);} ?>
-          @endif
-        @endfor
-        data: [<?php echo "'".implode("','", array_reverse ($values))."'" ?>]
-      @elseif(count($img_answers)>0)
-      <?php $temp=array_count_values($img_answers[$j-$q_omr]);
-        $value1=0; $value2=0; $value3=0; $value4=0;
-        foreach($temp as $option => $val){
-          if($option <= 4){
-            $value1=$value1+$val;
-          }elseif($option <= 6){
-            $value2=$value2+$val;
-          }elseif($option <= 8){
-            $value3=$value3+$val;
-          }elseif($option <= 10){
-            $value4=$value4+$val;
-          }
-        }
-      ?>
-      data: [{{$value1}},{{$value2}},{{$value3}},{{$value4}}]
+      @if($options!="")
+        @foreach ($options as $option)
+          <?php array_unshift($values, $frequencies[$option]);?>
+        @endforeach
       @endif
+      data: [<?php echo "'".implode("','", array_reverse ($values))."'" ?>]
       },]
     };
     bar{{$question->id}}.setOption(option);

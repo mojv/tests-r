@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Classroom extends Model
 {
   protected $fillable = [
-      'class_id', 'student_id', 'student_name', 
+      'class_id', 'student_id', 'student_name',
   ];
 
   public function classes()
@@ -17,7 +17,7 @@ class Classroom extends Model
 
   public function students()
   {
-      return $this->belongsTo('App\Student');
+      return $this->belongsTo('App\Student', 'student_id');
   }
 
 }

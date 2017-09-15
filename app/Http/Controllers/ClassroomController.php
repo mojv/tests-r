@@ -326,7 +326,14 @@ class ClassroomController extends Controller
       $results4 = Result::where('test_id', $test->id)->inRandomOrder()->take(1000)->get();
       $titles=explode(";",$test->titles);
       $answers=explode(";",$test->answers);
-      $enrolls = Classroom::select('id')->where('class_id', $classe->id)->count();
+      $enrolls = Classroom::where('class_id', $classe->id)
+                  ->whereNotExists(function($query) use($id){
+                      $query->select(DB::raw(1))
+                            ->from('results')
+                            ->whereRaw("classrooms.student_id = results.student_id AND results.test_id = $id");
+                  })
+                  ->join('students', 'classrooms.student_id', "=", 'students.id')
+                  ->count();
       $questions = Formcoord::where(function($query){
                 $query->where('idField',0)
                       ->orWhereNull('idField');
@@ -337,6 +344,7 @@ class ClassroomController extends Controller
             ->get();
       $omr_answers=[];
       $img_answers=[];
+      $grades=[];
       foreach ($results4 as $result){
         if (isset($result->omr_responses)){
           array_push($omr_answers,explode(";",$result->omr_responses));
@@ -344,12 +352,16 @@ class ClassroomController extends Controller
         if (isset($result->img_responses) ){
           array_push($img_answers,explode(";",$result->img_responses));
         }
+        array_push($grades,$result->grade);
       }
       if (count($omr_answers)>0) {
         $omr_answers=array_map(null, ...$omr_answers);
       }
       if (count($img_answers)>0) {
         $img_answers=array_map(null, ...$img_answers);
+      }
+      foreach ($img_answers as $img_answer) {
+        array_push($omr_answers,$img_answer);
       }
       $users_id=[Auth::id(), 1];
       $forms_id=[];
@@ -362,7 +374,7 @@ class ClassroomController extends Controller
           ->whereIn('user_id', $users_id)
           ->whereIn('id',$forms_id, 'or')
           ->pluck('form_name', 'id')->prepend('','');
-      return view('board.myTest', compact('test', 'classe', 'enrolls', 'results', 'results2', 'results3', 'results4','titles', 'answers', 'questions', 'items','omr_answers','img_answers', 'forms'));
+      return view('board.myTest', compact('test', 'classe', 'enrolls', 'results', 'results2', 'results3', 'results4','titles', 'answers', 'questions', 'items','omr_answers', 'forms', 'grades'));
     }
 
     public function defineAnswers($id)
@@ -424,13 +436,16 @@ class ClassroomController extends Controller
         $classe = User::find(Auth::id())->classes()->find($id_class);
         $test= $classe->tests()->find($id);
         $student = Student::where('user_id', Auth::id())->where('student_id', $data->input('student_id'))->first();
-        $result= New Result();
-        $result->student_id=$student->id;
-        $result->omr_responses=$data->input('omr_responses');
-        $result->omr_grade=$data->input('omr_grade');
-        $result->grade=$data->input('omr_grade');
-        $test->results()->save($result);
-        return $result;
+        $enroll = Classroom::where('class_id', $classe->id)->where('student_id', $student->id)->first();
+        if(isset($enroll->id)){
+          $result= New Result();
+          $result->student_id=$student->id;
+          $result->omr_responses=$data->input('omr_responses');
+          $result->omr_grade=$data->input('omr_grade');
+          $result->grade=$data->input('omr_grade');
+          $test->results()->save($result);
+          return $result;
+        }
     }
 
     public function storeGradeImg($id, Request $data)
@@ -440,6 +455,7 @@ class ClassroomController extends Controller
         $test= $classe->tests()->find($id);
         $student = Student::where('user_id', Auth::id())->where('student_id', $data->input('student_id'))->first();
         $result = Result::where('test_id', $id)->where('student_id', $student->id)->first();
+        $enroll = Classroom::where('class_id', $classe->id)->where('student_id', $student->id)->first();
         if(isset($result)){
           $result->img_responses=$data->input('img_responses');
           $result->img_grade=$data->input('img_grade');
@@ -450,7 +466,7 @@ class ClassroomController extends Controller
               $result->grade=$data->input('img_grade');
           }
           $result->save();
-        }else{
+        }elseif(isset($enroll->id)){
           $result= New Result();
           $result->student_id=$student->id;
           $result->img_responses=$data->input('img_responses');
@@ -520,6 +536,66 @@ class ClassroomController extends Controller
         $test= $classe->tests()->find($id);
         $test->delete();
         return redirect(route('myClasses'));
+    }
+
+    public function pendingEvaluation(Request $data, $id)
+    {
+        $q=$data->input('q');
+        $id_class = Test::find($id)->class_id;
+        $classe = User::find(Auth::id())->classes()->find($id_class);
+        if (!empty($q))
+        {
+            $students = Classroom::where('class_id', $classe->id)
+              ->whereNotExists(function($query) use($id){
+                  $query->select(DB::raw(1))
+                        ->from('results')
+                        ->whereRaw("classrooms.student_id = results.student_id AND results.test_id = $id");
+              })
+              ->join('students', 'classrooms.student_id', "=", 'students.id')
+              ->where(function($query) use ($q) {
+                  $query->where('students.name', 'LIKE', '%'.$q.'%')
+                    ->orWhere('students.last_name', 'LIKE', '%'.$q.'%')
+                    ->orWhere('students.email', 'LIKE', '%'.$q.'%')
+                    ->orWhere('students.student_id', 'LIKE', '%'.$q.'%');
+              })->paginate(10);
+        }
+        else
+        {
+            $students = Classroom::where('class_id', $classe->id)
+            ->whereNotExists(function($query) use($id){
+                $query->select(DB::raw(1))
+                      ->from('results')
+                      ->whereRaw("classrooms.student_id = results.student_id AND results.test_id = $id");
+            })
+            ->join('students', 'classrooms.student_id', "=", 'students.id')
+            ->paginate(10);
+        }
+        //return $students;
+        return view('board.pendingEvaluation', compact('students', 'id'));
+    }
+
+    public function downladPendings(Request $data, $id)
+    {
+        $q=$data->input('q');
+        $id_class = Test::find($id)->class_id;
+        $classe = User::find(Auth::id())->classes()->find($id_class);
+        $students = Classroom::where('class_id', $classe->id)->with('students')
+            ->whereNotExists(function($query) use($id){
+                $query->select(DB::raw(1))
+                      ->from('results')
+                      ->whereRaw("classrooms.student_id = results.student_id AND results.test_id = $id");
+            })->get();
+        $filename = "pendings.csv";
+        $handle = fopen($filename, 'w+');
+        fputcsv($handle, array('Student ID', 'Name', 'Last Name', 'E-mail'));
+        foreach($students as $row) {
+            fputcsv($handle, array($row->students->student_id, $row->students->name, $row->students->last_name, $row->students->email));
+        }
+        fclose($handle);
+        $headers = array(
+            'Content-Type' => 'text/csv',
+        );
+        return Response::download($filename, 'pendings.csv', $headers);
     }
 
 }

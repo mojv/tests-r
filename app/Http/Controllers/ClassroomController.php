@@ -598,10 +598,11 @@ class ClassroomController extends Controller
         return Response::download($filename, 'pendings.csv', $headers);
     }
 
-    public function classHistory($id){
+    public function classHistory(Request $data, $id){
+        $q=$data->input('q');
         $classe = User::find(Auth::id())->classes()->find($id);
         $tests = Test::where('class_id', $classe->id)->get();
-        $avgs=[]; $quartiles=[]; $testsNames=[];
+        $avgs=[]; $quartiles=[]; $testsNames=[]; $testIds=[];
         foreach ($tests as $test) {
           $quartile=[];
           $total=Result::where('test_id', $test->id)->count('grade');
@@ -613,8 +614,90 @@ class ClassroomController extends Controller
           array_push($quartile,round(Result::where('test_id', $test->id)->max('grade'),2));
           array_push($quartiles, $quartile);
           array_push($testsNames, $test->name);
+          array_push($testIds, $test->id);
         }
-        return view('board.classHistory', compact('avgs', 'quartiles', 'testsNames'));
+        if (!empty($q)){
+            $students = Classroom::where('class_id', $classe->id)
+              ->join('students', 'classrooms.student_id', "=", 'students.id')
+              ->where(function($query) use ($q) {
+                  $query->where('students.name', 'LIKE', '%'.$q.'%')
+                    ->orWhere('students.last_name', 'LIKE', '%'.$q.'%')
+                    ->orWhere('students.email', 'LIKE', '%'.$q.'%')
+                    ->orWhere('students.student_id', 'LIKE', '%'.$q.'%');
+                  })->paginate(10);
+        }
+        else{
+            $students = Classroom::where('class_id', $classe->id)
+            ->join('students', 'classrooms.student_id', "=", 'students.id')
+            ->paginate(10);
+        }
+        foreach ($students as $student) {
+           $grades = Result::select('test_id', 'grade')
+              ->where('student_id', $student->id)
+              ->whereIn('test_id', $testIds)
+              ->get();
+           $student->setAttribute('grades', $grades);
+        }
+        //return $students;
+        return view('board.classHistory', compact('avgs', 'quartiles', 'testsNames', 'students', 'id', 'results', 'tests'));
     }
 
+    public function downloadClassHistory( $id){
+        $classe = User::find(Auth::id())->classes()->find($id);
+        $tests = Test::where('class_id', $classe->id)->get();
+        $avgs=[]; $quartiles=[]; $testsNames=[]; $testIds=[];
+        $testIds=[];
+        foreach ($tests as $test) {
+          array_push($testIds, $test->id);
+        }
+        $students = Classroom::where('class_id', $classe->id)
+          ->join('students', 'classrooms.student_id', "=", 'students.id')
+          ->get();
+        $filename = "pendings.csv";
+        $handle = fopen($filename, 'w+');
+        $titles=['ID','Photo	Nombre',	'Apellido',	'E-mail'];
+        foreach ($tests as $test){
+          array_push($titles, $test->name);
+        }
+        array_push($titles, 'Final Grade');
+        fputcsv($handle, $titles);
+        foreach ($students as $student) {
+           $row = [$student->student_id, $student->name, $student->last_name, $student->email];
+           $grades = Result::select('test_id', 'grade')
+              ->where('student_id', $student->id)
+              ->whereIn('test_id', $testIds)
+          ->get();
+          $final=0; $points=0; $temp =0; $grades2=[];
+          foreach ($tests as $test){
+            foreach ($grades as $grade){
+              if ($grade->test_id == $test->id){
+                  $temp =1;
+                  array_push($row, $grade->grade);
+                  $final=$final+($grade->grade*$test->test_weight);
+                  $points=$points+$test->test_weight;
+                  break;
+              }else{
+                $temp =0;
+              }
+            }
+            if ($temp==0){
+                if(isset($grade)){
+                  array_push($row, 0);
+                  $final=$final+($grade->grade*$test->test_weight);
+                  $points=$points+$test->test_weight;
+                }
+            }
+          }
+          if(isset($grade)){
+            $final=$final/$points;
+          }
+          array_push($row, $final);
+          fputcsv($handle, $row);
+        }
+        fclose($handle);
+        $headers = array(
+            'Content-Type' => 'text/csv',
+        );
+        return Response::download($filename, 'results.csv', $headers);
+    }
 }

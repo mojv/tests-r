@@ -2,7 +2,6 @@
 
 @section('content')
 
-
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
       <div class="dashboard_graph">
@@ -18,9 +17,140 @@
         <div class="clearfix"></div>
       </div>
     </div>
-
   </div>
 
+  <div class="page-title">
+    <div class="title_left">
+      <h3>{{ __('messages.pendingEvaluation') }}</h3>
+    </div>
+
+    <div class="title_right">
+      <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+        <form action="{{route('classHistory', ['class' => $id])}}" method="get">
+          <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="{{ __('messages.search') }}...">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="submit">Go!</button>
+            </span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="clearfix"></div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <a href="{{route('downloadClassHistory', ['class' => $id])}}"><button type="button" class="btn btn-success btn-sm" class="btn btn-primary" data-toggle="modal" data-target=".createClass-modal">{{ __('messages.donwloadCSV') }}</button></a>
+          <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+
+          <!-- start classrooms list -->
+          <div class="col-md-12 col-sm-12 col-xs-12 text-center">
+            {{ $students->appends(Request::only('q'))->links() }}
+          </div>
+          <table class="table table-striped projects">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>{{ __('messages.photo') }}</th>
+                <th>{{ __('messages.name') }}</th>
+                <th>{{ __('messages.lastName') }}</th>
+                <th>{{ __('messages.eMailAddress') }}
+                @foreach ($tests as $test)
+                 <th>{{ $test->name}} {{ __('messages.weight') }}:{{ $test->test_weight}}</th>
+                @endforeach
+                <th>{{ __('messages.finalGrade') }}</th>
+                <th>Hist</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach ($students as $student)
+              <tr>
+                <td>{{$student->student_id}}</td>
+                <td>
+                  <ul class="list-inline">
+                    @if (!empty($student->photo))
+                    <li>
+                      <img  src="{{ asset('storage') }}\{{ $student->photo }}" height="32" value="{{$test->id}}" >
+                    </li>
+                    @else
+                    <li>
+                      <img  src="{{ asset('images\user.png') }}" height="32">
+                    </li>
+                    @endif
+                  </ul>
+                </td>
+                <td>{{$student->name}}</td>
+                <td>{{$student->last_name}}</td>
+                <td>{{$student->email}}</td>
+                <?php $final=0; $points=0; $temp =0; $grades2=[];?>
+                @foreach ($tests as $test)
+                  @foreach ($student->grades as $grade)
+                    @if ($grade->test_id == $test->id)
+                      <td align="center">{{$grade->grade}}%</td>
+                      <?php
+                        $temp =1;
+                        array_push($grades2, $grade->grade);
+                        $final=$final+($grade->grade*$test->test_weight);
+                        $points=$points+$test->test_weight;
+                        break;
+                      ?>
+                    @else
+                      <?php $temp =0; ?>
+                    @endif
+                  @endforeach
+                  @if ($temp==0)
+                    <td align="center">0%</td>
+                    <?php
+                      if(isset($grade)){
+                        array_push($grades2, 0);
+                        $final=$final+($grade->grade*$test->test_weight);
+                        $points=$points+$test->test_weight;
+                      }
+                    ?>
+                  @endif
+                @endforeach
+                <?php
+                  if(isset($grade)){
+                    $final=$final/$points;
+                  }
+                ?>
+                <td>{{$final}}%</td>
+                <td> <a onclick="setTimeout(function(){ setLine(<?php echo json_encode($grades2) ?>); }, 300)" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><i class="fa fa-area-chart"></i></a></td>
+                <td></td>
+              </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Large modal -->
+
+     <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+       <div class="modal-dialog modal-lg">
+         <div class="modal-content">
+
+           <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+             </button>
+             <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+           </div>
+           <div class="modal-body">
+              <div id="line-chart" style="height:600px;"></div>
+           </div>
+         </div>
+       </div>
+     </div>
+
+     <!-- /modals -->
 @endsection
 
 
@@ -33,8 +163,8 @@
 <script src="{{ asset('vendors/echarts/map/js/world.js') }}"></script>
 
 <script>
-var echartBar = echarts.init(document.getElementById('bar-chart'));
 
+var echartBar = echarts.init(document.getElementById('bar-chart'));
 echartBar.setOption({
 
     tooltip : {
@@ -44,8 +174,8 @@ echartBar.setOption({
             for (var i = params.length - 1; i >= 0; i--) {
                 if (params[i].value instanceof Array) {
                     res += '<br/>' + params[i].seriesName;
-                    res += '<br/>  开盘 : ' + params[i].value[0] + '  最高 : ' + params[i].value[3];
-                    res += '<br/>  收盘 : ' + params[i].value[1] + '  最低 : ' + params[i].value[2];
+                    res += '<br/>  Q1 : ' + params[i].value[0] + '  MIN : ' + params[i].value[2];
+                    res += '<br/>  Q3 : ' + params[i].value[1] + '  MAX : ' + params[i].value[3];
                 }
                 else {
                     res += '<br/>' + params[i].seriesName;
@@ -56,7 +186,7 @@ echartBar.setOption({
         }
     },
     legend: {
-        data:['上证指数','成交金额(万)']
+        data:['Boxplots','Averages']
     },
     toolbox: {
         show : true,
@@ -90,24 +220,12 @@ echartBar.setOption({
             scale:true,
             splitNumber: 5,
             boundaryGap: [0.01, 0.01]
-        },
-        {
-            type : 'value',
-            scale:true,
-            splitNumber: 5,
-            boundaryGap: [0.05, 0.05],
-            axisLabel: {
-                formatter: function (v) {
-                    return Math.round(v/10000) + ' 万'
-                }
-            }
         }
     ],
     series : [
         {
-            name:'成交金额(万)',
+            name:'Average',
             type:'line',
-            yAxisIndex: 1,
             symbol: 'none',
             data:<?php echo json_encode($avgs) ?>,
             markPoint : {
@@ -119,14 +237,14 @@ echartBar.setOption({
                             show:true,
                             position:'top',
                             formatter: function (param) {
-                                return Math.round(param.value/10000) + ' 万'
+                                return Math.round(param.value)
                             }
                         }
                     }
                 },
                 data : [
-                    {type : 'max', name: '最大值', symbolSize:5},
-                    {type : 'min', name: '最小值', symbolSize:5}
+                    {type : 'max', name: 'max', symbolSize:5},
+                    {type : 'min', name: 'min', symbolSize:5}
                 ]
             },
             markLine : {
@@ -137,23 +255,75 @@ echartBar.setOption({
                         label : {
                             show:true,
                             formatter: function (param) {
-                                return Math.round(param.value/10000) + ' 万'
+                                return Math.round(param.value)
                             }
                         }
                     }
                 },
                 data : [
-                    {type : 'average', name: '平均值'}
+                    {type : 'average', name: 'avg'}
                 ]
             }
         },
         {
-            name:'上证指数',
+            name:'Quartiles',
             type:'k',
             data: <?php echo json_encode($quartiles) ?>
         }
     ]
 });
+
+function setLine(value){
+  var line = echarts.init(document.getElementById('line-chart'));
+  line.setOption({
+
+     tooltip : {
+         trigger: 'axis'
+     },
+     legend: {
+         data:['Student','Average']
+     },
+     toolbox: {
+         show : true,
+         feature : {
+             mark : {show: true},
+             dataView : {show: true, readOnly: false},
+             magicType : {show: true, type: ['line', 'bar']},
+             restore : {show: true},
+             saveAsImage : {show: true}
+         }
+     },
+     calculable : true,
+     xAxis : [
+         {
+             type : 'category',
+             boundaryGap : false,
+             data : <?php echo json_encode($testsNames) ?>
+         }
+     ],
+     yAxis : [
+         {
+             type : 'value',
+             axisLabel : {
+                 formatter: '{value}%'
+             }
+         }
+     ],
+     series : [
+         {
+             name:'Student',
+             type:'line',
+             data:value,
+         },
+         {
+             name:'Average',
+             type:'line',
+             data:<?php echo json_encode($avgs) ?>,
+         }
+     ]
+  });
+}
+
 </script>
 
 @endsection

@@ -194,5 +194,6 @@ return [
      'deleteTestWarning' => 'If you delete this Test, It will also be removed all the result attached to it, an all records will be destroyed, ARE YOU SURE YOU WANT TO DELETE THIS TESTS?',
      'pendingEvaluation' => 'Pending for Evaluation',
      'donwloadCSV' => 'Download as CSV',
-
+     'finalGrade' => 'Final Grade',
+     'weight' => 'Weight',
 ];

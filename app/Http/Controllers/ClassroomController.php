@@ -10,7 +10,7 @@ use App\Classroom;
 use App\Test;
 use App\Form;
 use App\Formcoord;
-use App\ShareForm;
+use App\Shareform;
 use App\Result;
 use Auth;
 use Illuminate\Validation\Rule;

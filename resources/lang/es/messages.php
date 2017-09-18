@@ -120,7 +120,7 @@ return [
     'idField' => 'Este es un campo ID?',
     'img' => 'IMG',
     'gradeImage' => 'Calificar Imagenes',
-
+    //------------------------------
     'concatenate' => 'Concatenar',
     'classroom' => 'Aula',
     'myClassrooms' => 'Mis Aulas',
@@ -196,9 +196,7 @@ return [
     'donwloadCSV' => 'Descargar como CSV',
     'finalGrade' => 'Nota Final',
     'weight' => 'Peso',
-
-
-
+    'studentsGrades' => 'Notas de los Estudiantes',
 
 
 ];

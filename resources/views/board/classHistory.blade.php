@@ -21,7 +21,7 @@
 
   <div class="page-title">
     <div class="title_left">
-      <h3>{{ __('messages.pendingEvaluation') }}</h3>
+      <h3>{{ __('messages.studentsGrades') }}</h3>
     </div>
 
     <div class="title_right">
@@ -159,31 +159,29 @@
 <!-- FastClick -->
 <script src="{{ asset('vendors/fastclick/lib/fastclick.js') }}"></script>
 <!-- ECharts -->
-<script src="{{ asset('vendors/echarts/dist/echarts.js') }}"></script>
+<script src="{{ asset('vendors/echarts/dist/echarts.min.js') }}"></script>
 <script src="{{ asset('vendors/echarts/map/js/world.js') }}"></script>
 
 <script>
 
 var echartBar = echarts.init(document.getElementById('bar-chart'));
-echartBar.setOption({
 
+var dataq = echarts.dataTool.prepareBoxplotData([
+  @foreach($dataq as $dat)
+    <?php echo json_encode($dat) ?>,
+  @endforeach
+]);
+
+echartBar.setOption({
+    title: [
+          {
+              text: 'Max: Q3 + 1.5 * IRQ \nMin: Q1 - 1.5 * IRQ',
+              left: '10%',
+
+          }
+    ],
     tooltip : {
         trigger: 'axis',
-        formatter: function (params) {
-            var res = params[0].name;
-            for (var i = params.length - 1; i >= 0; i--) {
-                if (params[i].value instanceof Array) {
-                    res += '<br/>' + params[i].seriesName;
-                    res += '<br/>  Q1 : ' + params[i].value[0] + '  MIN : ' + params[i].value[2];
-                    res += '<br/>  Q3 : ' + params[i].value[1] + '  MAX : ' + params[i].value[3];
-                }
-                else {
-                    res += '<br/>' + params[i].seriesName;
-                    res += ' : ' + params[i].value;
-                }
-            }
-            return res;
-        }
     },
     legend: {
         data:['Boxplots','Averages']
@@ -192,17 +190,17 @@ echartBar.setOption({
         show : true,
         feature : {
             mark : {show: true},
-            dataZoom : {show: true},
-            dataView : {show: true, readOnly: false},
-            magicType: {show: true, type: ['line', 'bar']},
-            restore : {show: true},
-            saveAsImage : {show: true}
+            dataZoom : {show: true, title: "Zoom"},
+            dataView : {show: true, readOnly: false, title: "Data View"},
+            magicType: {show: false, type: ['line', 'bar']},
+            restore : {show: true, title: "Restore"},
+            saveAsImage : {show: true, title: "Save"}
         }
     },
     dataZoom : {
         show : true,
         realtime: true,
-        start : 50,
+        start : 0,
         end : 100
     },
     xAxis : [
@@ -266,9 +264,26 @@ echartBar.setOption({
             }
         },
         {
-            name:'Quartiles',
-            type:'k',
-            data: <?php echo json_encode($quartiles) ?>
+            name: 'boxplot',
+            type: 'boxplot',
+            data: dataq.boxData,
+            tooltip: {
+                formatter: function (param) {
+                    return [
+                        'Experiment ' + param.name + ': ',
+                        'Min: ' + param.data[4],
+                        'Q3: ' + param.data[3],
+                        'median: ' + param.data[2],
+                        'Q1: ' + param.data[1],
+                        'Max: ' + param.data[0]
+                    ].join('<br/>')
+                }
+            }
+        },
+        {
+            name: 'outlier',
+            type: 'scatter',
+            data: dataq.outliers
         }
     ]
 });
@@ -287,10 +302,10 @@ function setLine(value){
          show : true,
          feature : {
              mark : {show: true},
-             dataView : {show: true, readOnly: false},
-             magicType : {show: true, type: ['line', 'bar']},
-             restore : {show: true},
-             saveAsImage : {show: true}
+             dataView : {show: true, readOnly: false, title: "Data View"},
+             magicType : {show: true, type: ['line', 'bar'], title: {line: 'Line',bar: 'Bar'}},
+             restore : {show: true, title: "Restore"},
+             saveAsImage : {show: true, title: "Save"}
          }
      },
      calculable : true,

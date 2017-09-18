@@ -126,7 +126,7 @@ return [
      'myClassrooms' => 'My Classrooms',
      'myStudents' => 'My Students',
      'createStudent' => 'Create Student',
-     'uploadCsvMsg' => 'If you prefer, you can uplad a CSV file to create all of your students in a single step',
+     'uploadCsvMsg' => 'If you prefer, you can upload a CSV file to create all of your students in a single step',
      'uploadCsv' => 'Upload CSV',
      'createStudent' => 'Create Student',
      'updateStudent' => 'Update Student',
@@ -196,4 +196,5 @@ return [
      'donwloadCSV' => 'Download as CSV',
      'finalGrade' => 'Final Grade',
      'weight' => 'Weight',
+     'studentsGrades' => 'Students Grades',
 ];

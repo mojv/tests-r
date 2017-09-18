@@ -602,9 +602,10 @@ class ClassroomController extends Controller
         $q=$data->input('q');
         $classe = User::find(Auth::id())->classes()->find($id);
         $tests = Test::where('class_id', $classe->id)->get();
-        $avgs=[]; $quartiles=[]; $testsNames=[]; $testIds=[];
+        $avgs=[]; $quartiles=[]; $testsNames=[]; $testIds=[]; $dataq=[];
         foreach ($tests as $test) {
           $quartile=[];
+          array_push($dataq, Result::where('test_id', $test->id)->pluck('grade'));
           $total=Result::where('test_id', $test->id)->count('grade');
           $middle=ceil($total/2);
           array_push($avgs,round(Result::where('test_id', $test->id)->avg('grade'),2));
@@ -639,7 +640,7 @@ class ClassroomController extends Controller
            $student->setAttribute('grades', $grades);
         }
         //return $students;
-        return view('board.classHistory', compact('avgs', 'quartiles', 'testsNames', 'students', 'id', 'results', 'tests'));
+        return view('board.classHistory', compact('avgs', 'quartiles', 'testsNames', 'students', 'id', 'results', 'tests', 'dataq'));
     }
 
     public function downloadClassHistory( $id){

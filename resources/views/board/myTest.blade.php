@@ -236,7 +236,7 @@
 <!-- FastClick -->
 <script src="{{ asset('vendors/fastclick/lib/fastclick.js') }}"></script>
 <!-- ECharts -->
-<script src="{{ asset('vendors/echarts/dist/echarts.js') }}"></script>
+<script src="{{ asset('vendors/echarts/dist/echarts.min.js') }}"></script>
 <script src="{{ asset('vendors/echarts/map/js/world.js') }}"></script>
 
 <script>

@@ -125,6 +125,9 @@
             <a id="save"  class="btn btn-app">
               <i class="fa fa-save"></i> {{ __('messages.saveForm') }}
             </a>
+            <a id="threshold"  class="btn btn-app">
+              <i class="fa fa-sliders"></i> {{ __('messages.threshold') }}
+            </a>
           </div>
         </div>
         <div class="x_content row" hidden id="cancel">
@@ -132,6 +135,9 @@
             <div class="btn-group">
               <a id="cancel"  class="btn btn-app cancel">
                 <i class="fa fa-close"></i> {{ __('messages.exit') }}
+              </a>
+              <a id="readcorners"  class="btn btn-app" hidden>
+                <i class="fa fa-retweet"></i> {{ __('messages.readcorners') }}
               </a>
             </div>
           </div>
@@ -149,6 +155,10 @@
             <input type="number" min="0" class="form-control has-feedback-right" id="radius">
             <span class="fa fa-arrow-circle-o-up form-control-feedback right" aria-hidden="true"></span>
             <label for="ex3">{{ __('messages.markRadius') }}</label>
+          </div>
+          <div class="col-md-2 col-sm-2 col-xs-2 form-group has-feedback" align="center" id="thresholdbar" hidden>
+            <input type="range" min="1" max="255" step="1" value="128" id="thresholdinput">
+            <label for="ex3" id="inputThresholdValue"></label>
           </div>
         </div>
         </div>
@@ -332,6 +342,8 @@
             $("#markwidth").hide();
             $("#markheight").hide();
             $("#markradius").hide();
+            $("#readcorners").hide();
+            $("#thresholdbar").hide();
         });
         $('#modalok').submit(function(){;
             $('#myModal2').modal('hide');
@@ -418,6 +430,32 @@
             boxes[1].r = radius;
             invalidate();
         });
+        $('#threshold').click(function(){
+            $('#commands').hide();
+            $('#cancel').show();
+            $("#readcorners").show();
+            $("#thresholdbar").show();
+        });
+        $('#thresholdinput').change(function(){
+            tempCanvas = document.createElement("canvas")
+            tempCanvas.width = img.width;
+            tempCanvas.height = img.height;
+            tempCtx = tempCanvas.getContext("2d");
+            tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+            tempCtx.drawImage(img, 0, 0, img.width, img.height);
+            tobwimg=tempCtx.getImageData(0,0,tempCanvas.width, tempCanvas.height);
+            threshold=$('#thresholdinput').val();
+            $('#inputThresholdValue').html(threshold);
+            toblackWhite(tobwimg, ctx);
+        });
+        $('#readcorners').click(function(){
+          set_sheet_corners();
+          $('#cancel').hide();
+        });
+        $('#inputThresholdValue').html(threshold);
+        $('#thresholdinput').val(threshold);
+        $("#readcorners").hide();
+        $("#thresholdbar").hide();        
         var input = document.getElementById('file_input');
         input.addEventListener('change', handleFiles);
         PDFJS.disableWorker = true;

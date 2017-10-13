@@ -9,6 +9,7 @@ var omr_titles=[];
 var img_titles=[];
 var img_grades_temp=[];
 var tr_img = document.createElement('tr');
+var threshold  = 147;
 
     function rgbToHex(r, g, b) {
        if (r > 255 || g > 255 || b > 255){
@@ -17,8 +18,24 @@ var tr_img = document.createElement('tr');
        return ((r << 16) | (g << 8) | b).toString(16);
     }
 
+    function toblackWhite(img_temp,ctx_temp) {
+      var pixels  = img_temp.data;
+        for (var i = 0, n = pixels.length; i < n; i += 4) {
+            if (((pixels[i] + pixels[i+1] + pixels[i+2])/3) <= threshold){
+               pixels[i  ] = 0;        // red
+               pixels[i+1] = 0;        // green
+               pixels[i+2] = 0;        // blue
+            }else{
+               pixels[i  ] = 255;        // red
+               pixels[i+1] = 255;        // green
+               pixels[i+2] = 255;        // blue
+            }
+        }
+        ctx_temp.putImageData(img_temp, 0, 0);
+      }
+
     function my_isblack(data,pos){
-      	if(data[pos]<50 && data[pos+1]<50 && data[pos+2]<50){
+      	if(((data[pos]+data[pos+1]+data[pos+2])/3)<threshold){
       		return 1;
       	}
       	else{
@@ -274,9 +291,7 @@ var tr_img = document.createElement('tr');
       if (file = document.getElementById('pdf').files[0]) {
         fileReader = new FileReader();
         fileReader.onload = function(ev) {
-          console.log(ev);
           PDFJS.getDocument(fileReader.result).then(function getPdfHelloWorld(pdf) {
-            console.log(pdf)
             for (i = 1; i <= pdf.numPages; i++){
                 pdf.getPage(i).then(function getPageHelloWorld(page) {
                     var scale = 3;
@@ -303,7 +318,7 @@ var tr_img = document.createElement('tr');
 
         for (var i = 0; i < files.length; ++i) {
             img.onload = function(){
-                sheet_corners()
+                set_sheet_corners()
             };
             img.src = URL.createObjectURL(e.target.files[i]);
         }
@@ -313,9 +328,7 @@ var tr_img = document.createElement('tr');
       if (file = document.getElementById('pdf').files[0]) {
         fileReader = new FileReader();
         fileReader.onload = function(ev) {
-          console.log(ev);
           PDFJS.getDocument(fileReader.result).then(function getPdfHelloWorld(pdf) {
-            console.log(pdf)
             pdf.getPage(1).then(function getPageHelloWorld(page) {
               var scale = 3;
               var viewport = page.getViewport(scale);
@@ -327,7 +340,7 @@ var tr_img = document.createElement('tr');
               task.promise.then(function(){
                   srcs = canvas.toDataURL('image/png');
                   img.src = srcs;
-                  setTimeout(function(){ sheet_corners(); },500);
+                  setTimeout(function(){ set_sheet_corners(); },500);
               });
             });
           }, function(error){
@@ -338,76 +351,70 @@ var tr_img = document.createElement('tr');
       }
     }
 
-    function sheet_corners(){
-        $('#file_upload').hide();
-        $('#commands').show();
-        ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0, img.width, img.height);
-        var x11=(1300/1660)*img.width;
-        var v1 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x11,(20/2340)*img.height,(9/2340)*img.height);
-        var y21=(150/2340)*img.height;
-        var h1 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y21,(20/1660)*img.width,(9/1660)*img.width);
-        var x12=(1500/1660)*img.width;
-        var v2 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x12,(20/2340)*img.height,(9/2340)*img.height);
-        var y22=(350/2340)*img.height;
-        var h2 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y22,(20/1660)*img.width,(9/1660)*img.width);
-        var x13=(1300/1660)*img.width;
-        var v3 = verticalAxes((1940/2340)*img.height,(2320/2340)*img.height,x13,(20/2340)*img.height,(9/2340)*img.height);
-        var y23=(1920/2340)*img.height;
-        var h3 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y23,(20/1660)*img.width,(9/1660)*img.width);
-        var x14=(1500/1660)*img.width;
-        var v4 = verticalAxes((1940/2340)*img.height,(2300/2340)*img.height,x14,(20/2340)*img.height,(9/2340)*img.height);
-        var y24=(2120/2340)*img.height;
-        var h4 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y24,(20/1660)*img.width,(9/1660)*img.width);
-        var i1 = intersection(v1[0],v2[0],x11,x12,y21,y23,h1[0],h3[0]);
-        var i2 = intersection(v1[0],v2[0],x11,x12,y22,y24,h2[(h2.length)-1],h4[(h4.length)-1]);
-        var i3 = intersection(v3[(v3.length)-1],v4[(v4.length)-1],x13,x14,y23,y21,h3[0],h1[0]);
-        var i4 = intersection(v3[(v3.length)-1],v4[(v4.length)-1],x13,x14,y24,y22,h4[(h4.length)-1],h2[(h2.length)-1]);
+    function set_sheet_corners(){
+      $('#file_upload').hide();
+      $('#commands').show();
+      ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0, img.width, img.height);
+      var x11=(260/1660)*img.width;
+      var v1 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x11,(20/2340)*img.height,(7/2340)*img.height);
+      var y21=(250/2340)*img.height;
+      var h1 = horizontalAxes((20/1660)*img.width,(400/1660)*img.width,y21,(20/1660)*img.width,(7/1660)*img.width);
+      var x12=(1380/1660)*img.width;
+      var v2 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x12,(20/2340)*img.height,(7/2340)*img.height);
+      var x13=(260/1660)*img.width;
+      var v3 = verticalAxes((1940/2340)*img.height,(2320/2340)*img.height,x13,(20/2340)*img.height,(7/2340)*img.height);
+      var y23=(2070/2340)*img.height;
+      var h3 = horizontalAxes((20/1660)*img.width,(400/1660)*img.width,y23,(20/1660)*img.width,(7/1660)*img.width);
+      var x14=(1380/1660)*img.width;
+      var v4 = verticalAxes((1940/2340)*img.height,(2300/2340)*img.height,x14,(20/2340)*img.height,(7/2340)*img.height);
+      var i1 = intersection(v1[0],v2[0],x11,x12,y21,y23,h1[0],h3[0]);
+      var i3 = intersection(v3[(v3.length)-1],v4[(v4.length-1)],x13,x14,y23,y21,h3[0],h1[0]);
 
-        degrees = -Math.atan(-1*(i4[0]-i2[0])/(i4[1]-i2[1]));
-        //console.log(i3[0] + "-" + i1[0] + ")/(" + i3[1] + "-" + i1[1] + ")");
-        drawRotated();
+      degrees = -Math.atan(-1*(i3[0]-i1[0])/(i3[1]-i1[1]));
+      //console.log(i3[0] + "-" + i1[0] + ")/(" + i3[1] + "-" + i1[1] + ")");
+      drawRotated();
 
-        var x11=(1300/1660)*img.width;
-        var v1 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x11,(20/2340)*img.height,(9/2340)*img.height);
-        var y21=(150/2340)*img.height;
-        var h1 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y21,(20/1660)*img.width,(9/1660)*img.width);
-        var x12=(1500/1660)*img.width;
-        var v2 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x12,(20/2340)*img.height,(9/2340)*img.height);
-        var y22=(350/2340)*img.height;
-        var h2 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y22,(20/1660)*img.width,(9/1660)*img.width);
-        var x13=(1300/1660)*img.width;
-        var v3 = verticalAxes((1940/2340)*img.height,(2320/2340)*img.height,x13,(20/2340)*img.height,(9/2340)*img.height);
-        var y23=(1920/2340)*img.height;
-        var h3 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y23,(20/1660)*img.width,(9/1660)*img.width);
-        var x14=(1500/1660)*img.width;
-        var v4 = verticalAxes((1940/2340)*img.height,(2300/2340)*img.height,x14,(20/2340)*img.height,(9/2340)*img.height);
-        var y24=(2120/2340)*img.height;
-        var h4 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y24,(20/1660)*img.width,(9/1660)*img.width);
-        var i1 = intersection(v1[0],v2[0],x11,x12,y21,y23,h1[0],h3[0]);
-        var i2 = intersection(v1[0],v2[0],x11,x12,y22,y24,h2[(h2.length)-1],h4[(h4.length)-1]);
-        var i3 = intersection(v3[(v3.length)-1],v4[(v4.length)-1],x13,x14,y23,y21,h3[0],h1[0]);
-        var i4 = intersection(v3[(v3.length)-1],v4[(v4.length)-1],x13,x14,y24,y22,h4[(h4.length)-1],h2[(h2.length)-1]);
-        sheet_corners = new Path(img.width,img.height, "red", 1, ctx);
-        sheet_corners.moveTo(i1[0], i1[1]);
-        sheet_corners.lineTo(i2[0], i2[1]);
-        sheet_corners.lineTo(i4[0], i4[1]);
-        sheet_corners.lineTo(i3[0], i3[1]);
-        sheet_corners.lineTo(i1[0], i1[1]);
-        sheet_corners.stroke();
-        esq=i2;
-        dx = i4[1] - i2[1];
-        dy = i4[1] - i2[1];
-        width = Math.round((20/1660)*img.width);
-        height = Math.round((20/2340)*img.height);
-        radius = Math.round((10/1660)*img.width);
-        $("#width").val(width);
-        $("#height").val(height);
-        $("#radius").val(radius);
-        init();
+      var x11=(260/1660)*img.width;
+      var v1 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x11,(20/2340)*img.height,(7/2340)*img.height);
+      var y21=(250/2340)*img.height;
+      var h1 = horizontalAxes((20/1660)*img.width,(400/1660)*img.width,y21,(20/1660)*img.width,(7/1660)*img.width);
+      var x12=(1380/1660)*img.width;
+      var v2 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x12,(20/2340)*img.height,(7/2340)*img.height);
+      var y22=(250/2340)*img.height;
+      var h2 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y22,(20/1660)*img.width,(7/1660)*img.width);
+      var x13=(260/1660)*img.width;
+      var v3 = verticalAxes((1940/2340)*img.height,(2320/2340)*img.height,x13,(20/2340)*img.height,(7/2340)*img.height);
+      var y23=(2070/2340)*img.height;
+      var h3 = horizontalAxes((20/1660)*img.width,(400/1660)*img.width,y23,(20/1660)*img.width,(7/1660)*img.width);
+      var x14=(1380/1660)*img.width;
+      var v4 = verticalAxes((1940/2340)*img.height,(2300/2340)*img.height,x14,(20/2340)*img.height,(7/2340)*img.height);
+      var y24=(2070/2340)*img.height;
+      var h4 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y24,(20/1660)*img.width,(7/1660)*img.width);
+      var i1 = intersection(v1[0],v2[0],x11,x12,y21,y23,h1[0],h3[0]);
+      var i2 = intersection(v1[0],v2[0],x11,x12,y22,y24,h2[(h2.length)-1],h4[(h4.length)-1]);
+      var i3 = intersection(v3[(v3.length)-1],v4[(v4.length)-1],x13,x14,y23,y21,h3[0],h1[0]);
+      var i4 = intersection(v3[(v3.length)-1],v4[(v4.length)-1],x13,x14,y24,y22,h4[(h4.length)-1],h2[(h2.length)-1]);
+      sheet_corners = new Path(img.width,img.height, "red", 1, ctx);
+      sheet_corners.moveTo(i1[0], i1[1]);
+      sheet_corners.lineTo(i2[0], i2[1]);
+      sheet_corners.lineTo(i4[0], i4[1]);
+      sheet_corners.lineTo(i3[0], i3[1]);
+      sheet_corners.lineTo(i1[0], i1[1]);
+      sheet_corners.stroke();
+      esq=i1;
+      dx = i2[0] - i1[0];
+      dy = i3[1] - i1[1];
+      width = Math.round((20/1660)*img.width);
+      height = Math.round((20/2340)*img.height);
+      radius = Math.round((10/1660)*img.width);
+      $("#width").val(width);
+      $("#height").val(height);
+      $("#radius").val(radius);
+      init();
     }
 
     function Path(maxWidth, maxHeight, color, linewidth, drawingContext) {
@@ -1252,6 +1259,7 @@ var tr_img = document.createElement('tr');
     }
 
     function read() {
+        $('#threshold_canvas').hide();
         $('#redForm_run').hide();
         $('#results').show();
         imgs = document.getElementsByName('forms');
@@ -1270,76 +1278,70 @@ var tr_img = document.createElement('tr');
     }
 
     function prepare_sheet(i, canvas, img, relativeCoord2){
-        ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        preview.style.width = img.width + "px";
-        preview.style.height = img.height + "px";
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0, img.width, img.height);
+      ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      preview.style.width = img.width + "px";
+      preview.style.height = img.height + "px";
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0, img.width, img.height);
 
-        var x11=(1300/1660)*img.width;
-        var v1 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x11,(20/2340)*img.height,(9/2340)*img.height);
-        var y21=(150/2340)*img.height;
-        var h1 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y21,(20/1660)*img.width,(9/1660)*img.width);
-        var x12=(1500/1660)*img.width;
-        var v2 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x12,(20/2340)*img.height,(9/2340)*img.height);
-        var y22=(350/2340)*img.height;
-        var h2 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y22,(20/1660)*img.width,(9/1660)*img.width);
-        var x13=(1300/1660)*img.width;
-        var v3 = verticalAxes((1940/2340)*img.height,(2320/2340)*img.height,x13,(20/2340)*img.height,(9/2340)*img.height);
-        var y23=(1920/2340)*img.height;
-        var h3 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y23,(20/1660)*img.width,(9/1660)*img.width);
-        var x14=(1500/1660)*img.width;
-        var v4 = verticalAxes((1940/2340)*img.height,(2300/2340)*img.height,x14,(20/2340)*img.height,(9/2340)*img.height);
-        var y24=(2120/2340)*img.height;
-        var h4 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y24,(20/1660)*img.width,(9/1660)*img.width);
-        var i1 = intersection(v1[0],v2[0],x11,x12,y21,y23,h1[0],h3[0]);
-        var i2 = intersection(v1[0],v2[0],x11,x12,y22,y24,h2[(h2.length)-1],h4[(h4.length)-1]);
-        var i3 = intersection(v3[(v3.length)-1],v4[(v4.length)-1],x13,x14,y23,y21,h3[0],h1[0]);
-        var i4 = intersection(v3[(v3.length)-1],v4[(v4.length)-1],x13,x14,y24,y22,h4[(h4.length)-1],h2[(h2.length)-1]);
+      var x11=(260/1660)*img.width;
+      var v1 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x11,(20/2340)*img.height,(7/2340)*img.height);
+      var y21=(250/2340)*img.height;
+      var h1 = horizontalAxes((20/1660)*img.width,(400/1660)*img.width,y21,(20/1660)*img.width,(7/1660)*img.width);
+      var x12=(1380/1660)*img.width;
+      var v2 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x12,(20/2340)*img.height,(7/2340)*img.height);
+      var x13=(260/1660)*img.width;
+      var v3 = verticalAxes((1940/2340)*img.height,(2320/2340)*img.height,x13,(20/2340)*img.height,(7/2340)*img.height);
+      var y23=(2070/2340)*img.height;
+      var h3 = horizontalAxes((20/1660)*img.width,(400/1660)*img.width,y23,(20/1660)*img.width,(7/1660)*img.width);
+      var x14=(1380/1660)*img.width;
+      var v4 = verticalAxes((1940/2340)*img.height,(2300/2340)*img.height,x14,(20/2340)*img.height,(7/2340)*img.height);
+      var i1 = intersection(v1[0],v2[0],x11,x12,y21,y23,h1[0],h3[0]);
+      var i3 = intersection(v3[(v3.length)-1],v4[(v4.length-1)],x13,x14,y23,y21,h3[0],h1[0]);
 
-        degrees = -Math.atan(-1*(i4[0]-i2[0])/(i4[1]-i2[1]));
-        drawRotated2(img,degrees);
+      degrees = -Math.atan(-1*(i3[0]-i1[0])/(i3[1]-i1[1]));
+      drawRotated2(img,degrees);
 
-        var x11=(1300/1660)*img.width;
-        var v1 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x11,(20/2340)*img.height,(9/2340)*img.height);
-        var y21=(150/2340)*img.height;
-        var h1 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y21,(20/1660)*img.width,(9/1660)*img.width);
-        var x12=(1500/1660)*img.width;
-        var v2 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x12,(20/2340)*img.height,(9/2340)*img.height);
-        var y22=(350/2340)*img.height;
-        var h2 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y22,(20/1660)*img.width,(9/1660)*img.width);
-        var x13=(1300/1660)*img.width;
-        var v3 = verticalAxes((1940/2340)*img.height,(2320/2340)*img.height,x13,(20/2340)*img.height,(9/2340)*img.height);
-        var y23=(1920/2340)*img.height;
-        var h3 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y23,(20/1660)*img.width,(9/1660)*img.width);
-        var x14=(1500/1660)*img.width;
-        var v4 = verticalAxes((1940/2340)*img.height,(2300/2340)*img.height,x14,(20/2340)*img.height,(9/2340)*img.height);
-        var y24=(2120/2340)*img.height;
-        var h4 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y24,(20/1660)*img.width,(9/1660)*img.width);
-        var i1 = intersection(v1[0],v2[0],x11,x12,y21,y23,h1[0],h3[0]);
-        var i2 = intersection(v1[0],v2[0],x11,x12,y22,y24,h2[(h2.length)-1],h4[(h4.length)-1]);
-        var i3 = intersection(v3[(v3.length)-1],v4[(v4.length)-1],x13,x14,y23,y21,h3[0],h1[0]);
-        var i4 = intersection(v3[(v3.length)-1],v4[(v4.length)-1],x13,x14,y24,y22,h4[(h4.length)-1],h2[(h2.length)-1]);
-        var esq=i2;
-        var dx = i4[1] - i2[1];
-        var dy = i4[1] - i2[1];
-        if (hasId==1){
-            idRead(esq, dx, dy, relativeCoord2, function (id) {
-              console.log(id);
-              omrRead(id,  esq, dx, dy, relativeCoord2);
-              bcrRead(id,  esq, dx, dy, relativeCoord2);
-              ocrRead(id,  esq, dx, dy, relativeCoord2);
-              imgRead(id,  esq, dx, dy, relativeCoord2);
-            });
-        } else if (hasId==2) {
-            idReadOmr(esq, dx, dy, relativeCoord2, function (id) {
-              asyncRead(id,  esq, dx, dy, relativeCoord2);
-            });
-        } else {
-            asyncRead(i,  esq, dx, dy, relativeCoord2);
-        }
+      var x11=(260/1660)*img.width;
+      var v1 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x11,(20/2340)*img.height,(7/2340)*img.height);
+      var y21=(250/2340)*img.height;
+      var h1 = horizontalAxes((20/1660)*img.width,(400/1660)*img.width,y21,(20/1660)*img.width,(7/1660)*img.width);
+      var x12=(1380/1660)*img.width;
+      var v2 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x12,(20/2340)*img.height,(7/2340)*img.height);
+      var y22=(250/2340)*img.height;
+      var h2 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y22,(20/1660)*img.width,(7/1660)*img.width);
+      var x13=(260/1660)*img.width;
+      var v3 = verticalAxes((1940/2340)*img.height,(2320/2340)*img.height,x13,(20/2340)*img.height,(7/2340)*img.height);
+      var y23=(2070/2340)*img.height;
+      var h3 = horizontalAxes((20/1660)*img.width,(400/1660)*img.width,y23,(20/1660)*img.width,(7/1660)*img.width);
+      var x14=(1380/1660)*img.width;
+      var v4 = verticalAxes((1940/2340)*img.height,(2300/2340)*img.height,x14,(20/2340)*img.height,(7/2340)*img.height);
+      var y24=(2070/2340)*img.height;
+      var h4 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y24,(20/1660)*img.width,(7/1660)*img.width);
+      var i1 = intersection(v1[0],v2[0],x11,x12,y21,y23,h1[0],h3[0]);
+      var i2 = intersection(v1[0],v2[0],x11,x12,y22,y24,h2[(h2.length)-1],h4[(h4.length)-1]);
+      var i3 = intersection(v3[(v3.length)-1],v4[(v4.length)-1],x13,x14,y23,y21,h3[0],h1[0]);
+      var i4 = intersection(v3[(v3.length)-1],v4[(v4.length)-1],x13,x14,y24,y22,h4[(h4.length)-1],h2[(h2.length)-1]);
+      var esq=i1;
+      var dx = i2[0] - i1[0];
+      var dy = i3[1] - i1[1];
+      if (hasId==1){
+          idRead(esq, dx, dy, relativeCoord2, function (id) {
+            console.log(id);
+            omrRead(id,  esq, dx, dy, relativeCoord2);
+            bcrRead(id,  esq, dx, dy, relativeCoord2);
+            ocrRead(id,  esq, dx, dy, relativeCoord2);
+            imgRead(id,  esq, dx, dy, relativeCoord2);
+          });
+      } else if (hasId==2) {
+          idReadOmr(esq, dx, dy, relativeCoord2, function (id) {
+            asyncRead(id,  esq, dx, dy, relativeCoord2);
+          });
+      } else {
+          asyncRead(i,  esq, dx, dy, relativeCoord2);
+      }
     }
 
     function asyncRead(i,  esq, dx, dy, relativeCoord2) {
@@ -1360,7 +1362,7 @@ var tr_img = document.createElement('tr');
         var counter=0;
         for (var xx=0; xx<data.length; xx++){
             var yy = xx*4;
-	    counter+= data[yy]<50 & data[yy+1]<50 &data[yy+2]<50;
+	          counter+=((data[yy] + data[yy+1] + data[yy+2])/3)<threshold;
         }
         return counter;
     }
@@ -1815,7 +1817,6 @@ var tr_img = document.createElement('tr');
             }
         });
         grade=(average/points)*100;
-        console.log(grade);
         omr_responses=omr_responses.join(";");
         var token = $("input[name='_token']").val();
         $.ajax({
@@ -1850,7 +1851,6 @@ var tr_img = document.createElement('tr');
             }
         });
         grade=(average/points)*100;
-        console.log(grade);
         img_responses=img_responses.join(";");
         var token = $("input[name='_token']").val();
         $.ajax({

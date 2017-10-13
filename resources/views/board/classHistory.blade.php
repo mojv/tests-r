@@ -121,7 +121,7 @@
                   }
                 ?>
                 <td>{{$final}}%</td>
-                <td> <a onclick="setTimeout(function(){ setLine(<?php echo json_encode($grades2) ?>); }, 300)" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><i class="fa fa-area-chart"></i></a></td>
+                <td> <a onclick='setTimeout(function(){ setLine(<?php echo json_encode($grades2) ?>); }, 300)' class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><i class="fa fa-area-chart"></i></a></td>
                 <td></td>
               </tr>
               @endforeach

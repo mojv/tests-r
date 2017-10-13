@@ -287,25 +287,25 @@ $( "#bar-tab").trigger("click");
       labels.push(Math.round(start*10)/10 + "-" + Math.round(end*10)/10);
    }
 
-   var echartBar = echarts.init(document.getElementById('bar-chart'));
+   echartBar = echarts.init(document.getElementById('bar-chart'));
 
-   echartBar.setOption({
+   option1 = {
      tooltip : {trigger: 'axis'},
       calculable : true,
       legend: {data:['Frequencies','shape']},
       xAxis : [{type : 'category',data : labels}],
-      yAxis : [{type : 'value', name : 'frequencies',axisLabel : {formatter: '{value} ml'}},
-          {type : 'value', name : 'grade', axisLabel : {formatter: '{value} °C'}}
+      yAxis : [{type : 'value', name : 'frequencies', axisLabel : {formatter: '{value}'}}
       ],
       series : [{name:'Totals',type:'bar', data:totals},
-          {name:'Distribution shape',type:'line',yAxisIndex: 1, data:totals}]
-   });
+          {name:'Distribution shape',type:'line', data:totals}]
+   };
+   echartBar.setOption(option1);
 
  }
 
  function setChart{{$question->id}}a(){
-    var pie{{$question->id}} = echarts.init(document.getElementById('pie-chart'));
-    var option = {
+    pie{{$question->id}} = echarts.init(document.getElementById('pie-chart'));
+    option2 = {
     tooltip: { trigger: 'item', formatter: "{a} <br/>{b} : {c} ({d}%)"   },
     legend: {x: 'center', y: 'bottom', data: [<?php echo $list; ?>] },
     toolbox: { show: true,
@@ -328,11 +328,12 @@ $( "#bar-tab").trigger("click");
           @endforeach
         @endif
       ]}]};
-    pie{{$question->id}}.setOption(option);
+    pie{{$question->id}}.setOption(option2);
   }
   function setChart{{$question->id}}b(){
-    var bar{{$question->id}} = echarts.init(document.getElementById('bar-chart'));
-    var option = {
+    echartBar="";
+    bar{{$question->id}} = echarts.init(document.getElementById('bar-chart'));
+    option3 = {
       title: {text: 'Bar Graph',subtext: 'Graph subtitle'},
       tooltip: {trigger: 'axis'},
       legend: {x: 100,data: ['2015']},
@@ -354,7 +355,7 @@ $( "#bar-tab").trigger("click");
       data: [<?php echo "'".implode("','", array_reverse ($values))."'" ?>]
       },]
     };
-    bar{{$question->id}}.setOption(option);
+    bar{{$question->id}}.setOption(option3);
   }
 
 <?php $j++; ?>

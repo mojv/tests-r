@@ -197,4 +197,7 @@ return [
      'finalGrade' => 'Final Grade',
      'weight' => 'Weight',
      'studentsGrades' => 'Students Grades',
+     'threshold'=>'Threshold',
+     'readcorners' => 'Read Corners',
+     
 ];

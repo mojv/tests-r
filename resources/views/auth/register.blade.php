@@ -85,7 +85,15 @@
                 <div class="form-group">
                         <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required placeholder="{{ __('messages.confirmPassword') }}">
                 </div>
-
+                {!! NoCaptcha::renderJs() !!}
+                <div class="form-group" align="center">
+                {!! NoCaptcha::display() !!}
+                @if ($errors->has('g-recaptcha-response'))
+                    <span class="help-block">
+                        <strong><font color="red">{{ $errors->first('g-recaptcha-response') }}</font></strong>
+                    </span>
+                @endif
+                </div>
                 <div class="form-group">
 
                         <button type="submit" class="btn btn-default submit">

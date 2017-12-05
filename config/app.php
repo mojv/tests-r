@@ -12,7 +12,7 @@ return [
     | any other location as required by the application or its packages.
     */
     'icon' => 'print',
-    'name' => 'SILOG Capture',
+    'name' => 'FormRead',
 
     /*
     |--------------------------------------------------------------------------
@@ -179,6 +179,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Greggilbert\Recaptcha\RecaptchaServiceProvider::class,
         PragmaRX\Firewall\Vendor\Laravel\ServiceProvider::class,
+        Anhskohbo\NoCaptcha\NoCaptchaServiceProvider::class,
     ],
 
     /*
@@ -231,6 +232,7 @@ return [
         'Html' => Collective\Html\HtmlFacade::class,
         'Recaptcha' => Greggilbert\Recaptcha\Facades\Recaptcha::class,
         'Firewall' => PragmaRX\Firewall\Vendor\Laravel\Facade::class,
+        'NoCaptcha' => Anhskohbo\NoCaptcha\Facades\NoCaptcha::class,
     ],
 
 ];

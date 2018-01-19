@@ -25,15 +25,15 @@
   </head>
 
   <body class="login">
-    <div>
+
       <a class="hiddenanchor" id="signup"></a>
       <a class="hiddenanchor" id="signin"></a>
 
       <div class="login_wrapper">
-          @yield('content') 
+          @yield('content')
       </div>
-    </div>
-         
+
+
     <!-- jQuery autocomplete -->
     <script src="{{ asset('vendors/devbridge-autocomplete/dist/jquery.autocomplete.min.js') }}"></script>
     <!-- jQuery autocomplete -->
@@ -55,6 +55,6 @@
       });
     </script>
     <!-- /jQuery autocomplete -->
-        
+
   </body>
 </html>

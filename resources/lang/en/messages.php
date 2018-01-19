@@ -199,5 +199,6 @@ return [
      'studentsGrades' => 'Students Grades',
      'threshold'=>'Threshold',
      'readcorners' => 'Read Corners',
-     
+     'homePage' => 'http://formread.org/',
+
 ];

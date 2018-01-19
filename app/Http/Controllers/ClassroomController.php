@@ -155,7 +155,7 @@ class ClassroomController extends Controller
         }
         else
         {
-            $classes = Classe::where('user_id',Auth::id())->with('tests')->with('classrooms')->orderBy('name')->paginate(20);
+            $classes = Classe::where('user_id',Auth::id())->with('tests')->orderBy('name')->paginate(20);
         }
         $users_id=[Auth::id(), 1];
         $forms_id=[];

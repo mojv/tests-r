@@ -243,122 +243,124 @@
 $("#bar-tab").attr("onclick","setTimeout(function(){ setAverageChart(); }, 300);");
 $( "#bar-tab").trigger("click");
 <?php $j=0;?>
-@foreach ($questions as $question)
-  <?php
-     if (isset($omr_answers[$j])){
-       $options=array_unique($omr_answers[$j]);
-       sort($options);
-       $list = "'".implode("','", $options)."'";
-       $frequencies=array_count_values($omr_answers[$j]);
-     }else {
-       $list = "";
-       $options="";
-       $frequencies="";
-     }
-     $title=$question->field_name.'-'.$question->q_id; $data=[];
-  ?>
-  function questionSts(value){
-    if(value=='average'){
-      $("#partitions_div").show();
-      $("#bar-tab").attr("onclick","setTimeout(function(){ setAverageChart(); }, 300);");
-      $( "#bar-tab").trigger("click");
-    }else{
-      $("#partitions_div").hide();
-      $("#bar-tab").attr("onclick","setTimeout(function(){ setChart"+ value +"b(); }, 300);");
-      $("#pie-tab").attr("onclick","setTimeout(function(){ setChart"+ value +"a(); }, 300);");
-      $( "#pie-tab").trigger("click");
+@if($results2>1)
+  @foreach ($questions as $question)
+    <?php
+       if (isset($omr_answers[$j])){
+         $options=array_unique($omr_answers[$j]);
+         sort($options);
+         $list = "'".implode("','", $options)."'";
+         $frequencies=array_count_values($omr_answers[$j]);
+       }else {
+         $list = "";
+         $options="";
+         $frequencies="";
+       }
+       $title=$question->field_name.'-'.$question->q_id; $data=[];
+    ?>
+    function questionSts(value){
+      if(value=='average'){
+        $("#partitions_div").show();
+        $("#bar-tab").attr("onclick","setTimeout(function(){ setAverageChart(); }, 300);");
+        $( "#bar-tab").trigger("click");
+      }else{
+        $("#partitions_div").hide();
+        $("#bar-tab").attr("onclick","setTimeout(function(){ setChart"+ value +"b(); }, 300);");
+        $("#pie-tab").attr("onclick","setTimeout(function(){ setChart"+ value +"a(); }, 300);");
+        $( "#pie-tab").trigger("click");
+      }
     }
-  }
 
- function setAverageChart(){
-   partitions=$("#partitions").val();
-   max=Math.max.apply(null, grades)+1;
-   min=Math.min.apply(null, grades)-1;
-   step=(max-min)/partitions;
-   totals=[];
-   labels=[];
-   for (i=0;i<partitions;i++){
-      start=min+(step*i);
-      end=min+(step*(i+1));
-      temp=grades.filter(function(x) {
-          return x >= start && x < end;
-      });
-      totals.push(temp.length);
-      labels.push(Math.round(start*10)/10 + "-" + Math.round(end*10)/10);
+   function setAverageChart(){
+     partitions=$("#partitions").val();
+     max=Math.max.apply(null, grades)+1;
+     min=Math.min.apply(null, grades)-1;
+     step=(max-min)/partitions;
+     totals=[];
+     labels=[];
+     for (i=0;i<partitions;i++){
+        start=min+(step*i);
+        end=min+(step*(i+1));
+        temp=grades.filter(function(x) {
+            return x >= start && x < end;
+        });
+        totals.push(temp.length);
+        labels.push(Math.round(start*10)/10 + "-" + Math.round(end*10)/10);
+     }
+
+     echartBar = echarts.init(document.getElementById('bar-chart'));
+
+     option1 = {
+       tooltip : {trigger: 'axis'},
+        calculable : true,
+        legend: {data:['Frequencies','shape']},
+        xAxis : [{type : 'category',data : labels}],
+        yAxis : [{type : 'value', name : 'frequencies', axisLabel : {formatter: '{value}'}}
+        ],
+        series : [{name:'Totals',type:'bar', data:totals},
+            {name:'Distribution shape',type:'line', data:totals}]
+     };
+     echartBar.setOption(option1);
+
    }
 
-   echartBar = echarts.init(document.getElementById('bar-chart'));
-
-   option1 = {
-     tooltip : {trigger: 'axis'},
-      calculable : true,
-      legend: {data:['Frequencies','shape']},
-      xAxis : [{type : 'category',data : labels}],
-      yAxis : [{type : 'value', name : 'frequencies', axisLabel : {formatter: '{value}'}}
-      ],
-      series : [{name:'Totals',type:'bar', data:totals},
-          {name:'Distribution shape',type:'line', data:totals}]
-   };
-   echartBar.setOption(option1);
-
- }
-
- function setChart{{$question->id}}a(){
-    pie{{$question->id}} = echarts.init(document.getElementById('pie-chart'));
-    option2 = {
-    tooltip: { trigger: 'item', formatter: "{a} <br/>{b} : {c} ({d}%)"   },
-    legend: {x: 'center', y: 'bottom', data: [<?php echo $list; ?>] },
-    toolbox: { show: true,
-      feature: {
-        magicType: {show: true, type: ['pie', 'funnel'],
-          option: {
-            funnel: {x: '25%', width: '50%', funnelAlign: 'left', max: 1548 }
-          }
-        },
-        restore: {show: false, title: "Restore"},
-        saveAsImage: {show: false, title: "Save Image"}
-      }
-    },
-    calculable: true,
-    series: [{ name: 'Pie', type: 'pie',radius: '55%', center: ['50%', '48%'],
-      data: [
-        @if($options!="")
-          @foreach ($options as $option)
-            {value: {{$frequencies[$option]}}, name: '{{$option}}'},
-          @endforeach
-        @endif
-      ]}]};
-    pie{{$question->id}}.setOption(option2);
-  }
-  function setChart{{$question->id}}b(){
-    echartBar="";
-    bar{{$question->id}} = echarts.init(document.getElementById('bar-chart'));
-    option3 = {
-      title: {text: 'Bar Graph',subtext: 'Graph subtitle'},
-      tooltip: {trigger: 'axis'},
-      legend: {x: 100,data: ['2015']},
-      toolbox: {show: false,
+   function setChart{{$question->id}}a(){
+      pie{{$question->id}} = echarts.init(document.getElementById('pie-chart'));
+      option2 = {
+      tooltip: { trigger: 'item', formatter: "{a} <br/>{b} : {c} ({d}%)"   },
+      legend: {x: 'center', y: 'bottom', data: [<?php echo $list; ?>] },
+      toolbox: { show: true,
         feature: {
-        saveAsImage: {show: false, title: "Save Image"}
+          magicType: {show: true, type: ['pie', 'funnel'],
+            option: {
+              funnel: {x: '25%', width: '50%', funnelAlign: 'left', max: 1548 }
+            }
+          },
+          restore: {show: false, title: "Restore"},
+          saveAsImage: {show: false, title: "Save Image"}
         }
       },
       calculable: true,
-      xAxis: [{type: 'value', boundaryGap: [0, 0.01]}],
-      yAxis: [{type: 'category', data:  [<?php echo $list; ?>] }],
-      series: [{ name: 'Bar', type: 'bar',
-      <?php $values=[]; ?>
-      @if($options!="")
-        @foreach ($options as $option)
-          <?php array_unshift($values, $frequencies[$option]);?>
-        @endforeach
-      @endif
-      data: [<?php echo "'".implode("','", array_reverse ($values))."'" ?>]
-      },]
-    };
-    bar{{$question->id}}.setOption(option3);
-  }
+      series: [{ name: 'Pie', type: 'pie',radius: '55%', center: ['50%', '48%'],
+        data: [
+          @if($options!="")
+            @foreach ($options as $option)
+              {value: {{$frequencies[$option]}}, name: '{{$option}}'},
+            @endforeach
+          @endif
+        ]}]};
+      pie{{$question->id}}.setOption(option2);
+    }
+    function setChart{{$question->id}}b(){
+      echartBar="";
+      bar{{$question->id}} = echarts.init(document.getElementById('bar-chart'));
+      option3 = {
+        title: {text: 'Bar Graph',subtext: 'Graph subtitle'},
+        tooltip: {trigger: 'axis'},
+        legend: {x: 100,data: ['2015']},
+        toolbox: {show: false,
+          feature: {
+          saveAsImage: {show: false, title: "Save Image"}
+          }
+        },
+        calculable: true,
+        xAxis: [{type: 'value', boundaryGap: [0, 0.01]}],
+        yAxis: [{type: 'category', data:  [<?php echo $list; ?>] }],
+        series: [{ name: 'Bar', type: 'bar',
+        <?php $values=[]; ?>
+        @if($options!="")
+          @foreach ($options as $option)
+            <?php array_unshift($values, $frequencies[$option]);?>
+          @endforeach
+        @endif
+        data: [<?php echo "'".implode("','", array_reverse ($values))."'" ?>]
+        },]
+      };
+      bar{{$question->id}}.setOption(option3);
+    }
 
-<?php $j++; ?>
-@endforeach
+  <?php $j++; ?>
+  @endforeach
+@endif
 </script>
 @endsection

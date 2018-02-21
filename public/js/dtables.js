@@ -125,10 +125,10 @@ var threshold  = 147;
     function horizontalAxes(start,end,y_pos,markSize,errorAdmited){
 	    start=Math.round(start);
 	    end=Math.round(end);
-            markSize=Math.round(markSize);
-            errorAdmited=Math.round(errorAdmited);
-            var b = [0,0,0,0,0];
-            var black = [];
+      markSize=Math.round(markSize);
+      errorAdmited=Math.round(errorAdmited);
+      var b = [0,0,0,0,0];
+      var black = [];
 	    var data1 = ctx.getImageData(0,y_pos,end,1).data;
 	    var data2 = ctx.getImageData(0,y_pos+1,end,1).data;
 	    var data3 = ctx.getImageData(0,y_pos+2,end,1).data;
@@ -209,6 +209,97 @@ var threshold  = 147;
         //alert ("puntos x= " + xi + " y= " + yi);
         return i=[xi,yi];
     }
+
+    function delStreaks(hm,wm,h,w){
+      l=0;
+      r=0;
+      u=0;
+      d=0;
+      var b = [0,0,0,0,0];
+      var black = [];
+      var data1 = ctx.getImageData(0,hm,w,1).data;
+      var data2 = ctx.getImageData(0,hm+1,w,1).data;
+      var data3 = ctx.getImageData(0,hm+2,w,1).data;
+      var data4 = ctx.getImageData(0,hm+3,w,1).data;
+      var data5 = ctx.getImageData(0,hm+4,w,1).data;
+      for (var k = 0; k < w; k++){
+         b[0]=my_isblack(data1,k*4);
+         b[1]=my_isblack(data2,k*4);
+         b[2]=my_isblack(data3,k*4);
+         b[3]=my_isblack(data4,k*4);
+         b[4]=my_isblack(data5,k*4);
+          if(b.reduce(getSum)>3){
+              black[k]=1;
+          }
+          else{
+              black[k]=0;
+          }
+      }
+      for (var k=20;k<w;k++){
+        white=0;
+        for (var p=k-20; p<k; p++){
+          white=white+black[p];
+        }
+        if (white<=2){
+           l=k-20;
+           break;
+        }
+      }
+      for (var k=black.length-20;k>1;k--){
+        white=0;
+        for (var p=k+20; p>k; p--){
+          white=white+black[p];
+        }
+        if (white<=2){
+          r=k+20;
+          break;
+        }
+      }
+      var b = [0,0,0,0,0];
+      var black = [];
+      var data1 = ctx.getImageData(wm,0,1,h).data;
+      var data2 = ctx.getImageData(wm+1,0,1,h).data;
+      var data3 = ctx.getImageData(wm+2,0,1,h).data;
+      var data4 = ctx.getImageData(wm+3,0,1,h).data;
+      var data5 = ctx.getImageData(wm+4,0,1,h).data;
+
+      for (var k = 0; k < h; k++){
+        b[0]=my_isblack(data1,k*4);
+        b[1]=my_isblack(data2,k*4);
+        b[2]=my_isblack(data3,k*4);
+        b[3]=my_isblack(data4,k*4);
+        b[4]=my_isblack(data5,k*4);
+         if(b.reduce(getSum)>3){
+             black[k]=1;
+         }
+         else{
+             black[k]=0;
+         }
+      }
+      for (var k=20;k<h;k++){
+        white=0;
+        for (var p=k-20; p<k; p++){
+           white=white+black[p];
+        }
+        if (white<=2){
+          u=k-20;
+          break;
+        }
+      }
+
+      for (var k=black.length-20;k>1;k--){
+        white=0;
+        for (var p=k+20; p>k; p--){
+           white=white+black[p];
+        }
+        if (white<=2){
+          d=k+20;
+          break;
+        }
+      }
+      return [l, (w-r), u , (h-d)];
+    }
+
 
     function drawRotated(){
         ctx.save();
@@ -359,18 +450,20 @@ var threshold  = 147;
       canvas.width = img.width;
       canvas.height = img.height;
       ctx.drawImage(img, 0, 0, img.width, img.height);
-      var x11=(260/1660)*img.width;
-      var v1 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x11,(20/2340)*img.height,(7/2340)*img.height);
-      var y21=(250/2340)*img.height;
-      var h1 = horizontalAxes((20/1660)*img.width,(400/1660)*img.width,y21,(20/1660)*img.width,(7/1660)*img.width);
-      var x12=(1380/1660)*img.width;
-      var v2 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x12,(20/2340)*img.height,(7/2340)*img.height);
-      var x13=(260/1660)*img.width;
-      var v3 = verticalAxes((1940/2340)*img.height,(2320/2340)*img.height,x13,(20/2340)*img.height,(7/2340)*img.height);
-      var y23=(2070/2340)*img.height;
-      var h3 = horizontalAxes((20/1660)*img.width,(400/1660)*img.width,y23,(20/1660)*img.width,(7/1660)*img.width);
-      var x14=(1380/1660)*img.width;
-      var v4 = verticalAxes((1940/2340)*img.height,(2300/2340)*img.height,x14,(20/2340)*img.height,(7/2340)*img.height);
+      corners=delStreaks(Math.round(img.height/2),Math.round(img.width/2),img.height,img.width);
+      console.log(corners);
+      var x11=(260/1660)*img.width+corners[0];
+      var v1 = verticalAxes(corners[2]+(20/2340)*img.height,corners[2]+(400/2340)*img.height,x11,(20/2340)*img.height,(7/2340)*img.height);
+      var y21=(250/2340)*img.height+corners[2];
+      var h1 = horizontalAxes(corners[0]+(20/1660)*img.width,corners[0]+(400/1660)*img.width,y21,(20/1660)*img.width,(7/1660)*img.width);
+      var x12=(1380/1660)*img.width-corners[1];
+      var v2 = verticalAxes(corners[2]+(20/2340)*img.height,corners[2]+(400/2340)*img.height,x12,(20/2340)*img.height,(7/2340)*img.height);
+      var x13=(260/1660)*img.width+corners[0];
+      var v3 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x13,(20/2340)*img.height,(7/2340)*img.height);
+      var y23=(2070/2340)*img.height-corners[3];
+      var h3 = horizontalAxes(corners[0]+(20/1660)*img.width,corners[0]+(400/1660)*img.width,y23,(20/1660)*img.width,(7/1660)*img.width);
+      var x14=(1380/1660)*img.width-corners[2];
+      var v4 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x14,(20/2340)*img.height,(7/2340)*img.height);
       var i1 = intersection(v1[0],v2[0],x11,x12,y21,y23,h1[0],h3[0]);
       var i3 = intersection(v3[(v3.length)-1],v4[(v4.length-1)],x13,x14,y23,y21,h3[0],h1[0]);
 
@@ -378,22 +471,22 @@ var threshold  = 147;
       //console.log(i3[0] + "-" + i1[0] + ")/(" + i3[1] + "-" + i1[1] + ")");
       drawRotated();
 
-      var x11=(260/1660)*img.width;
-      var v1 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x11,(20/2340)*img.height,(7/2340)*img.height);
-      var y21=(250/2340)*img.height;
-      var h1 = horizontalAxes((20/1660)*img.width,(400/1660)*img.width,y21,(20/1660)*img.width,(7/1660)*img.width);
-      var x12=(1380/1660)*img.width;
-      var v2 = verticalAxes((20/2340)*img.height,(400/2340)*img.height,x12,(20/2340)*img.height,(7/2340)*img.height);
-      var y22=(250/2340)*img.height;
-      var h2 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y22,(20/1660)*img.width,(7/1660)*img.width);
-      var x13=(260/1660)*img.width;
-      var v3 = verticalAxes((1940/2340)*img.height,(2320/2340)*img.height,x13,(20/2340)*img.height,(7/2340)*img.height);
-      var y23=(2070/2340)*img.height;
-      var h3 = horizontalAxes((20/1660)*img.width,(400/1660)*img.width,y23,(20/1660)*img.width,(7/1660)*img.width);
-      var x14=(1380/1660)*img.width;
-      var v4 = verticalAxes((1940/2340)*img.height,(2300/2340)*img.height,x14,(20/2340)*img.height,(7/2340)*img.height);
-      var y24=(2070/2340)*img.height;
-      var h4 = horizontalAxes((1260/1660)*img.width,(1640/1660)*img.width,y24,(20/1660)*img.width,(7/1660)*img.width);
+      var x11=(260/1660)*img.width+corners[0];
+      var v1 = verticalAxes(corners[2]+(20/2340)*img.height,corners[2]+(400/2340)*img.height,x11,(20/2340)*img.height,(7/2340)*img.height);
+      var y21=(250/2340)*img.height+corners[2];
+      var h1 = horizontalAxes(corners[0]+(20/1660)*img.width,corners[0]+(400/1660)*img.width,y21,(20/1660)*img.width,(7/1660)*img.width);
+      var x12=(1380/1660)*img.width-corners[1];
+      var v2 = verticalAxes(corners[2]+(20/2340)*img.height,corners[2]+(400/2340)*img.height,x12,(20/2340)*img.height,(7/2340)*img.height);
+      var y22=(250/2340)*img.height+corners[2];
+      var h2 = horizontalAxes((1260/1660)*img.width-corners[1],(1640/1660)*img.width-corners[1],y22,(20/1660)*img.width,(7/1660)*img.width);
+      var x13=(260/1660)*img.width+corners[0];
+      var v3 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x13,(20/2340)*img.height,(7/2340)*img.height);
+      var y23=(2070/2340)*img.height-corners[3];
+      var h3 = horizontalAxes(corners[0]+(20/1660)*img.width,corners[0]+(400/1660)*img.width,y23,(20/1660)*img.width,(7/1660)*img.width);
+      var x14=(1380/1660)*img.width-corners[2];
+      var v4 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x14,(20/2340)*img.height,(7/2340)*img.height);
+      var y24=(2070/2340)*img.height-corners[3];
+      var h4 = horizontalAxes((1260/1660)*img.width-corners[1],(1640/1660)*img.width-corners[1],y24,(20/1660)*img.width,(7/1660)*img.width);
       var i1 = intersection(v1[0],v2[0],x11,x12,y21,y23,h1[0],h3[0]);
       var i2 = intersection(v1[0],v2[0],x11,x12,y22,y24,h2[(h2.length)-1],h4[(h4.length)-1]);
       var i3 = intersection(v3[(v3.length)-1],v4[(v4.length)-1],x13,x14,y23,y21,h3[0],h1[0]);

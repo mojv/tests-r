@@ -455,7 +455,7 @@
         $('#inputThresholdValue').html(threshold);
         $('#thresholdinput').val(threshold);
         $("#readcorners").hide();
-        $("#thresholdbar").hide();        
+        $("#thresholdbar").hide();
         var input = document.getElementById('file_input');
         input.addEventListener('change', handleFiles);
         PDFJS.disableWorker = true;

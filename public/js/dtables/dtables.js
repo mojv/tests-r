@@ -1436,7 +1436,6 @@ var threshold  = 180;
        var dy = i4[1] - i2[1];
        if (!isNaN(dx) || !isNaN(dy)){
        if (hasId==1){
-
            idRead(esq, dx, dy, relativeCoord2, function (id) {
              omrRead(id,  esq, dx, dy, relativeCoord2);
              bcrRead(id,  esq, dx, dy, relativeCoord2);

@@ -498,7 +498,7 @@ var threshold  = 147;
       sheet_corners.lineTo(i3[0], i3[1]);
       sheet_corners.lineTo(i1[0], i1[1]);
       sheet_corners.stroke();
-      esq=i1;
+      esq=[i1, i2, i3, i4];
       dx = i2[0] - i1[0];
       dy = i3[1] - i1[1];
       width = Math.round((20/1660)*img.width);
@@ -554,6 +554,7 @@ var threshold  = 147;
       this.q_option;
       this.idField=0;
       this.concatenate=0;
+      this.corner=0;
     }
 
     Box.prototype.drawshape = function(context, shape, fill, shape_id) {
@@ -652,7 +653,7 @@ var threshold  = 147;
       invalidate();
     }
 
-    function addTempRect(x, y, w, h, r, fill, field, question, output, shape, multiMark, idField, concatenate) {
+    function addTempRect(x, y, w, h, r, fill, field, question, output, shape, multiMark, idField, concatenate, corner) {
       var rect = new Box;
       rect.x = x;
       rect.y = y;
@@ -667,6 +668,7 @@ var threshold  = 147;
       rect.q_option = output;
       rect.idField = idField;
       rect.concatenate = concatenate;
+      rect.corner = corner;
       temp_boxes.push(rect);
     }
 
@@ -1225,13 +1227,16 @@ var threshold  = 147;
 
         var postData = [];
         for (i = 4 ; i<boxes.length; i++){
-            var x = (boxes[i].x-esq[0])/dx;
-            var y = (boxes[i].y-esq[1])/dy;
+            var corner = getCorner(boxes[i].x,boxes[i].y,esq);
+            var x = (boxes[i].x-esq[corner][0])/dx;
+            var y = (boxes[i].y-esq[corner][1])/dy;
             var w = boxes[i].w/dx;
             var h = boxes[i].h/dy;
             var r = boxes[i].r/dx;
-            postData.push({field_name:boxes[i].field_name, x: x, y: y, w: w, h: h, r: r, shape: boxes[i].shape, fill: boxes[i].fill.substring(1), multiMark: boxes[i].multiMark, q_id: boxes[i].q_id, q_option: boxes[i].q_option, idField: boxes[i].idField, concatenate: boxes[i].concatenate, _token: token});
+            postData.push({field_name:boxes[i].field_name, x: x, y: y, w: w, h: h, r: r, shape: boxes[i].shape, fill: boxes[i].fill.substring(1), multiMark: boxes[i].multiMark, q_id: boxes[i].q_id, q_option: boxes[i].q_option, idField: boxes[i].idField, concatenate: boxes[i].concatenate, corner: corner, _token: token});
+            console.log(corner);
         }
+        console.log(esq);
 
         $.ajax({
             async: true,
@@ -1244,6 +1249,16 @@ var threshold  = 147;
         }).always(function() {
             $('#loading').modal('hide');
         });
+    }
+
+    function getCorner(x,y,esq){
+      d1 = Math.sqrt((Math.abs(y-esq[0][1])^2)+(Math.abs(x-esq[0][0])^2));
+      d2 = Math.sqrt((Math.abs(y-esq[1][1])^2)+(Math.abs(x-esq[1][0])^2));
+      d3 = Math.sqrt((Math.abs(y-esq[2][1])^2)+(Math.abs(x-esq[2][0])^2));
+      d4 = Math.sqrt((Math.abs(y-esq[3][1])^2)+(Math.abs(x-esq[3][0])^2));
+      d = new Array(d1,d2,d3,d4);
+      corner =d.indexOf(Math.min.apply(null,d));
+      return corner;
     }
 
     function set_tables(){
@@ -1417,23 +1432,27 @@ var threshold  = 147;
       var i2 = intersection(v1[0],v2[0],x11,x12,y22,y24,h2[(h2.length)-1],h4[(h4.length)-1]);
       var i3 = intersection(v3[(v3.length)-1],v4[(v4.length)-1],x13,x14,y23,y21,h3[0],h1[0]);
       var i4 = intersection(v3[(v3.length)-1],v4[(v4.length)-1],x13,x14,y24,y22,h4[(h4.length)-1],h2[(h2.length)-1]);
-      var esq=i1;
+      var esq=[i1, i2, i3, i4];
       var dx = i2[0] - i1[0];
       var dy = i3[1] - i1[1];
-      if (hasId==1){
-          idRead(esq, dx, dy, relativeCoord2, function (id) {
-            console.log(id);
-            omrRead(id,  esq, dx, dy, relativeCoord2);
-            bcrRead(id,  esq, dx, dy, relativeCoord2);
-            ocrRead(id,  esq, dx, dy, relativeCoord2);
-            imgRead(id,  esq, dx, dy, relativeCoord2);
-          });
-      } else if (hasId==2) {
-          idReadOmr(esq, dx, dy, relativeCoord2, function (id) {
-            asyncRead(id,  esq, dx, dy, relativeCoord2);
-          });
-      } else {
-          asyncRead(i,  esq, dx, dy, relativeCoord2);
+      if (!isNaN(dx) || !isNaN(dy)){
+        if (hasId==1){
+            idRead(esq, dx, dy, relativeCoord2, function (id) {
+              console.log(id);
+              omrRead(id,  esq, dx, dy, relativeCoord2);
+              bcrRead(id,  esq, dx, dy, relativeCoord2);
+              ocrRead(id,  esq, dx, dy, relativeCoord2);
+              imgRead(id,  esq, dx, dy, relativeCoord2);
+            });
+        } else if (hasId==2) {
+            idReadOmr(esq, dx, dy, relativeCoord2, function (id) {
+              asyncRead(id,  esq, dx, dy, relativeCoord2);
+            });
+        } else {
+            asyncRead(i,  esq, dx, dy, relativeCoord2);
+        }
+      }else{
+
       }
     }
 
@@ -1478,7 +1497,7 @@ var threshold  = 147;
             var newCanvas = document.createElement("canvas");
             newCanvas.width = width;
             newCanvas.height = height;
-            var imageData = ctx.getImageData((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], width, height);
+            var imageData = ctx.getImageData((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height);
             newCanvas.getContext("2d").putImageData(imageData, 0, 0);
             ocrRead2(newCanvas,tr);
         }
@@ -1513,7 +1532,7 @@ var threshold  = 147;
               var newCanvas = document.createElement("canvas");
               newCanvas.width = width;
               newCanvas.height = height;
-              var imageData = ctx.getImageData((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], width, height);
+              var imageData = ctx.getImageData((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height);
               newCanvas.getContext("2d").putImageData(imageData, 0, 0);
               var qrImg = newCanvas.toDataURL();
               idRead2(qrImg,tr, function(id){
@@ -1553,7 +1572,7 @@ var threshold  = 147;
             var newCanvas = document.createElement("canvas");
             newCanvas.width = width;
             newCanvas.height = height;
-            var imageData = ctx.getImageData((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], width, height);
+            var imageData = ctx.getImageData((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height);
             newCanvas.getContext("2d").putImageData(imageData, 0, 0);
             var qrImg = newCanvas.toDataURL();
             bcrRead2(qrImg,tr);
@@ -1650,9 +1669,10 @@ var threshold  = 147;
             var temp2 = relativeCoord2[j][5] + "-" + relativeCoord2[j][6];
             if (temp_q_id==0){
                 if (relativeCoord2[j][8]==1){
-                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], width, height),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height,relativeCoord2[j][10], relativeCoord2[j][11]]);
+                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height,relativeCoord2[j][10], relativeCoord2[j][11]]);
                 } else if (relativeCoord2[j][8]==2){
-                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], radius*2, radius*2),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2, relativeCoord2[j][10], relativeCoord2[j][11]]);
+                  console.log(relativeCoord2[j][12]);
+                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], radius*2, radius*2),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2, relativeCoord2[j][10], relativeCoord2[j][11]]);
                 }
                 temp1 = relativeCoord2[j][5] + "-" + relativeCoord2[j][6];
                 temp_q_id=1;
@@ -1710,15 +1730,15 @@ var threshold  = 147;
                 ocrTemp = [];
                 qtemp = "";
                 if (relativeCoord2[j][8]==1){
-                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], width, height),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height,relativeCoord2[j][10], relativeCoord2[j][11]]);
+                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height,relativeCoord2[j][10], relativeCoord2[j][11]]);
                 } else if (relativeCoord2[j][8]==2){
-                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], radius*2, radius*2),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2,relativeCoord2[j][10], relativeCoord2[j][11]]);
+                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], radius*2, radius*2),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2,relativeCoord2[j][10], relativeCoord2[j][11]]);
                 }
             }else if (temp2==temp1 && temp_q_id!=0){
                 if (relativeCoord2[j][8]==1){
-                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], width, height),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height, relativeCoord2[j][10],relativeCoord2[j][11]]);
+                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height, relativeCoord2[j][10],relativeCoord2[j][11]]);
                 } else if (relativeCoord2[j][8]==2){
-                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], radius*2, radius*2),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2, relativeCoord2[j][10],relativeCoord2[j][11]]);
+                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], radius*2, radius*2),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2, relativeCoord2[j][10],relativeCoord2[j][11]]);
                 }
             }
         }
@@ -1781,9 +1801,9 @@ var threshold  = 147;
             var temp2 = relativeCoord2[j][5] + "-" + relativeCoord2[j][6];
             if (temp_q_id==0){
                 if (relativeCoord2[j][8]==1){
-                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], width, height),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height]);
+                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height]);
                 } else if (relativeCoord2[j][8]==2){
-                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], radius*2, radius*2),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2]);
+                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], radius*2, radius*2),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2]);
                 }
                 temp1 = relativeCoord2[j][5] + "-" + relativeCoord2[j][6];
                 temp_q_id=1;
@@ -1817,15 +1837,15 @@ var threshold  = 147;
                 ocrTemp = [];
                 qtemp = "";
                 if (relativeCoord2[j][8]==1){
-                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], width, height),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height,relativeCoord2[j][10], relativeCoord2[j][11]]);
+                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height,relativeCoord2[j][10], relativeCoord2[j][11]]);
                 } else if (relativeCoord2[j][8]==2){
-                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], radius*2, radius*2),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2,relativeCoord2[j][10], relativeCoord2[j][11]]);
+                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], radius*2, radius*2),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2,relativeCoord2[j][10], relativeCoord2[j][11]]);
                 }
             }else if (temp2==temp1 && temp_q_id!=0){
                 if (relativeCoord2[j][8]==1){
-                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], width, height),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height, relativeCoord2[j][10],relativeCoord2[j][11]]);
+                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height, relativeCoord2[j][10],relativeCoord2[j][11]]);
                 } else if (relativeCoord2[j][8]==2){
-                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], radius*2, radius*2),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2, relativeCoord2[j][10],relativeCoord2[j][11]]);
+                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], radius*2, radius*2),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2, relativeCoord2[j][10],relativeCoord2[j][11]]);
                 }
             }
         }
@@ -1847,7 +1867,7 @@ var threshold  = 147;
             var newCanvas = document.createElement("canvas");
             newCanvas.width = width;
             newCanvas.height = height;
-            var imageData = ctx.getImageData((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], width, height);
+            var imageData = ctx.getImageData((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height);
             newCanvas.getContext("2d").putImageData(imageData, 0, 0);
             temp.push(newCanvas.toDataURL());
         }

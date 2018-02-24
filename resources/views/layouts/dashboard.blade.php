@@ -181,6 +181,7 @@
                     <li><a href="{{ route('lang', ['lang'=>'en']) }}">English</a></li>
                     <li><a href="{{ route('lang', ['lang'=>'es']) }}">Español</a></li>
                     <li><a href="{{ route('lang', ['lang'=>'pt']) }}">Português</a></li>
+                    <li><a href="{{ route('lang', ['lang'=>'fr']) }}">Français</a></li>
                   </ul>
                 </li>
               </ul>

@@ -273,7 +273,7 @@
 <script src="{{ asset('js/qcode-decoder.min.js') }}"></script>
 <script src="https://cdn.rawgit.com/naptha/tesseract.js/1.0.7/dist/tesseract.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/processing.js/1.4.1/processing-api.min.js"></script>
-<script type="text/javascript" src="https://rawgithub.com/mozilla/pdf.js/gh-pages/build/pdf.js"></script>
+<script type="text/javascript" src="{{ asset('js/pdfjs/build/pdf.js') }}"></script>
 <script>
     $body = $("body");
     $(document).on({

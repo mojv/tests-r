@@ -49,6 +49,7 @@
 
                     @include('layouts.brand')
                 </div>
+                {{ __('messages.recomendedBrowser') }} <img src="{{ asset('images\chrome.png') }}" height="40">
             </form>
           </section>
         </div>

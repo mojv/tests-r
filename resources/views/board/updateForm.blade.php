@@ -14,6 +14,7 @@
 
     <div class="row">
       <div class="col-md-12 col-sm-12 col-xs-12">
+        <button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#createFormModal">{{ __('messages.createForm') }}</button>
         <div class="x_panel">
           <div class="x_content">
             <table id="datatable" class="table table-striped table-bordered">
@@ -27,7 +28,7 @@
                 @foreach ($forms as $form)
                 <tr>
                   <td width="40%" align="center">{{ $form->form_name }}</td>
-                  <td align="center"><button  type="button" class="btn btn-success btn-xs" value="{{ $form->id }}" onclick="editName(this.value)">{{ __('messages.changeName') }}</button><a href="{{ route('editForm', $form->id) }}"><button  type="button" class="btn btn-success btn-xs" value="{{ $form->id }}" >{{ __('messages.editForm') }}</button></a><a href="{{ route('deleteForm', $form->id) }}"><button  type="button" class="btn btn-warning btn-xs" value="{{ $form->id }}" onclick="deleteform(this.value)">{{ __('messages.deleteForm') }}</button></a><button  type="button" class="btn btn-success btn-xs" value="{{ $form->id }}" onclick="shareForm(this.value)">{{ __('messages.shareForm') }}</button></td>
+                  <td align="center"><button  type="button" class="btn btn-success btn-xs" value="{{ $form->id }}" onclick="editName(this.value)">{{ __('messages.changeName') }}</button><a href="{{ route('editForm', $form->id) }}"><button  type="button" class="btn btn-success btn-xs" value="{{ $form->id }}" >{{ __('messages.editForm') }}</button></a><button  type="button" class="btn btn-warning btn-xs" value="{{ $form->id }}" onclick="deleteform('{{ route('deleteForm', $form->id) }}')">{{ __('messages.deleteForm') }}</button><button  type="button" class="btn btn-success btn-xs" value="{{ $form->id }}" onclick="shareForm(this.value)">{{ __('messages.shareForm') }}</button></td>
                   <input type="hidden" id="formfile_{{ $form->id }}" value="{{ $form->formfile }}" />
                 </tr>
                 @endforeach
@@ -182,8 +183,42 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true"  id="createFormModal">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <form role="form" method="POST" action="{{ route('checkName') }}">
+                {{ csrf_field() }}
+                <div class="modal-header">
+                  <h4 class="modal-title" id="myModalLabel2">{{ __('messages.formName') }}</h4>
+                </div>
+                <div class="modal-body">
+                  <p>{{ __('messages.WriteFormName') }}</p>
+                  <div class="form-group{{ $errors->has('form_name') ? ' has-error' : '' }}">
+                      <input id="form_name" type="text" class="form-control" name="form_name" value="{{ old('form_name') }}" autofocus placeholder="Form Name" required>
+                        @if ($errors->has('form_name'))
+                            <span class="help-block">
+                                <strong>{{ $errors->first('form_name') }}</strong>
+                            </span>
+                        @endif
+                   </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" class="btn btn-default" data-dismiss="modal" aria-label="Close">{{ __('messages.cancel') }}</button>
+                  <button type="submit" class="btn btn-primary">{{ __('messages.createForm') }}</button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
     <!-- /modals -->
     <script>
+        function deleteform(value){
+          var r = confirm("{{ __('messages.areYouSure') }}");
+          if (r == true) {
+               location.href = value;
+          }
+        }
         var formId_share;
         var userId_share;
         function editName(value){

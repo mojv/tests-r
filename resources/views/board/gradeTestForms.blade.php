@@ -272,8 +272,10 @@
 <script type="text/javascript" src="{{ asset('js/dtables.js') }}?t={{rand(10000, 99999)}}"></script>
 <script src="{{ asset('js/qcode-decoder.min.js') }}"></script>
 <script src="https://cdn.rawgit.com/naptha/tesseract.js/1.0.7/dist/tesseract.js"></script>
+<script src="{{ asset('js/ocrad.min.js') }}"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/processing.js/1.4.1/processing-api.min.js"></script>
 <script type="text/javascript" src="{{ asset('js/pdfjs/build/pdf.js') }}"></script>
+<script src="{{ asset('js/jsQR.js') }}"></script>
 <script>
     $body = $("body");
     $(document).on({
@@ -314,6 +316,7 @@
     var threshold_canvas = document.getElementById('threshold_canvas');
     var threshold_ctx;
     var threshold_img = new Image;
+    var scanInAnswers= {{$scanInAnswers}};
     $('#thresholdValue').html(threshold);
     $('#gradeImg').click(function() {
       gradeImage();

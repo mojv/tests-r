@@ -200,5 +200,8 @@ return [
      'threshold'=>'Threshold',
      'readcorners' => 'Read Corners',
      'homePage' => 'http://formread.org/',
-
+     //---------------------------------------------------------
+     'scanIn' => 'Scan In',
+     'areYouSure' => 'Are You Sure?',  
+     'recomendedBrowser' => 'Recomended Browser',
 ];

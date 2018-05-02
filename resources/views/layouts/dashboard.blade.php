@@ -84,7 +84,6 @@
                   <li><a href="{{ route('profile') }}"><i class="fa fa-user"></i>{{ __('messages.profile') }}</a></li>
                   <li><a><i class="fa fa-edit"></i>{{ __('messages.forms') }}<span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <li><a href="{{ route('createForm') }}">{{ __('messages.newForm') }}</a></li>
                       <li><a href="{{ route('updateForm') }}">{{ __('messages.editForm') }}</a></li>
                       <li><a href="{{ __('messages.tutorialFormCreate') }}" target="_blank">{{ __('messages.tutorial') }}</a></li>
                     </ul>
@@ -92,14 +91,14 @@
                   <li><a><i class="fa fa-table"></i> {{ __('messages.formsProcessing') }} <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="{{route('formList') }}">{{ __('messages.yourForms') }}</a></li>
-                      <li><a href="{{route('templateList') }}">{{ __('messages.formReadTemplates') }} {{ config('app.name', 'Laravel') }}</a></li>
                       <li><a href="{{ __('messages.tutorialReadForms') }}" target="_blank">{{ __('messages.tutorial') }}</a></li>
                     </ul>
                   </li>
-                  <li><a><i class="fa fa-graduation-cap"></i> {{ __('messages.classroom') }} <span class="label label-warning pull-right">beta</span></a>
+                  <li><a><i class="fa fa-graduation-cap"></i> {{ __('messages.classroom') }} <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="{{route('myClasses') }}">{{ __('messages.myClassrooms') }}</a></li>
                       <li><a href="{{route('myStudents') }}">{{ __('messages.myStudents') }}</a></li>
+                      <li><a href="#" target="_blank">{{ __('messages.tutorial') }}</a></li>                      
                     </ul>
                   </li>
                   <li><a><i class="fa fa-download"></i> {{ __('messages.downloads') }} <span class="fa fa-chevron-down"></span></a>

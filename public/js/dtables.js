@@ -205,8 +205,6 @@ var threshold  = 147;
             var xi=(m1*x11-m2*x21-y11+y21)/(m1-m2);
         }
         var yi=(m1*(xi-x11)+y11);
-        //console.log(y12);
-        //alert ("puntos x= " + xi + " y= " + yi);
         return i=[xi,yi];
     }
 
@@ -451,7 +449,6 @@ var threshold  = 147;
       canvas.height = img.height;
       ctx.drawImage(img, 0, 0, img.width, img.height);
       corners=delStreaks(Math.round(img.height/2),Math.round(img.width/2),img.height,img.width);
-      console.log(corners);
       var x11=(260/1660)*img.width+corners[0];
       var v1 = verticalAxes(corners[2]+(20/2340)*img.height,corners[2]+(400/2340)*img.height,x11,(20/2340)*img.height,(7/2340)*img.height);
       var y21=(250/2340)*img.height+corners[2];
@@ -468,7 +465,6 @@ var threshold  = 147;
       var i3 = intersection(v3[(v3.length)-1],v4[(v4.length-1)],x13,x14,y23,y21,h3[0],h1[0]);
 
       degrees = -Math.atan(-1*(i3[0]-i1[0])/(i3[1]-i1[1]));
-      //console.log(i3[0] + "-" + i1[0] + ")/(" + i3[1] + "-" + i1[1] + ")");
       drawRotated();
 
       var x11=(260/1660)*img.width+corners[0];
@@ -876,7 +872,7 @@ var threshold  = 147;
               $('#multiMark_up').val('');
               $('#output_up').val('');
               $('#concatenate_up').val('');
-              if (fsSel.shape == 5){
+              if (fsSel.shape == 5 || fsSel.shape == 4 ){
                 $('#idField_up').val(fsSel.idField);
                 $('#id_field_div_up').show();
               }
@@ -1234,9 +1230,7 @@ var threshold  = 147;
             var h = boxes[i].h/dy;
             var r = boxes[i].r/dx;
             postData.push({field_name:boxes[i].field_name, x: x, y: y, w: w, h: h, r: r, shape: boxes[i].shape, fill: boxes[i].fill.substring(1), multiMark: boxes[i].multiMark, q_id: boxes[i].q_id, q_option: boxes[i].q_option, idField: boxes[i].idField, concatenate: boxes[i].concatenate, corner: corner, _token: token});
-            console.log(corner);
         }
-        console.log(esq);
 
         $.ajax({
             async: true,
@@ -1326,6 +1320,10 @@ var threshold  = 147;
             }
             if (relativeCoord[j][8]>4){
                 break;
+            }
+            if (relativeCoord[j][10] == 1){
+                hasId=3;
+                continue;
             }
             var temp2 = relativeCoord[j][5] + "-" + relativeCoord[j][6];
             if (temp2!=temp1){
@@ -1438,7 +1436,6 @@ var threshold  = 147;
       if (!isNaN(dx) || !isNaN(dy)){
         if (hasId==1){
             idRead(esq, dx, dy, relativeCoord2, function (id) {
-              console.log(id);
               omrRead(id,  esq, dx, dy, relativeCoord2);
               bcrRead(id,  esq, dx, dy, relativeCoord2);
               ocrRead(id,  esq, dx, dy, relativeCoord2);
@@ -1446,6 +1443,10 @@ var threshold  = 147;
             });
         } else if (hasId==2) {
             idReadOmr(esq, dx, dy, relativeCoord2, function (id) {
+              asyncRead(id,  esq, dx, dy, relativeCoord2);
+            });
+        } else if (hasId==3) {
+            idReadOcr(esq, dx, dy, relativeCoord2, function (id) {
               asyncRead(id,  esq, dx, dy, relativeCoord2);
             });
         } else {
@@ -1517,6 +1518,39 @@ var threshold  = 147;
         });
     }
 
+    function idReadOcr (esq, dx, dy, relativeCoord2, callback){
+        for (var j=0; j<relativeCoord2.length; j++){
+            if (relativeCoord2[j][8]<=3){
+                continue;
+            }
+            if (relativeCoord2[j][8]>4){
+                break;
+            }
+            if (relativeCoord2[j][10]==1){
+              var width = (relativeCoord2[j][2]*dx);
+              var height = (relativeCoord2[j][3]*dy);
+              var newCanvas = document.createElement("canvas");
+              newCanvas.width = width;
+              newCanvas.height = height;
+              var imageData = ctx.getImageData((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height);
+              newCanvas.getContext("2d").putImageData(imageData, 0, 0);
+              idReadOcr2(newCanvas, function(id){
+                  callback(id);
+              });
+            }
+        }
+    }
+
+    function idReadOcr2 (newCanvas,callback){
+        var langsel = document.getElementById("langsel").value;
+        Tesseract.recognize(newCanvas, {
+        lang: langsel})
+        .then(function(data){
+            temp = progressUpdate({ status: 'done', data: data });
+            callback(temp);
+        });
+    }
+
     function idRead (esq, dx, dy, relativeCoord2, callback){
         var tr = document.createElement('tr');
         for (var j=0; j<relativeCoord2.length; j++){
@@ -1535,24 +1569,30 @@ var threshold  = 147;
               var imageData = ctx.getImageData((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height);
               newCanvas.getContext("2d").putImageData(imageData, 0, 0);
               var qrImg = newCanvas.toDataURL();
-              idRead2(qrImg,tr, function(id){
+              idRead2(imageData,qrImg,tr, function(id){
                   callback(id);
               });
             }
         }
     }
 
-    function idRead2 (qrImg,tr,callback){
+    function idRead2 (imageData,qrImg,tr,callback){
+        var qr = jsQR(imageData.data, imageData.width, imageData.height);
+        if (qr){
+            callback(qr.data);
+        }else{
         var qr = new QCodeDecoder();
         qr.decodeFromImage(qrImg, function (err, result) {
-            var td = document.createElement('td');
+            //if (err) throw err;
             temp = result;
             if (err){
-               callback('');
+               callback("Error");
+               throw err;
             }else{
                callback(temp);
             }
         });
+        }
     }
 
     function bcrRead (i,  esq, dx, dy, relativeCoord2){
@@ -1574,25 +1614,53 @@ var threshold  = 147;
             newCanvas.height = height;
             var imageData = ctx.getImageData((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height);
             newCanvas.getContext("2d").putImageData(imageData, 0, 0);
-            var qrImg = newCanvas.toDataURL();
-            bcrRead2(qrImg,tr);
+            var qrImg = newCanvas.toDataURL("image/jpg");
+            bcrRead2(imageData,qrImg,tr);
         }
     }
 
-    function bcrRead2 (qrImg,tr){
+    function bcrRead2 (imageData,qrImg,tr){
+      console.log(qrImg);
+        var td = document.createElement('td');
+        var qr = jsQR(imageData.data, imageData.width, imageData.height);
+        if (qr){
+            td.appendChild(document.createTextNode(qr.data));
+        }else{
         var qr = new QCodeDecoder();
         qr.decodeFromImage(qrImg, function (err, result) {
-            //if (err) throw err;
-            var td = document.createElement('td');
             temp = result;
             if (err){
-               td.appendChild(document.createTextNode(''));
+              Quagga.decodeSingle({
+                  decoder: {
+                      readers: [
+                        "code_128_reader",
+                        "ean_reader",
+                        "ean_8_reader",
+                        "code_39_reader",
+                        "code_39_vin_reader",
+                        "codabar_reader",
+                        "upc_reader",
+                        "upc_e_reader",
+                        "i2of5_reader"] // List of active readers
+                  },
+                  locate: true, // try to locate the barcode in the image
+                  // You can set the path to the image in your server
+                  // or using it's base64 data URI representation data:image/jpg;base64, + data
+                  src: qrImg
+              }, function(result){
+                  if(result.codeResult) {
+                      td.appendChild(document.createTextNode(result.codeResult.code));
+                  } else {
+                      td.appendChild(document.createTextNode("not detected"));
+                  }
+              });
             }else{
                td.appendChild(document.createTextNode(temp));
             }
-            tr.appendChild(td);
-            document.getElementById('resultsFormBcrBody').appendChild(tr);
         });
+        }
+        tr.appendChild(td);
+        document.getElementById('resultsFormBcrBody').appendChild(tr);
     }
 
     function omrRead (i,  esq, dx, dy, relativeCoord2){
@@ -1671,7 +1739,6 @@ var threshold  = 147;
                 if (relativeCoord2[j][8]==1){
                     ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height,relativeCoord2[j][10], relativeCoord2[j][11]]);
                 } else if (relativeCoord2[j][8]==2){
-                  console.log(relativeCoord2[j][12]);
                     ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], radius*2, radius*2),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2, relativeCoord2[j][10], relativeCoord2[j][11]]);
                 }
                 temp1 = relativeCoord2[j][5] + "-" + relativeCoord2[j][6];
@@ -1931,6 +1998,7 @@ var threshold  = 147;
         });
         grade=(average/points)*100;
         omr_responses=omr_responses.join(";");
+        data_array={student_id: student_id, omr_responses: omr_responses, omr_grade: grade, scanInAnswers: scanInAnswers}
         var token = $("input[name='_token']").val();
         $.ajax({
             async: true,
@@ -1939,7 +2007,7 @@ var threshold  = 147;
             type: 'POST',
             contentType: 'application/json',
             dataType: 'json',
-            data: JSON.stringify({student_id: student_id, omr_responses: omr_responses, omr_grade: grade}),
+            data: JSON.stringify(data_array),
             success: function (data) {
               $("#"+student_id).css('background-color','rgba(0, 135, 0, 0.3)');
             }.bind(this, student_id),

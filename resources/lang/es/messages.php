@@ -197,6 +197,7 @@ return [
     'finalGrade' => 'Nota Final',
     'weight' => 'Peso',
     'studentsGrades' => 'Notas de los Estudiantes',
-
-
+    'scanIn' => 'Escanear',
+    'areYouSure' => '¿Está Seguro?',
+    'recomendedBrowser' => 'Navegador Recomendado',
 ];

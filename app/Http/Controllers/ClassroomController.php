@@ -157,7 +157,7 @@ class ClassroomController extends Controller
         {
             $classes = Classe::where('user_id',Auth::id())->with('tests')->orderBy('name')->paginate(20);
         }
-        $users_id=[Auth::id(), 1];
+        $users_id=[Auth::id()];
         $forms_id=[];
         $shareForms=ShareForm::where('user_id',Auth::id())->get();
         foreach ($shareForms as $form) {
@@ -420,6 +420,17 @@ class ClassroomController extends Controller
         return back();
     }
 
+    public function scanInAnswers($id)
+    {
+        $id_class = Test::find($id)->class_id;
+        $classe = User::find(Auth::id())->classes()->find($id_class);
+        $test= $classe->tests()->find($id);
+        $formcoords = Form::find($test->form_id)->formcoords;
+        $form_id=$test->form_id;
+        $scanInAnswers=1;
+        return view('board.gradeTestForms', compact('formcoords', 'form_id', 'test', 'scanInAnswers'));
+    }
+
     public function gradeTestForms($id)
     {
         $id_class = Test::find($id)->class_id;
@@ -427,7 +438,8 @@ class ClassroomController extends Controller
         $test= $classe->tests()->find($id);
         $formcoords = Form::find($test->form_id)->formcoords;
         $form_id=$test->form_id;
-        return view('board.gradeTestForms', compact('formcoords', 'form_id', 'test'));
+        $scanInAnswers=0;
+        return view('board.gradeTestForms', compact('formcoords', 'form_id', 'test', 'scanInAnswers'));
     }
 
     public function storeGradeOmr($id, Request $data)
@@ -435,16 +447,47 @@ class ClassroomController extends Controller
         $id_class = Test::find($id)->class_id;
         $classe = User::find(Auth::id())->classes()->find($id_class);
         $test= $classe->tests()->find($id);
-        $student = Student::where('user_id', Auth::id())->where('student_id', $data->input('student_id'))->first();
-        $enroll = Classroom::where('class_id', $classe->id)->where('student_id', $student->id)->first();
-        if(isset($enroll->id)){
-          $result= New Result();
-          $result->student_id=$student->id;
-          $result->omr_responses=$data->input('omr_responses');
-          $result->omr_grade=$data->input('omr_grade');
-          $result->grade=$data->input('omr_grade');
-          $test->results()->save($result);
-          return $result;
+        if ($data->input('scanInAnswers')==1) {
+          $questions = Formcoord::where(function($query){
+                    $query->where('idField',0)
+                          ->orWhereNull('idField');
+                })->selectRaw('field_name, q_id, min(q_option) as q_min, max(q_option) as q_max, shape')
+                ->whereIn('shape', [1,2])
+                ->where('form_id', $test->form_id)
+                ->groupBy('shape', 'field_name', 'q_id')
+                ->get();
+          $titles=[];
+          $answers=[];
+          $weights=[];
+          $fields=explode(";",$data->input('omr_responses'));
+          foreach ($fields as $field) {
+            if($field==""){
+              array_push($answers, "*");
+            }else {
+              array_push($answers, $field);
+            }
+            array_push($weights, 1);
+          }
+          foreach ($questions as $question) {
+            array_push($titles,$question->field_name . "-" . $question->q_id);
+          }
+          $test->titles=implode(";",$titles);
+          $test->answers=implode(";",$answers);
+          $test->answers_weight=implode(";",$weights);
+          $test->save();
+          return $test;
+        }else {
+            $student = Student::where('user_id', Auth::id())->where('student_id', $data->input('student_id'))->first();
+            $enroll = Classroom::where('class_id', $classe->id)->where('student_id', $student->id)->first();
+            if(isset($enroll->id)){
+              $result= New Result();
+              $result->student_id=$student->id;
+              $result->omr_responses=$data->input('omr_responses');
+              $result->omr_grade=$data->input('omr_grade');
+              $result->grade=$data->input('omr_grade');
+              $test->results()->save($result);
+              return $result;
+            }
         }
     }
 

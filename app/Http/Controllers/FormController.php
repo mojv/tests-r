@@ -48,9 +48,7 @@ class FormController extends Controller
             $form = new Form;
             $form->form_name=$data->input('form_name');
             $user->forms()->save($form);
-            $create = 1;
-            $form_id=$form->id;
-            return view('board.createForm', compact('create', 'form_id'));
+            return back();
     }
 
     public function updateForm()
@@ -81,7 +79,7 @@ class FormController extends Controller
         $form = $user->forms()->find($id);
         if(isset($form->formfile)){
           Storage::delete("/public/".$form->formfile);
-        }        
+        }
         $form->delete();
         return back();
     }

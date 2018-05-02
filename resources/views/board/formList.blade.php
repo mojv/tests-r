@@ -18,7 +18,7 @@
           <div class="x_title">
             <h2>{{ __('messages.yourForms') }}</h2>
             <div class="clearfix"></div>
-          </div>        
+          </div>
           <div class="x_content">
             <table id="datatable" class="table table-striped table-bordered">
               <thead>
@@ -68,7 +68,7 @@
           </div>
         </div>
       </div>
-    </div>    
+    </div>
     <!-- modal -->
 
     <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true" id="editNameModal">

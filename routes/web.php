@@ -92,6 +92,7 @@ Route::group(['middleware' => ['web', 'locale', 'fw-block-bl']], function () {
     Route::get('/mytest/{test}', ['as' => 'myTest', 'uses' =>'ClassroomController@myTest']);
     Route::get('/defineAnswers/{test}', ['as' => 'defineAnswers', 'uses' =>'ClassroomController@defineAnswers']);
     Route::post('/defineAnswers/{test}', ['as' => 'saveAnswers', 'uses' =>'ClassroomController@saveAnswers']);
+    Route::get('/scanInAnswers/{test}', ['as' => 'scanInAnswers', 'uses' =>'ClassroomController@scanInAnswers']);
     Route::get('/gradeTestForms/{test}', ['as' => 'gradeTestForms', 'uses' =>'ClassroomController@gradeTestForms']);
     Route::post('/gradeTestForms/{test}', ['as' => 'storeGradeOmr', 'uses' =>'ClassroomController@storeGradeOmr']);
     Route::post('/gradeTestImgForms/{test}', ['as' => 'storeGradeImg', 'uses' =>'ClassroomController@storeGradeImg']);

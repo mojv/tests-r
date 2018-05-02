@@ -377,7 +377,7 @@
             $('#concatenate').prop('disabled', true);
             $('#commands').hide();
             $('#cancel').show();
-            $("#id_field_div").hide();
+            $("#id_field_div").show();
         });
         $('#bcr').click(function(){
             $("#id_field_div").show();

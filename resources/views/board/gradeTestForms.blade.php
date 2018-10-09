@@ -317,6 +317,8 @@
     var threshold_ctx;
     var threshold_img = new Image;
     var scanInAnswers= {{$scanInAnswers}};
+    var storeOmrImgRoute = "{{route('storeOmrImg')}}";
+    var updateUsageRoute = "{{route('updateUsage')}}";
     $('#thresholdValue').html(threshold);
     $('#gradeImg').click(function() {
       gradeImage();

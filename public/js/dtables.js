@@ -1375,6 +1375,7 @@ var learn2 = 0.25;
         var canvas = document.createElement("canvas");
         //var canvas = document.getElementById("borrar");
         var iterations=imgs.length;
+        updateUsage(iterations);
         (sId = []).length = imgs.length;
         var i = 0;
         (function loop() {
@@ -2169,3 +2170,16 @@ var learn2 = 0.25;
            data: JSON.stringify({cut: img, mark: mark, per: my_string}),
        })
    }
+
+   function updateUsage(iterations) {
+        var token = $("input[name='_token']").val();
+        $.ajax({
+            async: true,
+            url: updateUsageRoute,
+            headers: {"X-CSRF-TOKEN": token},
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({iter: iterations}),
+        })
+    }

@@ -106,6 +106,11 @@ Route::group(['middleware' => ['web', 'locale', 'fw-block-bl']], function () {
     Route::get('/pendingEvaluation/{test}', ['as' => 'pendingEvaluation', 'uses' =>'ClassroomController@pendingEvaluation']);
     Route::get('/downladPendings/{test}', ['as' => 'downladPendings', 'uses' =>'ClassroomController@downladPendings']);
 
+
+    //-----------Usage traking-----------
+    Route::post('/updateUsage', ['as' => 'updateUsage', 'uses' =>'UpdateUserController@updateUsage']);
+
+
     Auth::routes();
 
     Route::get('/home', 'HomeController@index');

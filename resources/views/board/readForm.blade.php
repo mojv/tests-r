@@ -344,6 +344,7 @@
     var threshold_ctx;
     var threshold_img = new Image;
     var storeOmrImgRoute = "{{route('storeOmrImg')}}";
+    var updateUsageRoute = "{{route('updateUsage')}}";
     var darkn = document.getElementById("darkness").value;
     $('#thresholdValue').html(threshold);
     $('#gradeImg').click(function() {

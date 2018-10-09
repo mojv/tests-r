@@ -41,7 +41,7 @@ class UpdateUserController extends Controller
         if ($data->hasFile('photo')){
             if (isset($photo)){
                 Storage::delete("/public/".$photo);
-            }            
+            }
             $path = $data->photo->store('public');
             $user->photo=  basename($path);
             $user->save();
@@ -49,5 +49,11 @@ class UpdateUserController extends Controller
         return back();
     }
 
+    public function updateUsage(Request $data)
+    {
+      $user = User::find(Auth::id());
+      $user->usage=$user->usage+$data->input('iter');
+      $user->save();
+    }
 
 }

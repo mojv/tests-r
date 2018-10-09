@@ -343,6 +343,8 @@
     var threshold_canvas = document.getElementById('threshold_canvas');
     var threshold_ctx;
     var threshold_img = new Image;
+    var storeOmrImgRoute = "{{route('storeOmrImg')}}";
+    var darkn = document.getElementById("darkness").value;
     $('#thresholdValue').html(threshold);
     $('#gradeImg').click(function() {
       gradeImage();

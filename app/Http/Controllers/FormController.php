@@ -219,4 +219,31 @@ class FormController extends Controller
         return view('board.forum');
     }
 
+    public function storeOmrImg(Request $data)
+    {
+      $mark= $data->input('mark');
+      $cut = $data->input('cut');
+      $per = $data->input('per');
+      $cut = str_replace('data:image/png;base64,','', $cut);
+      $cut = str_replace('', '+', $cut);
+      $cut = base64_decode($cut);
+      $randname = $mark . "-" . $per . "-"  . rand(intval(111111111111), intval(999999999999)) .'.jpg';
+      try {
+         if ($mark==1) {
+           \File::put("learn/1/" . $randname, $cut);
+            return 1;
+         }elseif ($mark==0) {
+           \File::put("learn/0/" . $randname, $cut);
+            return 1;
+         }else {
+           \File::put("learn/2/" . $randname, $cut);
+            return 1;
+         }
+
+      }catch (\Exception $e) {
+          return $e;
+      }
+
+    }
+
 }

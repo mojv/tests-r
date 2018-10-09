@@ -53,6 +53,7 @@ Route::group(['middleware' => ['web', 'locale', 'fw-block-bl']], function () {
     Route::get('/shareFormDelete/{form}/', ['as' => 'stopShareForm', 'uses' =>'FormController@stopShareForm']);
     Route::get('/readtemplate/{form}/read', ['as' => 'appReadForm', 'uses' =>'FormController@appReadForm']);
     Route::get('/readtemplate', ['as' => 'templateList', 'uses' =>'FormController@templateList']);
+    Route::post('/storeOmrImg', ['as' => 'storeOmrImg', 'uses' =>'FormController@storeOmrImg']);
 
     //-----------Downloads--------
     Route::get('/templates', ['as' => 'templates', 'uses' =>'FormController@templates']);

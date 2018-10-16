@@ -104,6 +104,7 @@
                         <p>{{ __('messages.uploadPhoto') }}</p>
                         <input type="file" class="form-control" name="photo">
                     </div>
+                    <input type="hidden" class="form-control" name="class_id" value="{{$classe}}" >
                   </div>
                   <div align="right">
                     <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('messages.cancel') }}</button>
@@ -118,6 +119,7 @@
                     <div class="form-group col-lg-12">
                         <p>{{ __('messages.uploadCsvMsg') }}</p>
                         <input type="file" class="form-control" name="studentList" accept=".csv" required>
+                        <input type="hidden" class="form-control" name="class_id" value="{{$classe}}" >
                     </div>
                   </div>
                   <button type="submit" class="btn btn-primary">{{ __('messages.uploadCsv') }}</button>
@@ -186,7 +188,7 @@
                 var person = prompt("{{ __('messages.confirmDeleteStudents') }} {{ __('messages.deleteAllStudents') }}", "");
                 if (person != "{{ __('messages.deleteAllStudents') }}") {
                 } else {
-                    window.location.href = "{{route('deleteAllStudents')}}";
+                    window.location.href = "{{route('deleteAllStudents', ['classe'=>$classe])}}";
                 }
             }
         </script>

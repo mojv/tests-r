@@ -97,8 +97,7 @@
                   <li><a><i class="fa fa-graduation-cap"></i> {{ __('messages.classroom') }} <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="{{route('myClasses') }}">{{ __('messages.myClassrooms') }}</a></li>
-                      <li><a href="{{route('myStudents') }}">{{ __('messages.myStudents') }}</a></li>
-                      <li><a href="#" target="_blank">{{ __('messages.tutorial') }}</a></li>                      
+                      <li><a href="#" target="_blank">{{ __('messages.tutorial') }}</a></li>
                     </ul>
                   </li>
                   <li><a><i class="fa fa-download"></i> {{ __('messages.downloads') }} <span class="fa fa-chevron-down"></span></a>

@@ -69,6 +69,9 @@
                   <li>
                     <input type="image" src="{{ asset('images\create.png') }}" height="32"  data-toggle="modal" data-target=".createExam-modal" onclick="set_class(this.value)" value="{{$classe->id}}">
                   </li>
+                  <li>
+                    <input type="image" src="{{ asset('images\qr.png') }}" height="32"  data-toggle="modal" data-target=".createQr-modal" onclick="set_qrClass(this.value)" value="{{$classe->id}}">
+                  </li>
                 </ul>
               </td>
               <td class="project_progress">
@@ -86,7 +89,7 @@
                 <small>{{$complete}}% {{ __('messages.complete') }}</small>
               </td>
               <td>
-                <a href="{{route('enrollStudents', ['classe'=> $classe->id])}}"><button type="button" class="btn btn-success btn-xs">{{ __('messages.enroll') }}</button></a> ({{ count($classe->classrooms) }} {{ __('messages.students') }})
+                <a href="{{route('enrollStudents', ['classe'=> $classe->id])}}"><button type="button" class="btn btn-success btn-xs">{{ __('messages.enroll') }}</button></a> ({{ count($classe->students) }} {{ __('messages.students') }})
               </td>
               <td>
                 <div class="col-xs-4">
@@ -363,6 +366,37 @@
           </div>
         </div>
         <!-- /modals -->
+        <!-- Modal -->
+        <div class="modal fade createQr-modal" tabindex="-1" role="dialog" aria-hidden="true">
+          <div class="modal-dialog modal-md">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">{{ __('messages.createTest') }}</h4>
+              </div>
+              <form action="{{ route('createQrPdf') }}" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                  {{ csrf_field() }}
+                  <div class="row">
+                    <div class="form-group">
+                        <p>{{ __('messages.formName') }}</p>
+                        {{ Form::select('form_id', $forms, '', ['class' => 'form-control', 'id' => 'test_form_id', 'required'=>'required'])}}
+                    </div>
+                    <input type="hidden" name="classe" value="" id="classe">
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <div align="right">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('messages.cancel') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ __('messages.createTest') }}</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- /modals -->
         <script>
             function filterForms(value){
               $(".updateForms").hide();
@@ -381,6 +415,9 @@
               $('#test_weight').val('');
               $('#test_form_id').val('');
               $('#class_id').val(value);
+            }
+            function set_qrClass(value){
+              $('#classe').val(value);
             }
             $('#editor-one').bind("DOMSubtreeModified",function(){
               $('#descr').val($('#editor-one').html());

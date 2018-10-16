@@ -10,9 +10,9 @@ class Classe extends Model
       'user_id', 'name', 'syllabus'
   ];
 
-  public function classrooms()
+  public function students()
   {
-      return $this->hasMany('App\Classroom', 'class_id');
+      return $this->hasMany('App\Student', 'class_id');
   }
 
   public function tests()

@@ -88,6 +88,7 @@ Route::group(['middleware' => ['web', 'locale', 'fw-block-bl']], function () {
     Route::get('/unrollAllStudents/{classe}', ['as' => 'unrollAllStudents', 'uses' =>'ClassroomController@unrollAllStudents']);
     Route::get('/classHistory/{class}/', ['as' => 'classHistory', 'uses' =>'ClassroomController@classHistory']);
     Route::get('/downloadClassHistory/{class}/', ['as' => 'downloadClassHistory', 'uses' =>'ClassroomController@downloadClassHistory']);
+    Route::post('/createQrPdf', ['as' => 'createQrPdf', 'uses' =>'ClassroomController@createQrPdf']);
 
     //-----------Tests-----------
     Route::get('/mytest/{test}', ['as' => 'myTest', 'uses' =>'ClassroomController@myTest']);

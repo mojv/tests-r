@@ -687,25 +687,10 @@ var learn2 = 0.25;
         sheet_corners.stroke();
         // draw all boxes
         var l = boxes.length;
+
         for (var i = 0; i < l; i++) {
             boxes[i].drawshape(ctx, boxes[i], boxes[i].fill, boxes[i].shape);
         }
-
-        // draw selection
-        // right now this is just a stroke along the edge of the selected box
-        /*if (mySel != null) {
-          ctx.strokeStyle = mySelColor;
-          ctx.lineWidth = mySelWidth;
-          ctx.beginPath();
-          ctx.arc(mySel.x+mySel.r,mySel.y+mySel.r,mySel.r,0,Math.PI*2,true);
-          ctx.closePath();
-          ctx.strokeStyle = "#c82124";
-          ctx.stroke();
-          ctx.strokeRect(mySel.x,mySel.y,mySel.w,mySel.h);
-        }*/
-
-        // Add stuff you want drawn on top all the time here
-
 
         canvasValid = true;
       }
@@ -2182,4 +2167,48 @@ var learn2 = 0.25;
             dataType: 'json',
             data: JSON.stringify({iter: iterations}),
         })
+    }
+
+
+    function drawQr() {
+        clear(ctx);
+        ctx.save();
+        ctx.translate(img.width/2,img.width/2);
+        ctx.rotate(degrees);
+        ctx.drawImage(img,-img.width/2,-img.width/2);
+        ctx.restore();
+        qrPadding = 0.2;
+
+        var width = 300;
+        var height= canvas.height*width/canvas.width;
+        var pdf = new jsPDF('p', 'px', [width,height],true);
+        var l = students_id.length;
+
+        for (var i = 0; i < l; i++) {
+            var srcImg  = canvas;
+            window.onePageCanvas = document.createElement("canvas");
+            onePageCanvas.setAttribute('width', canvas.width);
+            onePageCanvas.setAttribute('height', canvas.height);
+            var ctxqr = onePageCanvas.getContext('2d');
+            ctxqr.drawImage(canvas,0,0);
+
+            $('#qrcode').qrcode({width: (boxes[0].w)*(1-qrPadding), height: (boxes[0].h)*(1-qrPadding), text: students_id[i]});
+            var qrCodeImg = $('canvas')[1];
+            ctxqr.drawImage(qrCodeImg , boxes[0].x+(boxes[0].w)*(qrPadding/2), boxes[0].y+(boxes[0].h)*(qrPadding/2));
+            ctxqr.font = "15px Arial";
+            ctxqr.textAlign="center";
+            ctxqr.fillText(students_id[i],boxes[0].x+(boxes[0].w/2),boxes[0].y+(boxes[0].h)*1.05);
+            ctxqr.fillText(students_name[i],boxes[0].x+(boxes[0].w/2),boxes[0].y+(boxes[0].h)*1.05+17);
+            var canvasDataURL = onePageCanvas.toDataURL("image/png", 1.0);
+
+            if (i > 0) {
+                pdf.addPage(width,height); //8.5" x 11" in pts (in*72)
+            }
+            pdf.setPage(i+1);
+            pdf.addImage(canvasDataURL, 'JPEG', 0, 0, width, height, undefined,'FAST');
+            $('#qrcode').empty();
+          }
+
+        pdf.save("download.pdf");
+        window.history.back();
     }

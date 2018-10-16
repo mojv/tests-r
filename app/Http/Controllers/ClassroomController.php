@@ -25,25 +25,6 @@ class ClassroomController extends Controller
         $this->middleware('auth');
     }
 
-    public function myStudents(Request $data)
-    {
-        $q=$data->input('q');
-        if ($q)
-        {
-            $students = Student::where('user_id', Auth::id())->where(function($query) use ($q) {
-                $query->where('name', 'LIKE', '%'.$q.'%')
-                    ->orWhere('last_name', 'LIKE', '%'.$q.'%')
-                    ->orWhere('email', 'LIKE', '%'.$q.'%')
-                    ->orWhere('student_id', 'LIKE', '%'.$q.'%');
-            })->orderBy('name')->paginate(9);
-        }
-        else
-        {
-            $students = Student::where('user_id',Auth::id())->orderBy('name')->paginate(9);
-        }
-        return view('board.myStudents', compact('students'));
-    }
-
     public function createStudent(Request $data)
     {
         $validator = $this->validate($data, [
@@ -104,7 +85,7 @@ class ClassroomController extends Controller
 
     public function deleteAllStudents()
     {
-        DB::table('students')->where('user_id', Auth::id())->delete();
+        DB::table('students')->where('user_id', Auth::id())->where('class_id', $classe)->delete();
         return back();
     }
 
@@ -116,6 +97,7 @@ class ClassroomController extends Controller
           'studentList' => 'required'
       ]);
       $path = $data->studentList->path();
+      $class_id=$data->class_id;
       $file = fopen($path,"r");
       $num=1;
       $errors=[];
@@ -129,7 +111,8 @@ class ClassroomController extends Controller
                     'student_id' => $row[0],
                     'name' => $row[1],
                     'last_name'=> $row[2],
-                    'email'=> $row[3]
+                    'email'=> $row[3],
+                    'class_id' => $class_id
                 )
               );
           } catch(\Illuminate\Database\QueryException $ex){
@@ -234,22 +217,22 @@ class ClassroomController extends Controller
     public function enrollStudents(Request $data, $classe)
     {
         $q=$data->input('q');
-        if (!empty($q))
+        if ($q)
         {
             $students = Student::where('user_id', Auth::id())
-              ->where(function($query) use ($q) {
-                  $query->where('name', 'LIKE', '%'.$q.'%')
+            ->where('class_id',$classe)
+            ->where(function($query) use ($q) {
+                $query->where('name', 'LIKE', '%'.$q.'%')
                     ->orWhere('last_name', 'LIKE', '%'.$q.'%')
                     ->orWhere('email', 'LIKE', '%'.$q.'%')
                     ->orWhere('student_id', 'LIKE', '%'.$q.'%');
-              })->with('classrooms')->orderBy('name')->paginate(10);
+            })->orderBy('name')->paginate(20);
         }
         else
         {
-            $students = Student::where('user_id',Auth::id())->with('classrooms')->orderBy('name')->paginate(9);
+            $students = Student::where('user_id',Auth::id())->where('class_id',$classe)->orderBy('name')->paginate(9);
         }
-        //return $students;
-        return view('board.enrollStudents', compact('students', 'classe'));
+        return view('board.myStudents', compact('students', 'classe'));
     }
 
     public function enrollStudent(Request $data){
@@ -326,14 +309,12 @@ class ClassroomController extends Controller
       $results4 = Result::where('test_id', $test->id)->inRandomOrder()->take(1000)->get();
       $titles=explode(";",$test->titles);
       $answers=explode(";",$test->answers);
-      $enrolls = Classroom::where('class_id', $classe->id)
+      $enrolls = Student::where('class_id', $classe->id)
                   ->whereNotExists(function($query) use($id){
                       $query->select(DB::raw(1))
                             ->from('results')
-                            ->whereRaw("classrooms.student_id = results.student_id AND results.test_id = $id");
-                  })
-                  ->join('students', 'classrooms.student_id', "=", 'students.id')
-                  ->count();
+                            ->whereRaw("students.id = results.student_id AND results.test_id = $id");
+                  })->count();
       $questions = Formcoord::where(function($query){
                 $query->where('idField',0)
                       ->orWhereNull('idField');
@@ -661,8 +642,7 @@ class ClassroomController extends Controller
           array_push($testIds, $test->id);
         }
         if (!empty($q)){
-            $students = Classroom::where('class_id', $classe->id)
-              ->join('students', 'classrooms.student_id', "=", 'students.id')
+            $students = Student::where('class_id', $classe->id)
               ->where(function($query) use ($q) {
                   $query->where('students.name', 'LIKE', '%'.$q.'%')
                     ->orWhere('students.last_name', 'LIKE', '%'.$q.'%')
@@ -671,22 +651,22 @@ class ClassroomController extends Controller
                   })->paginate(10);
         }
         else{
-            $students = Classroom::where('class_id', $classe->id)
-            ->join('students', 'classrooms.student_id', "=", 'students.id')
+            $students = Student::where('class_id', $classe->id)
             ->paginate(10);
         }
         foreach ($students as $student) {
+          return   $classe->id;
            $grades = Result::select('test_id', 'grade')
               ->where('student_id', $student->id)
               ->whereIn('test_id', $testIds)
               ->get();
            $student->setAttribute('grades', $grades);
         }
-        //return $students;
+        return $students;
         return view('board.classHistory', compact('avgs', 'quartiles', 'testsNames', 'students', 'id', 'results', 'tests', 'dataq'));
     }
 
-    public function downloadClassHistory( $id){
+    public function downloadClassHistory($id){
         $classe = User::find(Auth::id())->classes()->find($id);
         $tests = Test::where('class_id', $classe->id)->get();
         $avgs=[]; $quartiles=[]; $testsNames=[]; $testIds=[];
@@ -744,4 +724,13 @@ class ClassroomController extends Controller
         );
         return Response::download($filename, 'results.csv', $headers);
     }
+
+    public function createQrPdf(Request $data){
+       $user = User::find(Auth::id());
+       $form = $user->forms()->find($data->form_id);
+       $formcoords = $form->formcoords->where('shape',5)->where('idField',1);
+       $students = Student::where('user_id',Auth::id())->where('class_id',$data->classe)->orderBy('name')->get();
+       return view('board.createQrPdf', compact('students', 'formcoords'));
+    }
+
 }

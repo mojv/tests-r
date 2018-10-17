@@ -1802,9 +1802,9 @@ var threshold  = 180;
            var temp2 = relativeCoord2[j][5] + "-" + relativeCoord2[j][6];
            if (temp_q_id==0){
                if (relativeCoord2[j][8]==1){
-                   ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], width, height),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height]);
+                   ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], width, height),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height,relativeCoord2[j][10], relativeCoord2[j][11]]);
                } else if (relativeCoord2[j][8]==2){
-                   ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], radius*2, radius*2),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2]);
+                   ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[0], (relativeCoord2[j][1]*dy)+esq[1], radius*2, radius*2),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2,relativeCoord2[j][10], relativeCoord2[j][11]]);
                }
                temp1 = relativeCoord2[j][5] + "-" + relativeCoord2[j][6];
                temp_q_id=1;

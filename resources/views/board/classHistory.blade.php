@@ -109,7 +109,7 @@
                     <?php
                       if(isset($grade)){
                         array_push($grades2, 0);
-                        $final=$final+($grade->grade*$test->test_weight);
+                        $final=$final+(0*$test->test_weight);
                         $points=$points+$test->test_weight;
                       }
                     ?>
@@ -117,7 +117,7 @@
                 @endforeach
                 <?php
                   if(isset($grade)){
-                    $final=$final/$points;
+                    $final=round($final/$points,2);
                   }
                 ?>
                 <td>{{$final}}%</td>

@@ -120,7 +120,6 @@ return [
     'idField' => 'C`est un champ ID?',
     'img' => 'IMG',
     'gradeImage' => 'Évaluer des images',
-    //------------------------------
     'concatenate' => 'Concaténer',
     'classroom' => 'Salle de cours',
     'myClassrooms' => 'Mes salles de cours',
@@ -199,5 +198,7 @@ return [
     'studentsGrades' => 'Notes des élèves',
     'scanIn' => 'Numériser',
     'areYouSure' => 'Êtes-vous sûr?',
-    'recomendedBrowser' => 'Navigateur Recommandé',    
+    'recomendedBrowser' => 'Navigateur Recommandé',
+    'createQRfield' => 'Imprimer des Codes QR Personnalisés',
+    'print' => 'Imprimer',
 ];

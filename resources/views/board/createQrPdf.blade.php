@@ -3,15 +3,114 @@
 
 @section('content')
 
+    <style>
+
+        .circle {
+           background-color: rgba(0,0,0,0);
+           border: 5px solid rgba(0,183,229,0.9);
+           opacity: .9;
+           border-right: 5px solid rgba(0,0,0,0);
+           border-left: 5px solid rgba(0,0,0,0);
+           border-radius: 50px;
+           box-shadow: 0 0 35px #2187e7;
+           width: 50px;
+           height: 50px;
+           margin: 0 auto;
+           -moz-animation: spinPulse 1s infinite ease-in-out;
+           -webkit-animation: spinPulse 1s infinite linear;
+       }
+
+       .circle1 {
+           background-color: rgba(0,0,0,0);
+           border: 5px solid rgba(0,183,229,0.9);
+           opacity: .9;
+           border-left: 5px solid rgba(0,0,0,0);
+           border-right: 5px solid rgba(0,0,0,0);
+           border-radius: 50px;
+           box-shadow: 0 0 15px #2187e7;
+           width: 30px;
+           height: 30px;
+           margin: 0 auto;
+           position: relative;
+           top: -40px;
+           -moz-animation: spinoffPulse 1s infinite linear;
+           -webkit-animation: spinoffPulse 1s infinite linear;
+       }
+
+       @-moz-keyframes spinPulse {
+           0% {
+               -moz-transform: rotate(160deg);
+               opacity: 0;
+               box-shadow: 0 0 1px #2187e7;
+           }
+
+           50% {
+               -moz-transform: rotate(145deg);
+               opacity: 1;
+           }
+
+           100% {
+               -moz-transform: rotate(-320deg);
+               opacity: 0;
+           };
+       }
+
+       @-moz-keyframes spinoffPulse {
+           0% {
+               -moz-transform: rotate(0deg);
+           }
+
+           100% {
+               -moz-transform: rotate(360deg);
+           };
+       }
+
+       @-webkit-keyframes spinPulse {
+           0% {
+               -webkit-transform: rotate(160deg);
+               opacity: 0;
+               box-shadow: 0 0 1px #2187e7;
+           }
+
+           50% {
+               -webkit-transform: rotate(145deg);
+               opacity: 1;
+           }
+
+           100% {
+               -webkit-transform: rotate(-320deg);
+               opacity: 0;
+           };
+       }
+
+       @-webkit-keyframes spinoffPulse {
+           0% {
+               -webkit-transform: rotate(0deg);
+           }
+
+           100% {
+               -webkit-transform: rotate(360deg);
+           };
+       }
+
+    </style>
+
     <div class="row">
         @yield('nameModal')
         <div class="x_content" id="file_upload">
-            {{ __('messages.imageFile') }}<input id="file_input" type='file' />
-            {{ __('messages.PDFFile') }}<input id='pdf' type='file'/>
+            {{ __('messages.imageFile') }}<input id="file_input" type='file' accept=".png, .jpeg, .jpg" />
+            {{ __('messages.PDFFile') }}<input id='pdf' type='file' accept=".pdf"/>
         </div>
         <canvas id="canvas" hidden></canvas>
         <div id="qrcode" hidden></div>
     </div>
+
+    <div class="modal" id="loading">
+            <br><br><br><br><br><br><br><br><br>
+            <div class="circle"></div>
+            <div class="circle1"></div>
+    </div>
+
     <script type="text/javascript" src="{{ asset('js/dtables.js') }}?t={{rand(10000, 99999)}}"></script>
     <script type="text/javascript" src="{{ asset('js/qrcode.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/pdfjs/build/pdf.js') }}"></script>
@@ -41,9 +140,15 @@
 
         var input = document.getElementById('file_input');
         input.addEventListener('change', handleFiles);
+        $('#file_input').change(function(){
+          $('#loading').modal('show');
+        })
         PDFJS.disableWorker = true;
         var pdf = document.getElementById('pdf');
         pdf.addEventListener('change', pdftocanvas);
+        $('#pdf').change(function(){
+          $('#loading').modal('show');
+        })
         var img = new Image;
         var degrees;
         var ctx;
@@ -118,6 +223,7 @@
             addRect((temp_boxes[0].x*dx)+esq[temp_boxes[0].corner][0], (temp_boxes[0].y*dy)+esq[temp_boxes[0].corner][1], temp_boxes[0].w*dx,temp_boxes[0].h*dy,temp_boxes[0].fill,temp_boxes[0].field_name,temp_boxes[0].q_id,temp_boxes[0].q_option,temp_boxes[0].shape,temp_boxes[0].multiMark,temp_boxes[0].idField,temp_boxes[0].concatenate);
 
             drawQr();
+
         }
     </script>
 

@@ -373,23 +373,21 @@
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                 </button>
-                <h4 class="modal-title" id="myModalLabel">{{ __('messages.createTest') }}</h4>
+                <h4 class="modal-title" id="myModalLabel">{{ __('messages.createQRfield') }}</h4>
               </div>
               <form action="{{ route('createQrPdf') }}" method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
                   {{ csrf_field() }}
                   <div class="row">
-                    <div class="form-group">
                         <p>{{ __('messages.formName') }}</p>
                         {{ Form::select('form_id', $forms, '', ['class' => 'form-control', 'id' => 'test_form_id', 'required'=>'required'])}}
-                    </div>
                     <input type="hidden" name="classe" value="" id="classe">
                   </div>
                 </div>
                 <div class="modal-footer">
                   <div align="right">
                     <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('messages.cancel') }}</button>
-                    <button type="submit" class="btn btn-primary">{{ __('messages.createTest') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ __('messages.print') }}</button>
                   </div>
                 </div>
               </form>
@@ -424,7 +422,6 @@
             });
             @foreach ($classes as $classe)
             $('#editor-one{{$classe->id}}').bind("DOMSubtreeModified",function(){
-              console.log('hola');
               $('#descr{{$classe->id}}').val($('#editor-one{{$classe->id}}').html());
             });
             @endforeach

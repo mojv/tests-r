@@ -120,7 +120,6 @@ return [
     'idField' => 'Este es un campo ID?',
     'img' => 'IMG',
     'gradeImage' => 'Calificar Imagenes',
-    //------------------------------
     'concatenate' => 'Concatenar',
     'classroom' => 'Aula',
     'myClassrooms' => 'Mis Aulas',
@@ -200,4 +199,6 @@ return [
     'scanIn' => 'Escanear',
     'areYouSure' => '¿Está Seguro?',
     'recomendedBrowser' => 'Navegador Recomendado',
+    'createQRfield' => 'Imprimir códigos QR personalizados',
+    'print' => 'Imprimir',
 ];

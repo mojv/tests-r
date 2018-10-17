@@ -120,7 +120,6 @@ return [
     'idField' => 'Is this an ID field?',
     'img' => 'IMG',
     'gradeImage' => 'Grade Image',
-     //------------------------------
      'concatenate' => 'Concatenate',
      'classroom' => 'Classroom',
      'myClassrooms' => 'My Classrooms',
@@ -200,8 +199,9 @@ return [
      'threshold'=>'Threshold',
      'readcorners' => 'Read Corners',
      'homePage' => 'http://formread.org/',
-     //---------------------------------------------------------
      'scanIn' => 'Scan In',
-     'areYouSure' => 'Are You Sure?',  
+     'areYouSure' => 'Are You Sure?',
      'recomendedBrowser' => 'Recomended Browser',
+     'createQRfield' => 'Print Personalized QR Code',
+     'print' => 'Print',
 ];

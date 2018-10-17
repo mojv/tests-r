@@ -197,8 +197,8 @@
     </div>
 </div>
 <div id="files_input">
-    {{ __('messages.imagesFiles') }}<input type="file" id="files" name="files[]" multiple />
-    {{ __('messages.PDFFile') }}<input id='pdf' type='file'/>
+    {{ __('messages.imagesFiles') }}<input type="file" id="files" name="files[]" multiple accept=".png, .jpeg, .jpg"/>
+    {{ __('messages.PDFFile') }}<input id='pdf' type='file' accept=".pdf"/>
 </div>
 
 <div id="redForm_run" hidden>

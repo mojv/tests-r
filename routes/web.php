@@ -71,7 +71,7 @@ Route::group(['middleware' => ['web', 'locale', 'fw-block-bl']], function () {
     Route::post('/myStudents', ['as' => 'createStudent', 'uses' =>'ClassroomController@createStudent']);
     Route::patch('/myStudents/{student}/', ['as' => 'updateStudent', 'uses' =>'ClassroomController@updateStudent']);
     Route::delete('/myStudents/', ['as' => 'deleteStudent', 'uses' =>'ClassroomController@deleteStudent']);
-    Route::get('/deleteAllStudents/', ['as' => 'deleteAllStudents', 'uses' =>'ClassroomController@deleteAllStudents']);
+    Route::get('/deleteAllStudents/{classe}', ['as' => 'deleteAllStudents', 'uses' =>'ClassroomController@deleteAllStudents']);
     Route::post('/addStudentList', ['as' => 'addStudentList', 'uses' =>'ClassroomController@addStudentList']);
 
     //-----------Classes-----------

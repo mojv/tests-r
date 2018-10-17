@@ -3,8 +3,8 @@
 
 @section('fileInput')
     <div class="x_content" id="file_upload">
-        {{ __('messages.imageFile') }}<input id="file_input" type='file' />
-        {{ __('messages.PDFFile') }}<input id='pdf' type='file'/>
+        {{ __('messages.imageFile') }}<input id="file_input" type='file' accept=".png, .jpeg, .jpg"/>
+        {{ __('messages.PDFFile') }}<input id='pdf' type='file' accept=".pdf"/>
     </div>
 @endsection
 

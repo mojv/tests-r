@@ -83,7 +83,7 @@ class ClassroomController extends Controller
         return back();
     }
 
-    public function deleteAllStudents()
+    public function deleteAllStudents($classe)
     {
         DB::table('students')->where('user_id', Auth::id())->where('class_id', $classe)->delete();
         return back();
@@ -425,6 +425,7 @@ class ClassroomController extends Controller
 
     public function storeGradeOmr($id, Request $data)
     {
+
         $id_class = Test::find($id)->class_id;
         $classe = User::find(Auth::id())->classes()->find($id_class);
         $test= $classe->tests()->find($id);
@@ -458,17 +459,15 @@ class ClassroomController extends Controller
           $test->save();
           return $test;
         }else {
-            $student = Student::where('user_id', Auth::id())->where('student_id', $data->input('student_id'))->first();
-            $enroll = Classroom::where('class_id', $classe->id)->where('student_id', $student->id)->first();
-            if(isset($enroll->id)){
-              $result= New Result();
-              $result->student_id=$student->id;
-              $result->omr_responses=$data->input('omr_responses');
-              $result->omr_grade=$data->input('omr_grade');
-              $result->grade=$data->input('omr_grade');
-              $test->results()->save($result);
-              return $result;
-            }
+          $student = Student::where('user_id', Auth::id())->where('student_id', $data->input('student_id'))->where('class_id',$id_class)->first();
+          $enroll = Classroom::where('class_id', $classe->id)->where('student_id', $student->id)->first();
+          $result= New Result();
+          $result->student_id=$student->id;
+          $result->omr_responses=$data->input('omr_responses');
+          $result->omr_grade=$data->input('omr_grade');
+          $result->grade=$data->input('omr_grade');
+          $test->results()->save($result);
+          return $result;
         }
     }
 
@@ -477,9 +476,8 @@ class ClassroomController extends Controller
         $id_class = Test::find($id)->class_id;
         $classe = User::find(Auth::id())->classes()->find($id_class);
         $test= $classe->tests()->find($id);
-        $student = Student::where('user_id', Auth::id())->where('student_id', $data->input('student_id'))->first();
+        $student = Student::where('user_id', Auth::id())->where('student_id', $data->input('student_id'))->where('class_id',$id_class)->first();
         $result = Result::where('test_id', $id)->where('student_id', $student->id)->first();
-        $enroll = Classroom::where('class_id', $classe->id)->where('student_id', $student->id)->first();
         if(isset($result)){
           $result->img_responses=$data->input('img_responses');
           $result->img_grade=$data->input('img_grade');
@@ -655,14 +653,12 @@ class ClassroomController extends Controller
             ->paginate(10);
         }
         foreach ($students as $student) {
-          return   $classe->id;
            $grades = Result::select('test_id', 'grade')
               ->where('student_id', $student->id)
               ->whereIn('test_id', $testIds)
               ->get();
            $student->setAttribute('grades', $grades);
         }
-        return $students;
         return view('board.classHistory', compact('avgs', 'quartiles', 'testsNames', 'students', 'id', 'results', 'tests', 'dataq'));
     }
 
@@ -730,6 +726,16 @@ class ClassroomController extends Controller
        $form = $user->forms()->find($data->form_id);
        $formcoords = $form->formcoords->where('shape',5)->where('idField',1);
        $students = Student::where('user_id',Auth::id())->where('class_id',$data->classe)->orderBy('name')->get();
+       if ($students->isEmpty()) {
+         $errors=[];
+         array_push($errors,"You do not have any enrolled students");
+         return back()->withErrors($errors);
+       }
+       if ($formcoords->isEmpty()) {
+         $errors=[];
+         array_push($errors,"The form must have a QR field marked as ID");
+         return back()->withErrors($errors);
+       }
        return view('board.createQrPdf', compact('students', 'formcoords'));
     }
 

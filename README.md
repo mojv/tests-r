@@ -31,7 +31,7 @@ Start the local development server
 
 You can now access the server at http://localhost:8000
 
-   
+
 **Make sure you set the correct database connection information before running the migrations** [Environment variables](#environment-variables)
 
     php artisan migrate
@@ -39,12 +39,10 @@ You can now access the server at http://localhost:8000
 
 # Testing API
 
-Run the laravel development server
+Run the laravel development server:
 
     php artisan serve
 
 The api can now be accessed at
-        
+
     http://localhost:8000/login
-    
-   

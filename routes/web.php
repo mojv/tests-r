@@ -11,11 +11,13 @@
 |
 */
 
-Route::group(['middleware' => ['web', 'locale', 'fw-block-bl']], function () {
+Route::get('/', function () {
+    return redirect('/login');
+});
 
-    Route::get('/', function () {
-        return redirect('/login');
-    });
+Auth::routes(['verify' => true]);
+
+Route::group(['middleware' => ['web', 'locale', 'fw-block-bl', 'verified']], function () {
 
     Route::get('/dashboard', ['as' => 'dashboard', 'uses' =>function () {
         return view('board/test');
@@ -110,9 +112,6 @@ Route::group(['middleware' => ['web', 'locale', 'fw-block-bl']], function () {
 
     //-----------Usage traking-----------
     Route::post('/updateUsage', ['as' => 'updateUsage', 'uses' =>'UpdateUserController@updateUsage']);
-
-
-    Auth::routes();
 
     Route::get('/home', 'HomeController@index');
 

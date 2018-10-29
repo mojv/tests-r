@@ -12,7 +12,7 @@ return [
     | any other location as required by the application or its packages.
     */
     'icon' => 'print',
-    'name' => 'FormRead',
+    'name' => env('APP_NAME',  'FormRead'),
 
     /*
     |--------------------------------------------------------------------------

@@ -50,7 +50,6 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name' => 'required|max:255',
             'lastName' => 'required|max:255',
-            'country' => 'required|max:255',
             'company' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|min:6|confirmed',
@@ -66,10 +65,11 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $location=geoip()->getLocation();
         return User::create([
             'name' => $data['name'],
             'lastName' => $data['lastName'],
-            'country' => $data['country'],
+            'country' => $location->country,
             'company' => $data['company'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),

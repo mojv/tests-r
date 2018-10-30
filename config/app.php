@@ -171,6 +171,7 @@ return [
         Greggilbert\Recaptcha\RecaptchaServiceProvider::class,
         PragmaRX\Firewall\Vendor\Laravel\ServiceProvider::class,
         Anhskohbo\NoCaptcha\NoCaptchaServiceProvider::class,
+        Torann\GeoIP\GeoIPServiceProvider::class,
     ],
 
     /*
@@ -224,6 +225,7 @@ return [
         'Recaptcha' => Greggilbert\Recaptcha\Facades\Recaptcha::class,
         'Firewall' => PragmaRX\Firewall\Vendor\Laravel\Facade::class,
         'NoCaptcha' => Anhskohbo\NoCaptcha\Facades\NoCaptcha::class,
+        'GeoIP' => \Torann\GeoIP\Facades\GeoIP::class,
     ],
 
 ];

@@ -34,18 +34,6 @@
 
                 </div>
 
-                <div class="form-group{{ $errors->has('country') ? ' has-error' : '' }}">
-
-                        <input id="autocomplete-custom-append" type="text" class="form-control col-md-10" name="country" value="{{ old('country') }}" required autofocus placeholder="{{ __('messages.country') }}">
-
-                        @if ($errors->has('country'))
-                            <span class="help-block">
-                                <strong>{{ $errors->first('country') }}</strong>
-                            </span>
-                        @endif
-
-                </div>
-
                 <div class="form-group{{ $errors->has('company') ? ' has-error' : '' }}">
 
                         <input id="company" type="text" class="form-control" name="company" value="{{ old('company') }}" autofocus placeholder="{{ __('messages.company') }}">

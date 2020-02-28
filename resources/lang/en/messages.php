@@ -18,7 +18,7 @@ return [
     'dateOfBirth' => 'Date of Birth',
     'deleteField' => 'DEL FIELD',
     'deleteForm' => 'Delete Form',
-    'donate' => 'DONATE',
+    'premium' => 'Become Premium',
     'downloads' => 'Downloads',
     'editForm' => 'Edit Form',
     'eMailAddress' => 'E-Mail Address',
@@ -204,4 +204,9 @@ return [
      'recomendedBrowser' => 'Recomended Browser',
      'createQRfield' => 'Print Personalized QR Code',
      'print' => 'Print',
+     'noRestriction' => 'sheets without restrictions',
+     'freeInRestriction' => 'If you read less than 20 sheets, they will not be discounted from your Premium Account',
+     'freeSupport' => 'Free personalized help',
+     'restriction' => 'You can read as many sheets as you want for free, but only 20 at a time, If you want to read without restrictions, become premium!!!',
+     'markComparison' => 'Comparaison de marques',
 ];

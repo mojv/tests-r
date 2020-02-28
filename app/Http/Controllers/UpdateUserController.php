@@ -27,7 +27,6 @@ class UpdateUserController extends Controller
         $this->validate($data, [
             'name' => 'required',
             'lastName' => 'required',
-            'country' => 'required',
             'email' => 'required|email',
             'gender' => 'required',
             'dateOfBirth' => 'required',
@@ -52,8 +51,21 @@ class UpdateUserController extends Controller
     public function updateUsage(Request $data)
     {
       $user = User::find(Auth::id());
+      $read = $data->input('iter');
       $user->usage=$user->usage+$data->input('iter');
+      if ($data->input('type') == 1) {
+         $user->pro_sheets=$user->pro_sheets+$data->input('iter');
+      }else{
+          $read = 20;
+      }
+      if ($user->pro_sheets >= $user->pro) {
+        $read = $read - ($user->pro_sheets - $user->pro);  
+        $user->pro_sheets=0;
+        $user->pro=0;
+      }
       $user->save();
+      return $read;
     }
+    
 
 }

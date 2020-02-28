@@ -107,7 +107,7 @@
                     </ul>
                   </li>
                   <li><a href="{{route('ocrLanguage') }}"><i class="fa fa-language"></i> {{ __('messages.installOCRLanguage') }}</a></li>
-                  <li><a href="{{route('donate') }}"><i class="fa fa-thumbs-o-up"></i> {{ __('messages.donate') }}</a></li>
+                  <li><a href="{{route('premium') }}"><i class="fa fa-trophy"></i> {{ __('messages.premium') }}</a></li>
                 </ul>
             </div>
             <!-- /sidebar menu -->
@@ -191,6 +191,25 @@
         <!-- page content -->
         <div class="right_col" role="main">
           <div class="">
+
+            @if ($message = Session::get('success'))
+            <div class="alert alert-success alert-dismissible fade in" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+              </button>
+              <li>{!! $message !!}</li>
+            </div>
+            <?php Session::forget('success');?>
+            @endif
+
+            @if ($message = Session::get('error'))
+            <div class="alert alert-danger alert-dismissible fade in" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+              </button>
+              <li>{!! $message !!}</li>
+            </div>
+            <?php Session::forget('error');?>
+            @endif
+
             @if (count($errors))
                 <div class="alert alert-danger alert-dismissible fade in" role="alert">
                   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
@@ -200,6 +219,7 @@
                   @endforeach
                 </div>
             @endif
+
             @yield('content')
           </div>
         </div>

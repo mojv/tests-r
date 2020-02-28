@@ -1,10 +1,10 @@
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table class="action" width="100%" border="0" cellpadding="0" cellspacing="0">
     <tr>
         <td align="center">
             <table border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                    <td>
-                        <a href="{{ $url }}" class="button button-green" target="_blank">{{ $slot }}</a>
+                    <td class="background">
+                        <a href="{{ $url }}" target="_blank"><button class="button button-blue">{{ $slot }}</button></a>
                     </td>
                 </tr>
             </table>

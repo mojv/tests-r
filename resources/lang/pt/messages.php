@@ -18,7 +18,7 @@ return [
     'dateOfBirth' => 'Nascimento',
     'deleteField' => 'DEL CAMPO',
     'deleteForm' => 'Excluir Formulário',
-    'donate' => 'DOAR',
+    'premium' => 'Torne-se premium',
     'downloads' => 'Transferências',
     'editForm' => 'Editar Formulário',
     'eMailAddress' => 'E-mail',
@@ -204,4 +204,9 @@ return [
     'recomendedBrowser' => 'Navegador recomendado',
     'createQRfield' => 'Imprimir códigos QR personalizados',
     'print' => 'Imprimir',
+    'noRestriction' => 'folhas sem restrições',
+    'freeInRestriction' => 'Se você ler menos de 20 folhas, elas não serão descontadas da sua conta Premium',
+    'freeSupport' => 'Ajuda personalizada grátis',
+    'restriction' => 'Você pode ler quantas folhas quiser de graça, mas apenas 20 de cada vez, se quiser ler sem restrições, torne-se premium!!!',
+    'markComparison' => 'Comparação de marcas',
 ];

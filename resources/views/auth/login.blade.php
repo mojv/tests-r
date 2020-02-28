@@ -2,7 +2,14 @@
 
 @section('content')
 
-
+                    <?php if (session()->has('locale')){
+                        echo session('locale');
+                    }else {
+                        $langServ=Request::server('HTTP_ACCEPT_LANGUAGE');
+                        $lang=substr($langServ, 0, 2);
+                        echo $lang;
+                    }
+                    ?>
 
         <div class="animate form login_form">
           <section class="login_content">

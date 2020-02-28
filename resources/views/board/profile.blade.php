@@ -2,6 +2,17 @@
 
 @section('content')
 
+            <div class="row tile_count" align="center">
+              <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                <span class="count_top"><i class="fa fa-trophy"></i> Premium</span>
+                <div class="count green">{{ Auth::user()->pro }}</div>
+              </div>
+              <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                <span class="count_top"><i class="fa fa-line-chart"></i> Usage</span>
+                <div class="count green">{{ Auth::user()->pro_sheets }}</div>
+              </div>
+            </div>
+
             <div class="row">
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
@@ -38,12 +49,6 @@
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
                           <input type="text" id="lastName" name="lastName" required="required" class="form-control col-md-7 col-xs-12" value="{{ Auth::user()->lastName }}">
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="country" class="control-label col-md-3 col-sm-3 col-xs-12">{{ __('messages.country') }}</label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" name="country" id="autocomplete-custom-append" class="form-control col-md-10" value="{{ Auth::user()->country }}"/>
                         </div>
                       </div>
                       <div class="form-group">

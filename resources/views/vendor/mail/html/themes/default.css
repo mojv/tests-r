@@ -197,6 +197,10 @@ img {
 
 /* Buttons */
 
+.background {
+    background-color: #4CAF50;
+}
+
 .action {
     margin: 30px auto;
     padding: 0;

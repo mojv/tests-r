@@ -165,7 +165,10 @@ class FormController extends Controller
         $form = $user->forms()->find($id);
         $formcoords = $form->formcoords;
         $form_id=$id;
-        return view('board.readForm', compact('formcoords', 'form_id'));
+        $last = $user->pro - $user->pro_sheets;
+        $pro = str_split(str_pad($last, 7, "0", STR_PAD_LEFT));
+        $pro = rand(intval(111), intval(999)) . $pro[0] . rand(intval(111), intval(999)) . $pro[1] . rand(intval(111), intval(999)) . $pro[2] . rand(intval(111), intval(999)) . $pro[3] . rand(intval(111), intval(999)) . $pro[4] . rand(intval(111), intval(999)) . $pro[5] . rand(intval(111), intval(999)) . $pro[6];
+        return view('board.readForm', compact('formcoords', 'form_id', 'pro'));
     }
 
     public function readSharedForm($id)
@@ -209,9 +212,9 @@ class FormController extends Controller
         return view('board.software');
     }
 
-    public function donate()
+    public function premium()
     {
-        return view('board.donate');
+        return view('board.premium');
     }
 
     public function forum()

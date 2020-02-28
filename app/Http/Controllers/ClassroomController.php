@@ -409,18 +409,23 @@ class ClassroomController extends Controller
         $formcoords = Form::find($test->form_id)->formcoords;
         $form_id=$test->form_id;
         $scanInAnswers=1;
-        return view('board.gradeTestForms', compact('formcoords', 'form_id', 'test', 'scanInAnswers'));
+        $pro = 0;
+        return view('board.gradeTestForms', compact('formcoords', 'form_id', 'test', 'scanInAnswers', 'pro'));
     }
 
     public function gradeTestForms($id)
     {
         $id_class = Test::find($id)->class_id;
+        $user = User::find(Auth::id());
         $classe = User::find(Auth::id())->classes()->find($id_class);
         $test= $classe->tests()->find($id);
         $formcoords = Form::find($test->form_id)->formcoords;
         $form_id=$test->form_id;
         $scanInAnswers=0;
-        return view('board.gradeTestForms', compact('formcoords', 'form_id', 'test', 'scanInAnswers'));
+        $last = $user->pro - $user->pro_sheets;
+        $pro = str_split(str_pad($last, 7, "0", STR_PAD_LEFT));
+        $pro = rand(intval(111), intval(999)) . $pro[0] . rand(intval(111), intval(999)) . $pro[1] . rand(intval(111), intval(999)) . $pro[2] . rand(intval(111), intval(999)) . $pro[3] . rand(intval(111), intval(999)) . $pro[4] . rand(intval(111), intval(999)) . $pro[5] . rand(intval(111), intval(999)) . $pro[6];
+        return view('board.gradeTestForms', compact('formcoords', 'form_id', 'test', 'scanInAnswers', 'pro'));
     }
 
     public function storeGradeOmr($id, Request $data)
@@ -461,7 +466,11 @@ class ClassroomController extends Controller
         }else {
           $student = Student::where('user_id', Auth::id())->where('student_id', $data->input('student_id'))->where('class_id',$id_class)->first();
           $enroll = Classroom::where('class_id', $classe->id)->where('student_id', $student->id)->first();
-          $result= New Result();
+          if (Result::where('student_id', $student->id)->exists()) {
+            $result = Result::where('student_id', $student->id)->first();
+          }else{
+            $result= New Result();
+          }
           $result->student_id=$student->id;
           $result->omr_responses=$data->input('omr_responses');
           $result->omr_grade=$data->input('omr_grade');
@@ -567,13 +576,12 @@ class ClassroomController extends Controller
         $classe = User::find(Auth::id())->classes()->find($id_class);
         if (!empty($q))
         {
-            $students = Classroom::where('class_id', $classe->id)
+            $students = Student::where('class_id', $classe->id)
               ->whereNotExists(function($query) use($id){
                   $query->select(DB::raw(1))
                         ->from('results')
-                        ->whereRaw("classrooms.student_id = results.student_id AND results.test_id = $id");
+                        ->whereRaw("students.id = results.student_id AND results.test_id = $id");
               })
-              ->join('students', 'classrooms.student_id', "=", 'students.id')
               ->where(function($query) use ($q) {
                   $query->where('students.name', 'LIKE', '%'.$q.'%')
                     ->orWhere('students.last_name', 'LIKE', '%'.$q.'%')
@@ -583,13 +591,12 @@ class ClassroomController extends Controller
         }
         else
         {
-            $students = Classroom::where('class_id', $classe->id)
+            $students = Student::where('class_id', $classe->id)
             ->whereNotExists(function($query) use($id){
                 $query->select(DB::raw(1))
                       ->from('results')
-                      ->whereRaw("classrooms.student_id = results.student_id AND results.test_id = $id");
+                      ->whereRaw("students.id = results.student_id AND results.test_id = $id");
             })
-            ->join('students', 'classrooms.student_id', "=", 'students.id')
             ->paginate(10);
         }
         //return $students;
@@ -601,17 +608,17 @@ class ClassroomController extends Controller
         $q=$data->input('q');
         $id_class = Test::find($id)->class_id;
         $classe = User::find(Auth::id())->classes()->find($id_class);
-        $students = Classroom::where('class_id', $classe->id)->with('students')
+            $students = Student::where('class_id', $classe->id)
             ->whereNotExists(function($query) use($id){
                 $query->select(DB::raw(1))
                       ->from('results')
-                      ->whereRaw("classrooms.student_id = results.student_id AND results.test_id = $id");
+                      ->whereRaw("students.id = results.student_id AND results.test_id = $id");
             })->get();
         $filename = "pendings.csv";
         $handle = fopen($filename, 'w+');
         fputcsv($handle, array('Student ID', 'Name', 'Last Name', 'E-mail'));
         foreach($students as $row) {
-            fputcsv($handle, array($row->students->student_id, $row->students->name, $row->students->last_name, $row->students->email));
+            fputcsv($handle, array($row->student_id, $row->name, $row->last_name, $row->email));
         }
         fclose($handle);
         $headers = array(

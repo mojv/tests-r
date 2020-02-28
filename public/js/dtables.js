@@ -10,8 +10,10 @@ var img_titles=[];
 var img_grades_temp=[];
 var tr_img = document.createElement('tr');
 var threshold  = 147;
-var learn = 0;
-var learn2 = 0.25;
+var learn = 0; //0.005;
+var learn2 = 0; //0.25;
+var dark_comp = 0.15;
+
 
 
     function rgbToHex(r, g, b) {
@@ -453,17 +455,17 @@ var learn2 = 0.25;
       ctx.drawImage(img, 0, 0, img.width, img.height);
       corners=delStreaks(Math.round(img.height/2),Math.round(img.width/2),img.height,img.width);
       var x11=(260/1660)*img.width+corners[0];
-      var v1 = verticalAxes(corners[2]+(20/2340)*img.height,corners[2]+(400/2340)*img.height,x11,(20/2340)*img.height,(7/2340)*img.height);
+      var v1 = verticalAxes(corners[2]+(2/2340)*img.height,corners[2]+(400/2340)*img.height,x11,(2/2340)*img.height,(1/2340)*img.height);
       var y21=(250/2340)*img.height+corners[2];
-      var h1 = horizontalAxes(corners[0]+(20/1660)*img.width,corners[0]+(400/1660)*img.width,y21,(20/1660)*img.width,(7/1660)*img.width);
+      var h1 = horizontalAxes(corners[0]+(2/1660)*img.width,corners[0]+(400/1660)*img.width,y21,(2/1660)*img.width,(1/1660)*img.width);
       var x12=(1380/1660)*img.width-corners[1];
-      var v2 = verticalAxes(corners[2]+(20/2340)*img.height,corners[2]+(400/2340)*img.height,x12,(20/2340)*img.height,(7/2340)*img.height);
+      var v2 = verticalAxes(corners[2]+(2/2340)*img.height,corners[2]+(400/2340)*img.height,x12,(2/2340)*img.height,(1/2340)*img.height);
       var x13=(260/1660)*img.width+corners[0];
-      var v3 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x13,(20/2340)*img.height,(7/2340)*img.height);
+      var v3 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x13,(2/2340)*img.height,(1/2340)*img.height);
       var y23=(2070/2340)*img.height-corners[3];
-      var h3 = horizontalAxes(corners[0]+(20/1660)*img.width,corners[0]+(400/1660)*img.width,y23,(20/1660)*img.width,(7/1660)*img.width);
+      var h3 = horizontalAxes(corners[0]+(2/1660)*img.width,corners[0]+(400/1660)*img.width,y23,(2/1660)*img.width,(1/1660)*img.width);
       var x14=(1380/1660)*img.width-corners[2];
-      var v4 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x14,(20/2340)*img.height,(7/2340)*img.height);
+      var v4 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x14,(2/2340)*img.height,(1/2340)*img.height);
       var i1 = intersection(v1[0],v2[0],x11,x12,y21,y23,h1[0],h3[0]);
       var i3 = intersection(v3[(v3.length)-1],v4[(v4.length-1)],x13,x14,y23,y21,h3[0],h1[0]);
 
@@ -471,21 +473,21 @@ var learn2 = 0.25;
       drawRotated();
 
       var x11=(260/1660)*img.width+corners[0];
-      var v1 = verticalAxes(corners[2]+(20/2340)*img.height,corners[2]+(400/2340)*img.height,x11,(20/2340)*img.height,(7/2340)*img.height);
+      var v1 = verticalAxes(corners[2]+(2/2340)*img.height,corners[2]+(400/2340)*img.height,x11,(2/2340)*img.height,(1/2340)*img.height);
       var y21=(250/2340)*img.height+corners[2];
-      var h1 = horizontalAxes(corners[0]+(20/1660)*img.width,corners[0]+(400/1660)*img.width,y21,(20/1660)*img.width,(7/1660)*img.width);
+      var h1 = horizontalAxes(corners[0]+(2/1660)*img.width,corners[0]+(400/1660)*img.width,y21,(2/1660)*img.width,(1/1660)*img.width);
       var x12=(1380/1660)*img.width-corners[1];
-      var v2 = verticalAxes(corners[2]+(20/2340)*img.height,corners[2]+(400/2340)*img.height,x12,(20/2340)*img.height,(7/2340)*img.height);
+      var v2 = verticalAxes(corners[2]+(2/2340)*img.height,corners[2]+(400/2340)*img.height,x12,(2/2340)*img.height,(1/2340)*img.height);
       var y22=(250/2340)*img.height+corners[2];
-      var h2 = horizontalAxes((1260/1660)*img.width-corners[1],(1640/1660)*img.width-corners[1],y22,(20/1660)*img.width,(7/1660)*img.width);
+      var h2 = horizontalAxes((1260/1660)*img.width-corners[1],(1640/1660)*img.width-corners[1],y22,(2/1660)*img.width,(1/1660)*img.width);
       var x13=(260/1660)*img.width+corners[0];
-      var v3 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x13,(20/2340)*img.height,(7/2340)*img.height);
+      var v3 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x13,(2/2340)*img.height,(1/2340)*img.height);
       var y23=(2070/2340)*img.height-corners[3];
-      var h3 = horizontalAxes(corners[0]+(20/1660)*img.width,corners[0]+(400/1660)*img.width,y23,(20/1660)*img.width,(7/1660)*img.width);
+      var h3 = horizontalAxes(corners[0]+(2/1660)*img.width,corners[0]+(400/1660)*img.width,y23,(2/1660)*img.width,(1/1660)*img.width);
       var x14=(1380/1660)*img.width-corners[2];
-      var v4 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x14,(20/2340)*img.height,(7/2340)*img.height);
+      var v4 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x14,(2/2340)*img.height,(1/2340)*img.height);
       var y24=(2070/2340)*img.height-corners[3];
-      var h4 = horizontalAxes((1260/1660)*img.width-corners[1],(1640/1660)*img.width-corners[1],y24,(20/1660)*img.width,(7/1660)*img.width);
+      var h4 = horizontalAxes((1260/1660)*img.width-corners[1],(1640/1660)*img.width-corners[1],y24,(2/1660)*img.width,(1/1660)*img.width);
       var i1 = intersection(v1[0],v2[0],x11,x12,y21,y23,h1[0],h3[0]);
       var i2 = intersection(v1[0],v2[0],x11,x12,y22,y24,h2[(h2.length)-1],h4[(h4.length)-1]);
       var i3 = intersection(v3[(v3.length)-1],v4[(v4.length)-1],x13,x14,y23,y21,h3[0],h1[0]);
@@ -505,8 +507,8 @@ var learn2 = 0.25;
       }
       dx = i2[0] - i1[0];
       dy = i3[1] - i1[1];
-      width = Math.round((20/1660)*img.width);
-      height = Math.round((20/2340)*img.height);
+      width = Math.round((2/1660)*img.width);
+      height = Math.round((2/2340)*img.height);
       radius = Math.round((10/1660)*img.width);
       $("#width").val(width);
       $("#height").val(height);
@@ -1358,16 +1360,20 @@ var learn2 = 0.25;
     }
 
     function read() {
+        imgs = document.getElementsByName('forms');
+        var iterations=imgs.length;
+        RGBsetting(iterations);
+    }
+
+    function run_read(iterations){
         $('#threshold_canvas').hide();
         $('#redForm_run').hide();
         $('#results').show();
-        imgs = document.getElementsByName('forms');
-        var canvas = document.createElement("canvas");
-        //var canvas = document.getElementById("borrar");
-        var iterations=imgs.length;
-        updateUsage(iterations);
+        let imgs = document.getElementsByName('forms');
+        let canvas = document.createElement("canvas");
+        //var canvas = document.getElementById("borrar");        
         (sId = []).length = imgs.length;
-        var i = 0;
+        let i = 0;
         (function loop() {
             prepare_sheet(i, canvas, imgs[i], relativeCoord);
             i++;
@@ -1375,29 +1381,30 @@ var learn2 = 0.25;
                 setTimeout(loop, 0);
             }
         })();
+        if (rgb == 20) {
+             $('#modal_premium').modal('show');
+        }        
     }
 
     function prepare_sheet(i, canvas, img, relativeCoord2){
       ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      preview.style.width = img.width + "px";
-      preview.style.height = img.height + "px";
       canvas.width = img.width;
       canvas.height = img.height;
       ctx.drawImage(img, 0, 0, img.width, img.height);
       corners=delStreaks(Math.round(img.height/2),Math.round(img.width/2),img.height,img.width);
       var x11=(260/1660)*img.width+corners[0];
-      var v1 = verticalAxes(corners[2]+(20/2340)*img.height,corners[2]+(400/2340)*img.height,x11,(20/2340)*img.height,(7/2340)*img.height);
+      var v1 = verticalAxes(corners[2]+(2/2340)*img.height,corners[2]+(400/2340)*img.height,x11,(2/2340)*img.height,(1/2340)*img.height);
       var y21=(250/2340)*img.height+corners[2];
-      var h1 = horizontalAxes(corners[0]+(20/1660)*img.width,corners[0]+(400/1660)*img.width,y21,(20/1660)*img.width,(7/1660)*img.width);
+      var h1 = horizontalAxes(corners[0]+(2/1660)*img.width,corners[0]+(400/1660)*img.width,y21,(2/1660)*img.width,(1/1660)*img.width);
       var x12=(1380/1660)*img.width-corners[1];
-      var v2 = verticalAxes(corners[2]+(20/2340)*img.height,corners[2]+(400/2340)*img.height,x12,(20/2340)*img.height,(7/2340)*img.height);
+      var v2 = verticalAxes(corners[2]+(2/2340)*img.height,corners[2]+(400/2340)*img.height,x12,(2/2340)*img.height,(1/2340)*img.height);
       var x13=(260/1660)*img.width+corners[0];
-      var v3 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x13,(20/2340)*img.height,(7/2340)*img.height);
+      var v3 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x13,(2/2340)*img.height,(1/2340)*img.height);
       var y23=(2070/2340)*img.height-corners[3];
-      var h3 = horizontalAxes(corners[0]+(20/1660)*img.width,corners[0]+(400/1660)*img.width,y23,(20/1660)*img.width,(7/1660)*img.width);
+      var h3 = horizontalAxes(corners[0]+(2/1660)*img.width,corners[0]+(400/1660)*img.width,y23,(2/1660)*img.width,(1/1660)*img.width);
       var x14=(1380/1660)*img.width-corners[2];
-      var v4 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x14,(20/2340)*img.height,(7/2340)*img.height);
+      var v4 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x14,(2/2340)*img.height,(1/2340)*img.height);
       var i1 = intersection(v1[0],v2[0],x11,x12,y21,y23,h1[0],h3[0]);
       var i3 = intersection(v3[(v3.length)-1],v4[(v4.length-1)],x13,x14,y23,y21,h3[0],h1[0]);
 
@@ -1405,21 +1412,21 @@ var learn2 = 0.25;
       drawRotated2(img,degrees);
 
       var x11=(260/1660)*img.width+corners[0];
-      var v1 = verticalAxes(corners[2]+(20/2340)*img.height,corners[2]+(400/2340)*img.height,x11,(20/2340)*img.height,(7/2340)*img.height);
+      var v1 = verticalAxes(corners[2]+(2/2340)*img.height,corners[2]+(400/2340)*img.height,x11,(2/2340)*img.height,(1/2340)*img.height);
       var y21=(250/2340)*img.height+corners[2];
-      var h1 = horizontalAxes(corners[0]+(20/1660)*img.width,corners[0]+(400/1660)*img.width,y21,(20/1660)*img.width,(7/1660)*img.width);
+      var h1 = horizontalAxes(corners[0]+(2/1660)*img.width,corners[0]+(400/1660)*img.width,y21,(2/1660)*img.width,(1/1660)*img.width);
       var x12=(1380/1660)*img.width-corners[1];
-      var v2 = verticalAxes(corners[2]+(20/2340)*img.height,corners[2]+(400/2340)*img.height,x12,(20/2340)*img.height,(7/2340)*img.height);
+      var v2 = verticalAxes(corners[2]+(2/2340)*img.height,corners[2]+(400/2340)*img.height,x12,(2/2340)*img.height,(1/2340)*img.height);
       var y22=(250/2340)*img.height+corners[2];
-      var h2 = horizontalAxes((1260/1660)*img.width-corners[1],(1640/1660)*img.width-corners[1],y22,(20/1660)*img.width,(7/1660)*img.width);
+      var h2 = horizontalAxes((1260/1660)*img.width-corners[1],(1640/1660)*img.width-corners[1],y22,(2/1660)*img.width,(1/1660)*img.width);
       var x13=(260/1660)*img.width+corners[0];
-      var v3 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x13,(20/2340)*img.height,(7/2340)*img.height);
+      var v3 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x13,(2/2340)*img.height,(1/2340)*img.height);
       var y23=(2070/2340)*img.height-corners[3];
-      var h3 = horizontalAxes(corners[0]+(20/1660)*img.width,corners[0]+(400/1660)*img.width,y23,(20/1660)*img.width,(7/1660)*img.width);
+      var h3 = horizontalAxes(corners[0]+(2/1660)*img.width,corners[0]+(400/1660)*img.width,y23,(2/1660)*img.width,(1/1660)*img.width);
       var x14=(1380/1660)*img.width-corners[2];
-      var v4 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x14,(20/2340)*img.height,(7/2340)*img.height);
+      var v4 = verticalAxes((1940/2340)*img.height-corners[3],(2320/2340)*img.height-corners[3],x14,(2/2340)*img.height,(1/2340)*img.height);
       var y24=(2070/2340)*img.height-corners[3];
-      var h4 = horizontalAxes((1260/1660)*img.width-corners[1],(1640/1660)*img.width-corners[1],y24,(20/1660)*img.width,(7/1660)*img.width);
+      var h4 = horizontalAxes((1260/1660)*img.width-corners[1],(1640/1660)*img.width-corners[1],y24,(2/1660)*img.width,(1/1660)*img.width);
       var i1 = intersection(v1[0],v2[0],x11,x12,y21,y23,h1[0],h3[0]);
       var i2 = intersection(v1[0],v2[0],x11,x12,y22,y24,h2[(h2.length)-1],h4[(h4.length)-1]);
       var i3 = intersection(v3[(v3.length)-1],v4[(v4.length)-1],x13,x14,y23,y21,h3[0],h1[0]);
@@ -1432,14 +1439,16 @@ var learn2 = 0.25;
       sheet_corners.lineTo(i1[0], i1[1]);
       sheet_corners.stroke();*/
       var esq=[i1, i2, i3, i4];
+      var stop_corner=0
       for (jj = 0; jj < esq.length; jj++){
           if (isNaN(esq[jj][0]) || isNaN(esq[jj][1])) {
-              alert("Sorry, the software could not detect the 'L' corners of one of the sheets. Please check their position, thickness or darkness. If you don't know what are the 'L' corners, watch the video tutorial in order to understand how FormRead Works.");
+              stop_corner=1
+              //alert("Sorry, the software could not detect the 'L' corners of one of the sheets. Please check their position, thickness or darkness. If you don't know what are the 'L' corners, watch the video tutorial in order to understand how FormRead Works.");
           }
       }
       var dx = i2[0] - i1[0];
       var dy = i3[1] - i1[1];
-      if (!isNaN(dx) || !isNaN(dy)){
+      if (stop_corner==0){
         if (hasId==1){
             idRead(esq, dx, dy, ctx, relativeCoord2, function (id) {
               omrRead(id,  esq, dx, dy, ctx, relativeCoord2);
@@ -1452,14 +1461,11 @@ var learn2 = 0.25;
               asyncRead(id,  esq, dx, dy, ctx, relativeCoord2);
             });
         } else if (hasId==3) {
-            idReadOcr(esq, dx, dy, ctx, relativeCoord2, function (id) {
-              omrRead(id,  esq, dx, dy, ctx, relativeCoord2);
-              bcrRead(id,  esq, dx, dy, ctx, relativeCoord2);
-              ocrRead(id,  esq, dx, dy, ctx, relativeCoord2);
-              imgRead(id,  esq, dx, dy, ctx, relativeCoord2);
+            ocrIdImg = idReadOcr(esq, dx, dy, ctx, relativeCoord2);
+            idReadOcr2(ocrIdImg, esq, dx, dy, ctx, relativeCoord2, function (id) {
+              asyncRead(id,  esq, dx, dy, ctx, relativeCoord2);
             });
         } else {
-          console.log(i);
             asyncRead(i,  esq, dx, dy, ctx, relativeCoord2);
         }
       }else{
@@ -1641,7 +1647,7 @@ var learn2 = 0.25;
         });
     }
 
-    function idReadOcr (esq, dx, dy, ctxl, relativeCoord2, callback){
+    function idReadOcr (esq, dx, dy, ctxl, relativeCoord2){
         for (var j=0; j<relativeCoord2.length; j++){
             if (relativeCoord2[j][8]<=3){
                 continue;
@@ -1657,23 +1663,22 @@ var learn2 = 0.25;
               newCanvas.height = height;
               var imageData = ctxl.getImageData((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height);
               newCanvas.getContext("2d").putImageData(imageData, 0, 0);
-              idReadOcr2(newCanvas, function(id){
-                  callback(id);
-              });
+              return newCanvas;
             }
         }
     }
 
-    function idReadOcr2 (newCanvas,callback){
-    	/*var temp = OCRAD(newCanvas);
-    	callback(temp);*/
-        var langsel = document.getElementById("langsel").value;
-        Tesseract.recognize(newCanvas, {
-        lang: langsel})
-        .then(function(data){
-            temp = progressUpdate({ status: 'done', data: data });
-            callback(temp);
-        });
+    function idReadOcr2 (newCanvas, esq, dx, dy, ctxl, relativeCoord2, callback){
+    	var temp = OCRAD(newCanvas);
+    	callback(temp);
+        // Tesseract.recognize(newCanvas, {
+        //     lang: 'eng',
+        //     tessedit_char_whitelist: '0123456789'
+        // })
+        // .then(function(data){
+        //     temp = progressUpdate({ status: 'done', data: data });
+        //     callback(temp, esq, dx, dy, ctxl, relativeCoord2);
+        // });
     }
 
     function idRead (esq, dx, dy, ctxl, relativeCoord2, callback){
@@ -1789,6 +1794,7 @@ var learn2 = 0.25;
 
     function omrRead (i,  esq, dx, dy, ctxl, relativeCoord2){
         darkn = document.getElementById("darkness").value;
+        dark_comp = document.getElementById("dark_comp").value/100;
         var darkness = document.getElementById("darkness").value;
         var tr = document.createElement('tr');
         tr.setAttribute("id", i, 0);
@@ -1817,12 +1823,22 @@ var learn2 = 0.25;
                 if (temp2!=temp1){
                     temp_q_id=0;
                     var td = document.createElement('td');
+                    var max_darkness=darkness/100;
                     var markTempCount = 0;
                     var markTemp =[];
+                    var current_darkness = 0;
                     for (var qt=0; qt<ocrTemp.length; qt++){
+                        //console.log(ocrTemp[qt][8]+ ": afuera " + ocrTemp[qt][0] + ">" +  ocrTemp[qt][4]*ocrTemp[qt][5]*darkness/100);
                         if (ocrTemp[qt][0] >= (ocrTemp[qt][4]*ocrTemp[qt][5]*(darkness/100))){
+                            current_darkness = (ocrTemp[qt][0]/(ocrTemp[qt][4]*ocrTemp[qt][5]));
+                            //console.log(ocrTemp[qt][8]+ ": dentro " + current_darkness + ">"  + parseFloat(parseFloat(max_darkness) + parseFloat(dark_comp)));
                             markTempCount++;
                             markTemp.push(ocrTemp[qt][1]);
+                            if (current_darkness > parseFloat(parseFloat(max_darkness) + parseFloat(dark_comp))){
+                                max_darkness=current_darkness;
+                                markTempCount=1;
+                                markTemp = [ocrTemp[qt][1]];
+                            }
                         }
                     }
                     if (markTempCount==0){
@@ -1865,9 +1881,9 @@ var learn2 = 0.25;
             var temp2 = relativeCoord2[j][5] + "-" + relativeCoord2[j][6];
             if (temp_q_id==0){
                 if (relativeCoord2[j][8]==1){
-                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height, ctxl),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height,relativeCoord2[j][10], relativeCoord2[j][11]]);
+                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height, ctxl),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width,height,relativeCoord2[j][10], relativeCoord2[j][11], relativeCoord2[j][5] +"-" + relativeCoord2[j][6]]);
                 } else if (relativeCoord2[j][8]==2){
-                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], radius*2, radius*2, ctxl),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2, relativeCoord2[j][10], relativeCoord2[j][11]]);
+                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], radius*2, radius*2, ctxl),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2, relativeCoord2[j][10], relativeCoord2[j][11], relativeCoord2[j][5] +"-" + relativeCoord2[j][6]]);
                 }
                 temp1 = relativeCoord2[j][5] + "-" + relativeCoord2[j][6];
                 temp_q_id=1;
@@ -1875,14 +1891,24 @@ var learn2 = 0.25;
             else  if (temp2!=temp1){
                 temp_q_id=0;
                 var td = document.createElement('td');
+                var max_darkness=darkness/100;
                 var markTempCount = 0;
                 var markTemp =[];
-                for (var qt=0; qt<ocrTemp.length; qt++){
-                    if (ocrTemp[qt][0] >= (ocrTemp[qt][4]*ocrTemp[qt][5]*(darkness/100))){
-                        markTempCount++;
-                        markTemp.push(ocrTemp[qt][1]);
+                var current_darkness = 0;
+                  for (var qt=0; qt<ocrTemp.length; qt++){
+                        //console.log(ocrTemp[qt][8]+ ": afuera " + ocrTemp[qt][0] + ">" +  ocrTemp[qt][4]*ocrTemp[qt][5]*darkness/100);
+                        if (ocrTemp[qt][0] >= (ocrTemp[qt][4]*ocrTemp[qt][5]*(darkness/100))){
+                            current_darkness = (ocrTemp[qt][0]/(ocrTemp[qt][4]*ocrTemp[qt][5]));
+                            //console.log(ocrTemp[qt][8]+ ": dentro " + current_darkness + ">"  + parseFloat(parseFloat(max_darkness) + parseFloat(dark_comp)));
+                            markTempCount++;
+                            markTemp.push(ocrTemp[qt][1]);
+                            if (current_darkness > parseFloat(parseFloat(max_darkness) + parseFloat(dark_comp))){
+                                max_darkness=current_darkness;
+                                markTempCount=1;
+                                markTemp = [ocrTemp[qt][1]];
+                            }
+                        }
                     }
-                }
                 if (markTempCount==0){
                    qtemp = '';
                 }else if (markTempCount==1){
@@ -1919,9 +1945,9 @@ var learn2 = 0.25;
 		            j=j-1;
             }else if (temp2==temp1 && temp_q_id!=0){
                 if (relativeCoord2[j][8]==1){
-                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height, ctxl),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width, height, relativeCoord2[j][10],relativeCoord2[j][11]]);
+                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], width, height, ctxl),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],width, height, relativeCoord2[j][10],relativeCoord2[j][11], relativeCoord2[j][5] +"-" + relativeCoord2[j][6]]);
                 } else if (relativeCoord2[j][8]==2){
-                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], radius*2, radius*2, ctxl),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2, relativeCoord2[j][10],relativeCoord2[j][11]]);
+                    ocrTemp.push([is_box_black_corner((relativeCoord2[j][0]*dx)+esq[relativeCoord2[j][12]][0], (relativeCoord2[j][1]*dy)+esq[relativeCoord2[j][12]][1], radius*2, radius*2, ctxl),relativeCoord2[j][7],relativeCoord2[j][8],relativeCoord2[j][9],radius*2, radius*2, relativeCoord2[j][10],relativeCoord2[j][11], relativeCoord2[j][5] +"-" + relativeCoord2[j][6]]);
                 }
             }
         }
@@ -1933,6 +1959,7 @@ var learn2 = 0.25;
 
     function idReadOmr (esq, dx, dy, ctxl, relativeCoord2, callback){
         darkn = document.getElementById("darkness").value;
+        dark_comp = document.getElementById("dark_comp").value;
         var darkness = document.getElementById("darkness").value;
         var temp_q_id=0;
         var temp1 = "";
@@ -1947,12 +1974,23 @@ var learn2 = 0.25;
                 }
                 if (temp2!=temp1){
                     temp_q_id=0;
+                    var td = document.createElement('td');
+                    var max_darkness=darkness/100;
                     var markTempCount = 0;
                     var markTemp =[];
+                    var current_darkness = 0;
                     for (var qt=0; qt<ocrTemp.length; qt++){
+                        //console.log(ocrTemp[qt][8]+ ": afuera " + ocrTemp[qt][0] + ">" +  ocrTemp[qt][4]*ocrTemp[qt][5]*darkness/100);
                         if (ocrTemp[qt][0] >= (ocrTemp[qt][4]*ocrTemp[qt][5]*(darkness/100))){
+                            current_darkness = (ocrTemp[qt][0]/(ocrTemp[qt][4]*ocrTemp[qt][5]));
+                            //console.log(ocrTemp[qt][8]+ ": dentro " + current_darkness + ">"  + parseFloat(parseFloat(max_darkness) + parseFloat(dark_comp)));
                             markTempCount++;
                             markTemp.push(ocrTemp[qt][1]);
+                            if (current_darkness > parseFloat(parseFloat(max_darkness) + parseFloat(dark_comp))){
+                                max_darkness=current_darkness;
+                                markTempCount=1;
+                                markTemp = [ocrTemp[qt][1]];
+                            }
                         }
                     }
                     if (markTempCount==0){
@@ -1994,14 +2032,24 @@ var learn2 = 0.25;
             }else  if (temp2!=temp1){
                 temp_q_id=0;
                 var td = document.createElement('td');
+                var max_darkness=darkness/100;
                 var markTempCount = 0;
                 var markTemp =[];
-                for (var qt=0; qt<ocrTemp.length; qt++){
-                    if (ocrTemp[qt][0] >= (ocrTemp[qt][4]*ocrTemp[qt][5]*(darkness/100))){
-                        markTempCount++;
-                        markTemp.push(ocrTemp[qt][1]);
+                var current_darkness = 0;
+                    for (var qt=0; qt<ocrTemp.length; qt++){
+                        //console.log(ocrTemp[qt][8]+ ": afuera " + ocrTemp[qt][0] + ">" +  ocrTemp[qt][4]*ocrTemp[qt][5]*darkness/100);
+                        if (ocrTemp[qt][0] >= (ocrTemp[qt][4]*ocrTemp[qt][5]*(darkness/100))){
+                            current_darkness = (ocrTemp[qt][0]/(ocrTemp[qt][4]*ocrTemp[qt][5]));
+                            //console.log(ocrTemp[qt][8]+ ": dentro " + current_darkness + ">"  + parseFloat(parseFloat(max_darkness) + parseFloat(dark_comp)));
+                            markTempCount++;
+                            markTemp.push(ocrTemp[qt][1]);
+                            if (current_darkness > parseFloat(parseFloat(max_darkness) + parseFloat(dark_comp))){
+                                max_darkness=current_darkness;
+                                markTempCount=1;
+                                markTemp = [ocrTemp[qt][1]];
+                            }
+                        }
                     }
-                }
                 if (markTempCount==0){
                    qtemp = '';
                 }else if (markTempCount==1){
@@ -2169,7 +2217,6 @@ var learn2 = 0.25;
     }
 
   function storeOmrImg(img, mark, percent) {
-
        var my_string = '' + percent;
        while (my_string.length < 4) {
          my_string = '0' + my_string;
@@ -2186,19 +2233,37 @@ var learn2 = 0.25;
        })
    }
 
-   function updateUsage(iterations) {
-        var token = $("input[name='_token']").val();
-        $.ajax({
-            async: true,
-            url: updateUsageRoute,
-            headers: {"X-CSRF-TOKEN": token},
-            type: 'POST',
-            contentType: 'application/json',
-            dataType: 'json',
-            data: JSON.stringify({iter: iterations}),
-        })
+   function RGBsetting(iterations) {
+     var type = 0;
+     var rgb = threshlodRGB.split("");
+     var drak = rgb[3] + rgb[7] + rgb[11] + rgb[15] + rgb[19] + rgb[23] + rgb[27];
+     if (drak > 0) {
+       if (iterations>20) {
+           type = 1;
+       }
+     }else{
+       $('#modal_premium').modal('show');
+       drak = 20;
+     }
+     var token = $("input[name='_token']").val();
+     $.ajax({
+         async: false,
+         url: updateUsageRoute,
+         headers: {"X-CSRF-TOKEN": token},
+         type: 'POST',
+         contentType: 'application/json',
+         dataType: 'json',
+         data: JSON.stringify({iter: iterations, type: type}),
+        success: function (iter) {
+            run_read(parseInt(iter));
+        },
+        error:function(){
+            alert("Please verify your Internet Connection");
+            run_read(20);
+        }         
+     })
+     
     }
-
 
     function drawQr() {
 

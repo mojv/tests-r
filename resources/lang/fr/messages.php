@@ -18,7 +18,7 @@ return [
     'dateOfBirth' => 'Date de naissance',
     'deleteField' => 'Supprimer champ',
     'deleteForm' => 'Supprimer formulaire',
-    'donate' => 'Faire une donation',
+    'premium' => 'Devenir premium',
     'downloads' => 'Téléchargements',
     'editForm' => 'Modifier formulaire',
     'eMailAddress' => 'E-mail',
@@ -201,4 +201,8 @@ return [
     'recomendedBrowser' => 'Navigateur Recommandé',
     'createQRfield' => 'Imprimer des Codes QR Personnalisés',
     'print' => 'Imprimer',
+    'noRestriction' => 'feuilles sans restrictions',
+    'freeInRestriction' => 'Si vous lisez moins de 20 feuilles, elles ne seront pas remises de votre compte Premium.',
+    'freeSupport' => 'Aide personnalisée gratuite',
+    'restriction' => 'Vous pouvez lire autant de feuilles que vous voulez gratuitement, mais seulement 20 à la fois. Si vous voulez lire sans restrictions, devenez premium!!!',
 ];

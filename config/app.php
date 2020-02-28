@@ -13,7 +13,6 @@ return [
     */
     'icon' => 'print',
     'name' => env('APP_NAME',  'FormRead'),
-
     /*
     |--------------------------------------------------------------------------
     | Application Environment

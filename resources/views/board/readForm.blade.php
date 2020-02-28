@@ -196,6 +196,22 @@
       </div>
     </div>
 </div>
+<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true"  id="modal_premium" >
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel2">{{ __('messages.premium') }}</h4>
+      </div>
+      <div class="modal-body">
+          {{ __('messages.restriction') }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Close">{{ __('messages.cancel') }}</button>
+        <a href="{{route('premium')}}"><button type="submit" class="btn btn-success">{{ __('messages.premium') }}</button></a>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="files_input">
     {{ __('messages.imagesFiles') }}<input type="file" id="files" name="files[]" multiple accept=".png, .jpeg, .jpg"/>
     {{ __('messages.PDFFile') }}<input id='pdf' type='file' accept=".pdf"/>
@@ -285,6 +301,9 @@
     <div class="form-group col-lg-3" align="center">
       <h2>{{ __('messages.threshold') }} <a id="see_threshold"><span class="fa fa-eye"></span></a><a id="hide_threshold" hidden><span class="fa fa-eye-slash" hidden></span></a></h2><input type="range" min="1" max="255" id="threshold" value="147" class="form-control"><span id="thresholdValue"></span>
     </div>
+    <div class="form-group col-lg-2" align="center">
+    <h2>{{ __('messages.markComparison') }}</h2><input type="number" min="0" max="100" id="dark_comp" value="15" class="form-control">
+    </div>     
   </div>
 </div>
 
@@ -345,7 +364,7 @@
     var threshold_img = new Image;
     var storeOmrImgRoute = "{{route('storeOmrImg')}}";
     var updateUsageRoute = "{{route('updateUsage')}}";
-    var darkn = document.getElementById("darkness").value;
+    var threshlodRGB = "{{ $pro }}";
     $('#thresholdValue').html(threshold);
     $('#gradeImg').click(function() {
       gradeImage();

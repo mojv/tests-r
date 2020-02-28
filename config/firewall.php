@@ -15,7 +15,7 @@ return [
         // '172.17.*.*'
         // 'country:br'
         // storage_path().DIRECTORY_SEPARATOR.'blacklisted.txt',
-        'country:co'
+        // 'country:co'
     ],
 
     /**

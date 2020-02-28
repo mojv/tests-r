@@ -11,11 +11,14 @@
 |
 */
 
-Route::get('/', function () {
-    return redirect('/login');
+
+Route::group(['middleware' => ['locale']], function () {
+    Auth::routes(['verify' => true]);
+    Route::get('/', function () {
+        return redirect('/login');
+    });
 });
 
-Auth::routes(['verify' => true]);
 
 Route::group(['middleware' => ['web', 'locale', 'fw-block-bl', 'verified']], function () {
 
@@ -23,8 +26,8 @@ Route::group(['middleware' => ['web', 'locale', 'fw-block-bl', 'verified']], fun
         return view('board/test');
     }])->middleware('auth');
 
-    Route::get('/profile', ['as' => 'profile', 'uses' =>'UpdateUserController@profile']);
-    Route::patch('/profile', ['as' => 'profileUpdate', 'uses' =>'UpdateUserController@update']);
+    Route::get('/userProfile', ['as' => 'profile', 'uses' =>'UpdateUserController@profile']);
+    Route::patch('/userProfile', ['as' => 'profileUpdate', 'uses' =>'UpdateUserController@update']);
 
     //--------- Language -------------
     Route::get('lang/{locale}', function ($locale) {
@@ -64,8 +67,10 @@ Route::group(['middleware' => ['web', 'locale', 'fw-block-bl', 'verified']], fun
     //-----------OCR Language--------
     Route::get('/OCR-language', ['as' => 'ocrLanguage', 'uses' =>'FormController@ocrLanguage']);
 
-    //-----------OCR Language--------
-    Route::get('/donate', ['as' => 'donate', 'uses' =>'FormController@donate']);
+    //-----------Others--------
+    Route::get('/premium', ['as' => 'premium', 'uses' =>'FormController@premium']);
+    Route::post('paypal', 'PaymentController@payWithpaypal');
+    Route::get('status', 'PaymentController@getPaymentStatus');
     Route::get('/forum', ['as' => 'forum', 'uses' =>'FormController@forum']);
 
     //-----------Students-----------
